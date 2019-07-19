@@ -1,0 +1,34 @@
+{
+  "name": "smart-hooks",
+  "private": true,
+  "description": "Collections of React hooks that fill some gaps in the originally provided set of hooks extending or improving their logic",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turtleflyer/smart-hooks.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Andrei Kovalev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/turtleflyer/smart-hooks/issues"
+  },
+  "homepage": "https://github.com/turtleflyer/smart-hooks#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "lerna": "^3.16.0"
+  },
+  "dependencies": {
+    "@smart-hooks/use-smart-ref": "file:packages\\smart-hooks\\use-smart-ref"
+  }
+}

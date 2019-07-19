@@ -1,0 +1,25 @@
+{
+  "name": "@smart-hooks/use-smart-ref",
+  "version": "1.0.0",
+  "description": "Extends useRef logic",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turtleflyer/smart-hooks.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Andrei Kovalev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/turtleflyer/smart-hooks/issues"
+  },
+  "homepage": "https://github.com/turtleflyer/smart-hooks#readme",
+  "peerDependencies": {
+    "react": "^16.8.6"
+  }
+}
