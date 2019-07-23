@@ -14,7 +14,7 @@ import useSmartRef from '@smart-hooks/use-smart-ref';
 const Component = () => {
   refRecord = useRef();
 
-  ref = useEffect((el) => {
+  ref = useSmartRef((el) => {
     // el treated as a reference to the element.
     // Inside the function, perform operations with el.
     // For example, attach event listeners,
