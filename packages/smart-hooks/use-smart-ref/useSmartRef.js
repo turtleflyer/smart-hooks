@@ -2,7 +2,7 @@
 import {
   useMemo, useEffect, useCallback, useLayoutEffect,
 } from 'react';
-import supplyFreshPromise from './supplyFreshPromise';
+import supplyFreshPromise from '../../../src/utils/supplyFreshPromise';
 
 const useSmartRef = (effect, ref, deps) => {
   const state = useMemo(() => ({}), []);
