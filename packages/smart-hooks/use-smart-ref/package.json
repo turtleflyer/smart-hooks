@@ -19,7 +19,7 @@
   "keywords": [
     "react"
   ],
-  "author": "Andrei Kovalev",
+  "author": "Andrei Kovalev <turtlefly@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/turtleflyer/smart-hooks/issues"
