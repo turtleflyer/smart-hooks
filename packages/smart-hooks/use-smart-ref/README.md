@@ -21,9 +21,7 @@ const Component = () => {
     // make measurements, and so on.
     
     return () => {
-      // It will be executed at the same phase of component
-      // life cycle as in the case of executing a function
-      // returned by a function provided to useEffect.
+      // Cleaning routine
     }
   },
 
@@ -40,6 +38,3 @@ const Component = () => {
   )
 }
 ```
-
-
-
