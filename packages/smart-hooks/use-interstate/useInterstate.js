@@ -1,54 +1,64 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useMemo, useEffect, useState } from 'react';
+import {
+  useCallback, useMemo, useEffect, useState,
+} from 'react';
 
-const getFromStore = (() => {
+const store = (() => {
   const map = new Map();
+  const get = id => (map.get(id) !== undefined || map.set(id, { setters: [] })) && map.get(id);
+  const set = (id, value) => map.set(id, value);
 
-  return id => {
-    let getTry = map.get(id);
-    if (getTry === undefined) {
-      getTry = { setters: [] };
-      map.set(id, getTry);
-    }
-
-    return getTry;
+  return {
+    get,
+    set,
   };
 })();
 
-const useSubscribe = entry => {
+const useSubscribe = (id) => {
   const set = useState(true)[1];
 
   useMemo(() => {
-    entry.setters.push(set);
-  }, [entry]);
+    store.set(id, {
+      ...store.get(id),
+      setters: [...store.get(id).setters, set],
+    });
+  }, [id]);
 
   useEffect(
     () => () => {
-      entry.setters.splice(entry.setters.indexOf(set), 1);
+      store.set(id, {
+        ...store.get(id),
+        setters: store.get(id).setters.filter(s => s !== set),
+      });
     },
-    [entry],
+    [id],
   );
 
-  return entry.value;
+  return store.get(id).value;
 };
 
-const useInterstate = (id, initialValue, alternative) => {
-  const entry = useMemo(() => getFromStore(id), [id]);
+const useSetInterstateFactory = id => useCallback(
+  (newValue) => {
+    const { value, setters } = store.get(id);
+    const newActualValue = typeof newValue === 'function' ? newValue(value) : newValue;
 
-  const setInterstate = useCallback(
-    newValue => {
-      const actualValue = typeof newValue === 'function' ? newValue(entry.value) : newValue;
+    if (value !== newActualValue) {
+      store.set(id, {
+        ...store.get(id),
+        value: newActualValue,
+      });
 
-      if (entry.value !== actualValue) {
-        entry.value = actualValue;
-        entry.setters.forEach(callback => {
-          callback(v => !v);
-        });
-      }
-    },
-    [entry],
-  );
+      setters.forEach((callback) => {
+        callback(v => !v);
+      });
+    }
+  },
+  [id],
+);
+
+const useSetInterstate = (id, initialValue) => {
+  const setInterstate = useSetInterstateFactory(id);
 
   useMemo(() => {
     if (initialValue !== undefined) {
@@ -56,22 +66,19 @@ const useInterstate = (id, initialValue, alternative) => {
     }
   }, [id]);
 
-  const determineAlternative = useMemo(() => alternative, []);
+  return setInterstate;
+};
 
-  switch (determineAlternative) {
-    case undefined:
-      const useSubscribeInterstate = useCallback(() => useSubscribe(entry), [entry]);
-      return useMemo(() => ({ useSubscribeInterstate, setInterstate }), [entry]);
+const useSubscribeInterstateStatic = (id, initialValue) => {
+  useSetInterstate(id, initialValue);
+  return useSubscribe(id);
+};
 
-    case true:
-      return [useSubscribe(entry), setInterstate];
-
-    case false:
-      return setInterstate;
-
-    default:
-      throw new TypeError('The third argument of useInterstate should be "true" or "false"');
-  }
+const useInterstate = (id, initialValue) => {
+  const setInterstate = useSetInterstate(id, initialValue);
+  const useSubscribeInterstate = () => useSubscribe(id);
+  return useMemo(() => ({ useSubscribeInterstate, setInterstate }), [id]);
 };
 
 export default useInterstate;
+export { useSubscribeInterstateStatic, useSetInterstate };
