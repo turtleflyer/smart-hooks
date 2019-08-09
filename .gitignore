@@ -2,3 +2,4 @@ node_modules
 dist/
 lab/
 lerna-debug.log
+.vscode/
