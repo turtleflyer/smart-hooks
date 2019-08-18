@@ -4,14 +4,9 @@
 import { useState, useRef } from 'react';
 
 function ValueConductor() {
-  this._receiptor = function defHandler() {
-    throw new Error('No receiptor attached');
-  };
-
   this.resetCounter();
 
   const conductor = new Proxy(() => null, {
-    // eslint-disable-next-line consistent-return
     apply: (...args) => {
       const [, , [arg]] = args;
       if (typeof this._receiptor === 'function') {
@@ -20,11 +15,15 @@ function ValueConductor() {
       }
 
       // eslint-disable-next-line no-prototype-builtins
-      if (this._receiptor.hasOwnProperty('current')) {
+      if (typeof this._receiptor !== 'undefined' && this._receiptor.hasOwnProperty('current')) {
         return this._receiptor.current;
       }
 
-      throw new Error('Unknown receiptor attached');
+      if (typeof this._counter === 'number' && this._counter >= 0) {
+        return this._counter;
+      }
+
+      throw new Error('Invalid type of counter');
     },
 
     set: (_, prop, value) => {
@@ -57,14 +56,6 @@ Object.assign(ValueConductor.prototype, {
     if (typeof this._counter === 'number' && this._counter >= 0) {
       this._counter++;
       return this;
-    }
-
-    throw new Error('Invalid type of counter');
-  },
-
-  counter() {
-    if (typeof this._counter === 'number' && this._counter >= 0) {
-      return this._counter;
     }
 
     throw new Error('Invalid type of counter');

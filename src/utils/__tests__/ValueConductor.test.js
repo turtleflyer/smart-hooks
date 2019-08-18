@@ -22,7 +22,7 @@ describe('Test ValueConductor', () => {
     expect(typeof inst.apply).toBe('function');
   });
 
-  test('can conduct value', () => {
+  test('can conduct function', () => {
     let receive = false;
     inst.attach((v) => {
       receive = v;
@@ -43,21 +43,13 @@ describe('Test ValueConductor', () => {
     expect(inst()).toBeFalsy();
   });
 
-  test('invalid receiptor attached', () => {
-    inst.attach({});
-    expect(inst).toThrow('Unknown receiptor attached');
-    expect(() => {
-      inst(null);
-    }).toThrow('Unknown receiptor attached');
-  });
-
   test('counter works properly', () => {
-    expect(inst.counter()).toBe(0);
+    expect(inst()).toBe(0);
     inst.addCount();
     inst.addCount();
     inst.addCount();
-    expect(inst.counter()).toBe(3);
+    expect(inst()).toBe(3);
     inst.resetCounter();
-    expect(inst.counter()).toBe(0);
+    expect(inst()).toBe(0);
   });
 });
