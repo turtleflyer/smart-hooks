@@ -8,9 +8,12 @@ function ValueConductor() {
     throw new Error('No receiptor attached');
   };
 
+  this.resetCounter();
+
   const conductor = new Proxy(() => null, {
     // eslint-disable-next-line consistent-return
-    apply: (_, __, [arg]) => {
+    apply: (...args) => {
+      const [, , [arg]] = args;
       if (typeof this._receiptor === 'function') {
         this._receiptor(arg);
         return undefined;
@@ -39,9 +42,34 @@ function ValueConductor() {
 
 Object.setPrototypeOf(ValueConductor.prototype, Function.prototype);
 
-ValueConductor.prototype.attach = function attach(setState) {
-  this._receiptor = setState;
-};
+Object.assign(ValueConductor.prototype, {
+  attach(setState) {
+    this._receiptor = setState;
+    return this;
+  },
+
+  resetCounter() {
+    this._counter = 0;
+    return this;
+  },
+
+  addCount() {
+    if (typeof this._counter === 'number' && this._counter >= 0) {
+      this._counter++;
+      return this;
+    }
+
+    throw new Error('Invalid type of counter');
+  },
+
+  counter() {
+    if (typeof this._counter === 'number' && this._counter >= 0) {
+      return this._counter;
+    }
+
+    throw new Error('Invalid type of counter');
+  },
+});
 
 /**
  * Hook providing direct mutation of the state inside React

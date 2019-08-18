@@ -50,4 +50,14 @@ describe('Test ValueConductor', () => {
       inst(null);
     }).toThrow('Unknown receiptor attached');
   });
+
+  test('counter works properly', () => {
+    expect(inst.counter()).toBe(0);
+    inst.addCount();
+    inst.addCount();
+    inst.addCount();
+    expect(inst.counter()).toBe(3);
+    inst.resetCounter();
+    expect(inst.counter()).toBe(0);
+  });
 });
