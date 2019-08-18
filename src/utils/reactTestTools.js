@@ -79,7 +79,7 @@ Object.assign(ValueConductor.prototype, {
  * @param  {*} initialValue
  * @return {*}
  */
-const useReceiptor = (conductor, initialValue) => {
+const useStateReceiptor = (conductor, initialValue) => {
   const [state, setState] = useState(initialValue);
   if (conductor instanceof ValueConductor) {
     conductor.attach(setState);
@@ -99,4 +99,4 @@ const useConductRef = (conductor) => {
   throw new TypeError('Invalid type of argument passed to useReceiptor');
 };
 
-export { ValueConductor, useReceiptor, useConductRef };
+export { ValueConductor, useStateReceiptor, useConductRef };
