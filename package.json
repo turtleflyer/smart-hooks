@@ -34,6 +34,7 @@
     "jest": "^24.8.0",
     "lerna": "^3.16.4",
     "prettier": "^1.18.2",
+    "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-test-renderer": "^16.9.0",
