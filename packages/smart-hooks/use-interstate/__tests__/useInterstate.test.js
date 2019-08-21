@@ -23,9 +23,6 @@ describe('Test useInterstate functionality', () => {
     const subscribeId = '1';
     const testId1 = 'updater';
     const testId2 = 'listener';
-    const composeCallback = set => ({ target: { value } }) => {
-      set(value);
-    };
     const countRender1 = jest.fn();
     const countRender2 = jest.fn();
     const TestComponent = () => (
@@ -33,7 +30,6 @@ describe('Test useInterstate functionality', () => {
         <CanUpdate
           {...{
             subscribeId,
-            composeCallback,
             testId: testId1,
             countRender: countRender1,
           }}
@@ -72,10 +68,7 @@ describe('Test useInterstate functionality', () => {
     const testId7 = 'seventh';
     const testId8 = 'eighth';
     const testId9 = 'ninth';
-    const composeCallback1 = set => ({ target: { value } }) => {
-      set(value);
-    };
-    const composeCallback2 = set => ({ target: { value } }) => {
+    const altComposeCallback = set => ({ target: { value } }) => {
       set(old => (old || '') + value);
     };
     const countRender1 = jest.fn();
@@ -99,7 +92,6 @@ describe('Test useInterstate functionality', () => {
           <CanListenAndUpdate
             {...{
               subscribeId: subscribeId2,
-              composeCallback: composeCallback1,
               testId: testId2,
               countRender: countRender2,
             }}
@@ -117,7 +109,7 @@ describe('Test useInterstate functionality', () => {
             <CanListenAndUpdate
               {...{
                 subscribeId: subscribeId1,
-                composeCallback: composeCallback2,
+                composeCallback: altComposeCallback,
                 testId: testId4,
                 countRender: countRender4,
               }}
@@ -133,7 +125,7 @@ describe('Test useInterstate functionality', () => {
               <CanUpdate
                 {...{
                   subscribeId: subscribeId2,
-                  composeCallback: composeCallback2,
+                  composeCallback: altComposeCallback,
                   testId: testId6,
                   countRender: countRender6,
                 }}
@@ -141,7 +133,7 @@ describe('Test useInterstate functionality', () => {
                 <CanListenAndUpdate
                   {...{
                     subscribeId: subscribeId2,
-                    composeCallback: composeCallback2,
+                    composeCallback: altComposeCallback,
                     testId: testId7,
                     countRender: countRender7,
                   }}
@@ -158,7 +150,6 @@ describe('Test useInterstate functionality', () => {
                   <CanListenAndUpdate
                     {...{
                       subscribeId: subscribeId1,
-                      composeCallback: composeCallback1,
                       testId: testId9,
                       countRender: countRender9,
                     }}
