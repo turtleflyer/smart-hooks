@@ -11,6 +11,10 @@ import { getLastMaps } from '../../../../src/utils/getStore';
 
 jest.mock('../../../../src/utils/getStore.js');
 
+const defComposeCallback = set => ({ target: { value } }) => {
+  set(value);
+};
+
 const CanListen = ({
   subscribeId, initialValue, testId, countRender, children,
 }) => {
@@ -73,7 +77,7 @@ CanUpdate.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   initialValue: PropTypes.any,
   testId: PropTypes.string,
-  composeCallback: PropTypes.func.isRequired,
+  composeCallback: PropTypes.func,
   countRender: PropTypes.func,
   children: PropTypes.node,
 };
@@ -81,6 +85,7 @@ CanUpdate.propTypes = {
 CanUpdate.defaultProps = {
   initialValue: undefined,
   testId: '',
+  composeCallback: defComposeCallback,
   countRender: () => null,
   children: null,
 };
@@ -117,7 +122,7 @@ CanListenAndUpdate.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   initialValue: PropTypes.any,
   testId: PropTypes.string,
-  composeCallback: PropTypes.func.isRequired,
+  composeCallback: PropTypes.func,
   countRender: PropTypes.func,
   children: PropTypes.node,
 };
@@ -125,6 +130,7 @@ CanListenAndUpdate.propTypes = {
 CanListenAndUpdate.defaultProps = {
   initialValue: undefined,
   testId: '',
+  composeCallback: defComposeCallback,
   countRender: () => null,
   children: null,
 };
