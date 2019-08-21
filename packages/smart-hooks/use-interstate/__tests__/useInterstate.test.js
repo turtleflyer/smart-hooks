@@ -237,4 +237,39 @@ describe('Test useInterstate functionality', () => {
     expect(maps.map.get(subscribeId1).setters.length).toBe(0);
     expect(maps.map.get(subscribeId2).setters.length).toBe(0);
   });
+
+  test('check initialization concurrency', () => {
+    const subscribeId = '1';
+    const testId = 'first';
+    const TestComponent = () => (
+      <>
+        <div>
+          <CanUpdate
+            {...{
+              subscribeId,
+              initialValue: 'a',
+            }}
+          />
+          <CanListen
+            {...{
+              subscribeId,
+              initialValue: 'b',
+            }}
+          />
+        </div>
+        <CanListenAndUpdate
+          {...{
+            subscribeId,
+            testId,
+            initialValue: 'c',
+          }}
+        />
+      </>
+    );
+
+    const { unmount, getNodeWithText } = render(<TestComponent />);
+    maps = getLastMaps();
+    expect(getNodeWithText(testId)).toHaveTextContent('c');
+    unmount();
+  });
 });
