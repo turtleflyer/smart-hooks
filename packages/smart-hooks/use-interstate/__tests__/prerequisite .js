@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env jest */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { PropTypes } from 'prop-types';
@@ -16,7 +16,9 @@ const CanListen = ({
 }) => {
   const [, useSubscribe] = useInterstate(subscribeId, initialValue);
   const state = useSubscribe();
-  countRender();
+  useEffect(() => {
+    countRender();
+  });
 
   return (
     <div data-testid={testId}>
@@ -53,7 +55,9 @@ const CanUpdate = ({
 }) => {
   const [setState] = useInterstate(subscribeId, initialValue);
   const callback = useCallback(composeCallback(setState), [composeCallback, setState]);
-  countRender();
+  useEffect(() => {
+    countRender();
+  });
 
   return (
     <>
@@ -92,7 +96,9 @@ const CanListenAndUpdate = ({
   const [setState, useSubscribe] = useInterstate(subscribeId, initialValue);
   const state = useSubscribe();
   const callback = useCallback(composeCallback(setState), [composeCallback, setState]);
-  countRender();
+  useEffect(() => {
+    countRender();
+  });
 
   return (
     <div data-testid={testId}>
@@ -123,6 +129,33 @@ CanListenAndUpdate.defaultProps = {
   children: null,
 };
 
+const newRender = (...arg) => {
+  const fromRender = render(...arg);
+  const { getByTestId } = fromRender;
+
+  const fireNode = (testId, value) => {
+    const element = getByTestId(testId);
+    fireEvent.change(element.nodeName === 'INPUT' ? element : element.querySelector('input'), {
+      target: { value },
+    });
+  };
+
+  const getNodeWithText = (testId) => {
+    const element = getByTestId(testId);
+    return !element.firstChild || element.firstChild.nodeName === '#text'
+      ? element
+      : element.querySelector('div');
+  };
+
+  return { ...fromRender, fireNode, getNodeWithText };
+};
+
 export {
-  React, render, fireEvent, getLastMaps, CanListen, CanUpdate, CanListenAndUpdate,
+  React,
+  newRender as render,
+  fireEvent,
+  getLastMaps,
+  CanListen,
+  CanUpdate,
+  CanListenAndUpdate,
 };
