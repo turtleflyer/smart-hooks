@@ -146,14 +146,15 @@ const newRender = (...arg) => {
     });
   };
 
-  const getNodeWithText = (testId) => {
+  const getTextFromNode = (testId) => {
     const element = getByTestId(testId);
-    return !element.firstChild || element.firstChild.nodeName === '#text'
+    const elementWithText = !element.firstChild || element.firstChild.nodeName === '#text'
       ? element
       : element.querySelector('div');
+    return elementWithText.firstChild ? elementWithText.firstChild.textContent : '';
   };
 
-  return { ...fromRender, fireNode, getNodeWithText };
+  return { ...fromRender, fireNode, getTextFromNode };
 };
 
 export {
