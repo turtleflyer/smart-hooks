@@ -44,11 +44,11 @@ describe('Test useInterstate functionality', () => {
       </>
     );
 
-    const { unmount, fireNode, getNodeWithText } = render(<TestComponent />);
+    const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
     maps = getLastMaps();
-    expect(getNodeWithText(testId2)).toHaveTextContent('');
+    expect(getTextFromNode(testId2)).toBe('');
     fireNode(testId1, 'n');
-    expect(getNodeWithText(testId2)).toHaveTextContent('n');
+    expect(getTextFromNode(testId2)).toBe('n');
     expect(countRender1).toHaveBeenCalledTimes(1);
     expect(countRender2).toHaveBeenCalledTimes(2);
     expect(maps.map.get(subscribeId).setters.length).toBe(1);
@@ -162,16 +162,16 @@ describe('Test useInterstate functionality', () => {
       </>
     );
 
-    const { unmount, fireNode, getNodeWithText } = render(<TestComponent />);
+    const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
     maps = getLastMaps();
-    expect(getNodeWithText(testId1)).toHaveTextContent('');
-    expect(getNodeWithText(testId2)).toHaveTextContent('');
+    expect(getTextFromNode(testId1)).toBe('');
+    expect(getTextFromNode(testId2)).toBe('');
     fireNode(testId4, 'i');
-    expect(getNodeWithText(testId1)).toHaveTextContent('i');
-    expect(getNodeWithText(testId3)).toHaveTextContent('i');
-    expect(getNodeWithText(testId4)).toHaveTextContent('i');
-    expect(getNodeWithText(testId8)).toHaveTextContent('i');
-    expect(getNodeWithText(testId9)).toHaveTextContent('i');
+    expect(getTextFromNode(testId1)).toBe('i');
+    expect(getTextFromNode(testId3)).toBe('i');
+    expect(getTextFromNode(testId4)).toBe('i');
+    expect(getTextFromNode(testId8)).toBe('i');
+    expect(getTextFromNode(testId9)).toBe('i');
     expect(countRender1).toHaveBeenCalledTimes(2);
     expect(countRender2).toHaveBeenCalledTimes(1);
     expect(countRender3).toHaveBeenCalledTimes(2);
@@ -182,9 +182,9 @@ describe('Test useInterstate functionality', () => {
     expect(countRender8).toHaveBeenCalledTimes(2);
     expect(countRender9).toHaveBeenCalledTimes(2);
     fireNode(testId2, 'j');
-    expect(getNodeWithText(testId2)).toHaveTextContent('j');
-    expect(getNodeWithText(testId5)).toHaveTextContent('j');
-    expect(getNodeWithText(testId7)).toHaveTextContent('j');
+    expect(getTextFromNode(testId2)).toBe('j');
+    expect(getTextFromNode(testId5)).toBe('j');
+    expect(getTextFromNode(testId7)).toBe('j');
     expect(countRender1).toHaveBeenCalledTimes(2);
     expect(countRender2).toHaveBeenCalledTimes(2);
     expect(countRender3).toHaveBeenCalledTimes(2);
@@ -195,11 +195,11 @@ describe('Test useInterstate functionality', () => {
     expect(countRender8).toHaveBeenCalledTimes(2);
     expect(countRender9).toHaveBeenCalledTimes(2);
     fireNode(testId9, 'o');
-    expect(getNodeWithText(testId1)).toHaveTextContent('o');
-    expect(getNodeWithText(testId3)).toHaveTextContent('o');
-    expect(getNodeWithText(testId4)).toHaveTextContent('o');
-    expect(getNodeWithText(testId8)).toHaveTextContent('o');
-    expect(getNodeWithText(testId9)).toHaveTextContent('o');
+    expect(getTextFromNode(testId1)).toBe('o');
+    expect(getTextFromNode(testId3)).toBe('o');
+    expect(getTextFromNode(testId4)).toBe('o');
+    expect(getTextFromNode(testId8)).toBe('o');
+    expect(getTextFromNode(testId9)).toBe('o');
     expect(countRender1).toHaveBeenCalledTimes(3);
     expect(countRender2).toHaveBeenCalledTimes(2);
     expect(countRender3).toHaveBeenCalledTimes(3);
@@ -210,9 +210,9 @@ describe('Test useInterstate functionality', () => {
     expect(countRender8).toHaveBeenCalledTimes(3);
     expect(countRender9).toHaveBeenCalledTimes(3);
     fireNode(testId7, 'z');
-    expect(getNodeWithText(testId2)).toHaveTextContent('jz');
-    expect(getNodeWithText(testId5)).toHaveTextContent('jz');
-    expect(getNodeWithText(testId7)).toHaveTextContent('jz');
+    expect(getTextFromNode(testId2)).toBe('jz');
+    expect(getTextFromNode(testId5)).toBe('jz');
+    expect(getTextFromNode(testId7)).toBe('jz');
     expect(countRender1).toHaveBeenCalledTimes(3);
     expect(countRender2).toHaveBeenCalledTimes(3);
     expect(countRender3).toHaveBeenCalledTimes(3);
@@ -258,9 +258,9 @@ describe('Test useInterstate functionality', () => {
       </>
     );
 
-    const { unmount, getNodeWithText } = render(<TestComponent />);
+    const { unmount, getTextFromNode } = render(<TestComponent />);
     maps = getLastMaps();
-    expect(getNodeWithText(testId)).toHaveTextContent('c');
+    expect(getTextFromNode(testId)).toBe('c');
     unmount();
   });
 });
