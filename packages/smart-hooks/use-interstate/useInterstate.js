@@ -3,17 +3,9 @@
 import {
   useCallback, useMemo, useEffect, useState,
 } from 'react';
+import getNewStore from '../../../src/utils/getStore';
 
-const store = (() => {
-  const map = new Map();
-  const get = id => (map.get(id) !== undefined || map.set(id, { setters: [] })) && map.get(id);
-  const set = (id, value) => map.set(id, value);
-
-  return {
-    get,
-    set,
-  };
-})();
+const store = getNewStore();
 
 const useSubscribe = (id) => {
   const set = useState(true)[1];
