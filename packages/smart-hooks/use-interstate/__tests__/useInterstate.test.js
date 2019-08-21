@@ -57,7 +57,7 @@ describe('Test useInterstate functionality', () => {
     expect(countRender2).toHaveBeenCalledTimes(2);
     expect(maps.map.get(subscribeId).setters.length).toBe(1);
     unmount();
-    maps.map.clear();
+    expect(maps.map.get(subscribeId).setters.length).toBe(0);
   });
 
   test('sophisticated structure can communicate', () => {
@@ -234,5 +234,7 @@ describe('Test useInterstate functionality', () => {
     expect(maps.map.get(subscribeId1).setters.length).toBe(5);
     expect(maps.map.get(subscribeId2).setters.length).toBe(3);
     unmount();
+    expect(maps.map.get(subscribeId1).setters.length).toBe(0);
+    expect(maps.map.get(subscribeId2).setters.length).toBe(0);
   });
 });
