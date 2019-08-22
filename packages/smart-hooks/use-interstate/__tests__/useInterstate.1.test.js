@@ -1,17 +1,27 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env jest */
 
-import {
-  React,
-  render,
-  getLastMaps,
-  CanListen,
-  CanUpdate,
-  CanListenAndUpdate,
-} from './prerequisite ';
-
 describe('Test useInterstate functionality', () => {
   let maps;
+  let React;
+  let render;
+  let getLastMaps;
+  let CanListen;
+  let CanUpdate;
+  let CanListenAndUpdate;
+
+  beforeEach(() => {
+    jest.isolateModules(() => {
+      ({
+        React,
+        render,
+        getLastMaps,
+        CanListen,
+        CanUpdate,
+        CanListenAndUpdate,
+      } = require('./prerequisite'));
+    });
+  });
 
   afterEach(() => {
     if (maps) {
@@ -163,6 +173,7 @@ describe('Test useInterstate functionality', () => {
     );
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
+    // expect(getLastMaps()).toBe(maps);
     maps = getLastMaps();
     expect(getTextFromNode(testId1)).toBe('');
     expect(getTextFromNode(testId2)).toBe('');
