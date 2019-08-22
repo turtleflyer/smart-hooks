@@ -8,7 +8,7 @@ const { bypassGetStore, getLastMaps } = (() => {
     bypassGetStore(...arg) {
       const store = getStore(...arg);
       // eslint-disable-next-line no-underscore-dangle
-      lastStore = store._getMapForTesting();
+      lastStore = store._getMapsForTesting();
       return store;
     },
 

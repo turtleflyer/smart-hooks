@@ -1,20 +1,21 @@
-const getStore = (() => {
-  const defaultMap = new Map();
-  return (getNew) => {
-    const map = getNew ? new Map() : defaultMap;
+const getStore = () => {
+  const storeStructure = { map: new Map() };
 
-    const get = id => (map.get(id) !== undefined || map.set(id, { setters: [] })) && map.get(id);
-    const set = (id, value) => map.set(id, value);
+  // prettier-ignore
+  const get = id => (
+    storeStructure.map.get(id) !== undefined || storeStructure.map.set(id, { setters: [] })
+  )
+    && storeStructure.map.get(id);
+  const set = (id, value) => storeStructure.map.set(id, value);
 
-    // eslint-disable-next-line no-underscore-dangle
-    const _getMapForTesting = () => ({ map });
+  // eslint-disable-next-line no-underscore-dangle
+  const _getMapsForTesting = () => storeStructure;
 
-    return {
-      get,
-      set,
-      _getMapForTesting,
-    };
+  return {
+    get,
+    set,
+    _getMapsForTesting,
   };
-})();
+};
 
 export default getStore;
