@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env jest */
 
+import React from 'react';
+
 describe('Test useInterstate functionality', () => {
-  let React;
   let render;
   let CanListen;
   let CanUpdate;
@@ -11,7 +12,7 @@ describe('Test useInterstate functionality', () => {
   beforeEach(() => {
     jest.isolateModules(() => {
       ({
-        React, render, CanListen, CanUpdate, CanListenAndUpdate,
+        render, CanListen, CanUpdate, CanListenAndUpdate,
       } = require('./prerequisite'));
     });
   });

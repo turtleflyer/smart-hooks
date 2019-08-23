@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env jest */
 
+import React from 'react';
+
 describe('Test useInterstate functionality', () => {
-  let React;
   let render;
   let getLastMaps;
   let CanListen;
@@ -12,7 +13,6 @@ describe('Test useInterstate functionality', () => {
   beforeEach(() => {
     jest.isolateModules(() => {
       ({
-        React,
         render,
         getLastMaps,
         CanListen,
