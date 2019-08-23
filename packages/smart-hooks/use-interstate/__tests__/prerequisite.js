@@ -165,4 +165,5 @@ export {
   CanListen,
   CanUpdate,
   CanListenAndUpdate,
+  PropTypes,
 };
