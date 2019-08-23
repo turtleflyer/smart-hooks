@@ -2,7 +2,6 @@
 /* eslint-env jest */
 
 describe('Test useInterstate functionality', () => {
-  let maps;
   let React;
   let render;
   let getLastMaps;
@@ -49,7 +48,7 @@ describe('Test useInterstate functionality', () => {
     );
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
-    maps = getLastMaps();
+    const maps = getLastMaps();
     expect(getTextFromNode(testId2)).toBe('');
     fireNode(testId1, 'n');
     expect(getTextFromNode(testId2)).toBe('n');
@@ -168,7 +167,7 @@ describe('Test useInterstate functionality', () => {
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
     // expect(getLastMaps()).toBe(maps);
-    maps = getLastMaps();
+    const maps = getLastMaps();
     expect(getTextFromNode(testId1)).toBe('');
     expect(getTextFromNode(testId2)).toBe('');
     fireNode(testId4, 'i');
@@ -264,7 +263,6 @@ describe('Test useInterstate functionality', () => {
     );
 
     const { unmount, getTextFromNode } = render(<TestComponent />);
-    maps = getLastMaps();
     expect(getTextFromNode(testId)).toBe('c');
     unmount();
   });
