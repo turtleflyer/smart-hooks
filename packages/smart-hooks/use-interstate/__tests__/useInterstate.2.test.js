@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env jest */
 
-
 describe('Test useInterstate functionality', () => {
   let React;
   let render;
@@ -21,6 +20,42 @@ describe('Test useInterstate functionality', () => {
         CanListenAndUpdate,
       } = require('./prerequisite'));
     });
+  });
+
+  test('check initialization concurrency', () => {
+    const subscribeId = '1';
+    const testId = 'first';
+    const TestComponent = () => (
+      <>
+        <div>
+          <div>
+            <CanUpdate
+              {...{
+                subscribeId,
+                initialValue: 'a',
+              }}
+            />
+            <CanListen
+              {...{
+                subscribeId,
+                initialValue: 'b',
+              }}
+            />
+          </div>
+        </div>
+        <CanListenAndUpdate
+          {...{
+            subscribeId,
+            testId,
+            initialValue: 'c',
+          }}
+        />
+      </>
+    );
+
+    const { unmount, getTextFromNode } = render(<TestComponent />);
+    expect(getTextFromNode(testId)).toBe('c');
+    unmount();
   });
 
   test('values remain after tree unmount', () => {
