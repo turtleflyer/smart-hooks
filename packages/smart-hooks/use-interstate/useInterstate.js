@@ -56,7 +56,7 @@ const useSetInterstate = (id, initialValue) => {
     if (initialValue !== undefined) {
       setInterstate(initialValue);
     }
-  }, [id]);
+  }, [id, initialValue]);
 
   return setInterstate;
 };
