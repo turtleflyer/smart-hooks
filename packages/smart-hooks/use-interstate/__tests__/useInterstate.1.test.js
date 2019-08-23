@@ -23,12 +23,6 @@ describe('Test useInterstate functionality', () => {
     });
   });
 
-  afterEach(() => {
-    if (maps) {
-      maps.map.clear();
-    }
-  });
-
   test('siblings can communicate', () => {
     const subscribeId = '1';
     const testId1 = 'updater';
