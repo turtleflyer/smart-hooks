@@ -4,7 +4,6 @@
 describe('Test useInterstate functionality', () => {
   let React;
   let render;
-  let getLastMaps;
   let CanListen;
   let CanUpdate;
   let CanListenAndUpdate;
@@ -12,12 +11,7 @@ describe('Test useInterstate functionality', () => {
   beforeEach(() => {
     jest.isolateModules(() => {
       ({
-        React,
-        render,
-        getLastMaps,
-        CanListen,
-        CanUpdate,
-        CanListenAndUpdate,
+        React, render, CanListen, CanUpdate, CanListenAndUpdate,
       } = require('./prerequisite'));
     });
   });
