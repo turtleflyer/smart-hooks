@@ -18,6 +18,7 @@ describe('Test useInterstate functionality', () => {
         CanListen,
         CanUpdate,
         CanListenAndUpdate,
+      // eslint-disable-next-line global-require
       } = require('./prerequisite'));
     });
   });
