@@ -12,8 +12,11 @@ describe('Test useInterstate functionality', () => {
   beforeEach(() => {
     jest.isolateModules(() => {
       ({
-        render, CanListen, CanUpdate, CanListenAndUpdate,
-      // eslint-disable-next-line global-require
+        render,
+        CanListen,
+        CanUpdate,
+        CanListenAndUpdate,
+        // eslint-disable-next-line global-require
       } = require('./prerequisite'));
     });
   });
@@ -96,5 +99,6 @@ describe('Test useInterstate functionality', () => {
     fireNode(testId1, 'f');
     fireNode(testId1, 'r');
     expect(getTextFromNode(testId2)).toBe('gefr');
+    unmount();
   });
 });
