@@ -158,5 +158,5 @@ const newRender = (...arg) => {
 };
 
 export {
-  newRender as render, getLastMaps, CanListen, CanUpdate, CanListenAndUpdate,
+  newRender as render, getLastMaps, CanListen, CanUpdate, CanListenAndUpdate, fireEvent,
 };
