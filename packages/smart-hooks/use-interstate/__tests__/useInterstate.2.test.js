@@ -24,6 +24,18 @@ describe('Test useInterstate functionality', () => {
   test('check initialization concurrency', () => {
     const subscribeId = '1';
     const testId = 'first';
+
+    const InnerComponent = () => (
+      <div>
+        <CanListen
+          {...{
+            subscribeId,
+            initialValue: 'b',
+          }}
+        />
+      </div>
+    );
+
     const TestComponent = () => (
       <>
         <div>
@@ -34,12 +46,7 @@ describe('Test useInterstate functionality', () => {
                 initialValue: 'a',
               }}
             />
-            <CanListen
-              {...{
-                subscribeId,
-                initialValue: 'b',
-              }}
-            />
+            <InnerComponent />
           </div>
         </div>
         <CanListenAndUpdate
