@@ -16,12 +16,16 @@ describe('Test useInterstate functionality', () => {
       ({
         render,
         getLastMaps,
-        CanListen,
-        CanUpdate,
-        CanListenAndUpdate,
         fireEvent,
         // eslint-disable-next-line global-require
       } = require('./prerequisite'));
+
+      ({
+        CanListen,
+        CanUpdate,
+        CanListenAndUpdate,
+        // eslint-disable-next-line global-require
+      } = require('./testComponentGeneralAPI'));
     });
   });
 

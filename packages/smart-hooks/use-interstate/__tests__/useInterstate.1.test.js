@@ -15,11 +15,15 @@ describe('Test useInterstate functionality', () => {
       ({
         render,
         getLastMaps,
+        // eslint-disable-next-line global-require
+      } = require('./prerequisite'));
+
+      ({
         CanListen,
         CanUpdate,
         CanListenAndUpdate,
-      // eslint-disable-next-line global-require
-      } = require('./prerequisite'));
+        // eslint-disable-next-line global-require
+      } = require('./testComponentGeneralAPI'));
     });
   });
 

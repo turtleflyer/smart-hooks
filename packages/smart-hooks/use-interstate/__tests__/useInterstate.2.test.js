@@ -13,11 +13,15 @@ describe('Test useInterstate functionality', () => {
     jest.isolateModules(() => {
       ({
         render,
+        // eslint-disable-next-line global-require
+      } = require('./prerequisite'));
+
+      ({
         CanListen,
         CanUpdate,
         CanListenAndUpdate,
         // eslint-disable-next-line global-require
-      } = require('./prerequisite'));
+      } = require('./testComponentGeneralAPI'));
     });
   });
 
