@@ -1,14 +1,28 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  useCallback, useMemo, useEffect, useState,
-} from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import getNewStore from '../../../src/utils/getStore';
 
 const store = getNewStore();
 
+const FactoryOfSetInterstate = id => (newValue) => {
+  const { value, setters } = store.get(id);
+  const newActualValue = typeof newValue === 'function' ? newValue(value) : newValue;
+
+  if (value !== newActualValue) {
+    store.set(id, {
+      ...store.get(id),
+      value: newActualValue,
+    });
+
+    setters.forEach((callback) => {
+      callback(v => !v);
+    });
+  }
+};
+
 const useSubscribe = (id) => {
-  const set = useState(true)[1];
+  const [, set] = useState(true);
 
   useMemo(() => {
     store.set(id, {
@@ -30,27 +44,8 @@ const useSubscribe = (id) => {
   return store.get(id).value;
 };
 
-const useSetInterstateFactory = id => useCallback(
-  (newValue) => {
-    const { value, setters } = store.get(id);
-    const newActualValue = typeof newValue === 'function' ? newValue(value) : newValue;
-
-    if (value !== newActualValue) {
-      store.set(id, {
-        ...store.get(id),
-        value: newActualValue,
-      });
-
-      setters.forEach((callback) => {
-        callback(v => !v);
-      });
-    }
-  },
-  [id],
-);
-
 const useSetInterstate = (id, initialValue) => {
-  const setInterstate = useSetInterstateFactory(id);
+  const setInterstate = useMemo(() => FactoryOfSetInterstate(id), [id]);
 
   useMemo(() => {
     if (initialValue !== undefined) {
