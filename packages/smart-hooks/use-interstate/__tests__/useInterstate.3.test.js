@@ -41,6 +41,11 @@ const dynamicSubscriptionWorks = imports => () => {
           setInitialValue('mars');
           break;
 
+        case '4':
+          setSubscribeId(subscribeId1);
+          setInitialValue('neptune');
+          break;
+
         default:
           break;
       }
@@ -107,6 +112,7 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender4).toHaveBeenCalledTimes(2);
   expect(maps.map.get(subscribeId1).setters.length).toBe(2);
   expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+
   fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
   expect(getTextFromNode(testId4)).toBe('moon');
   fireNode(testId2, 'mercury');
@@ -120,6 +126,7 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender4).toHaveBeenCalledTimes(4);
   expect(maps.map.get(subscribeId1).setters.length).toBe(1);
   expect(maps.map.get(subscribeId2).setters.length).toBe(1);
+
   fireEvent.change(getByTestId(testId5), { target: { value: '1' } });
   expect(getTextFromNode(testId4)).toBe('mercury');
   expect(countRender1).toHaveBeenCalledTimes(4);
@@ -128,6 +135,7 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender4).toHaveBeenCalledTimes(5);
   expect(maps.map.get(subscribeId1).setters.length).toBe(2);
   expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+
   fireEvent.change(getByTestId(testId5), { target: { value: '3' } });
   expect(getTextFromNode(testId1)).toBe('mars');
   expect(getTextFromNode(testId4)).toBe('mars');
@@ -149,6 +157,27 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender4).toHaveBeenCalledTimes(8);
   expect(maps.map.get(subscribeId1).setters.length).toBe(2);
   expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  
+  fireEvent.change(getByTestId(testId5), { target: { value: '1' } });
+  expect(getTextFromNode(testId1)).toBe('pluto');
+  expect(getTextFromNode(testId4)).toBe('pluto');
+  expect(countRender1).toHaveBeenCalledTimes(7);
+  expect(countRender2).toHaveBeenCalledTimes(1);
+  expect(countRender3).toHaveBeenCalledTimes(1);
+  expect(countRender4).toHaveBeenCalledTimes(9);
+  expect(maps.map.get(subscribeId1).setters.length).toBe(2);
+  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  
+  fireEvent.change(getByTestId(testId5), { target: { value: '4' } });
+  expect(getTextFromNode(testId1)).toBe('pluto');
+  expect(getTextFromNode(testId4)).toBe('pluto');
+  expect(countRender1).toHaveBeenCalledTimes(7);
+  expect(countRender2).toHaveBeenCalledTimes(1);
+  expect(countRender3).toHaveBeenCalledTimes(1);
+  expect(countRender4).toHaveBeenCalledTimes(10);
+  expect(maps.map.get(subscribeId1).setters.length).toBe(2);
+  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+
   fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
   expect(getTextFromNode(testId4)).toBe('jupiter');
   fireNode(testId1, 'uranus');
@@ -159,7 +188,7 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender1).toHaveBeenCalledTimes(8);
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
-  expect(countRender4).toHaveBeenCalledTimes(10);
+  expect(countRender4).toHaveBeenCalledTimes(12);
   expect(maps.map.get(subscribeId1).setters.length).toBe(1);
   expect(maps.map.get(subscribeId2).setters.length).toBe(1);
   unmount();
