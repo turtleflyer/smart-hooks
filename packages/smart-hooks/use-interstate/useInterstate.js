@@ -61,7 +61,7 @@ const useSetInterstate = (id, initialValue) => {
   return setInterstate;
 };
 
-const useSubscribeInterstateStatic = (id, initialValue) => {
+const useSubscribeInterstate = (id, initialValue) => {
   useSetInterstate(id, initialValue);
   return useSubscribe(id);
 };
@@ -73,4 +73,4 @@ const useInterstate = (id, initialValue) => {
 };
 
 export default useInterstate;
-export { useSubscribeInterstateStatic, useSetInterstate };
+export { useSubscribeInterstate, useSetInterstate };

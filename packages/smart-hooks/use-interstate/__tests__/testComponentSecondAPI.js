@@ -3,7 +3,7 @@
 
 import React, { useCallback, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
-import { useSubscribeInterstateStatic, useSetInterstate } from '../useInterstate';
+import { useSubscribeInterstate, useSetInterstate } from '../useInterstate';
 
 const defComposeCallback = set => ({ target: { value } }) => {
   set(value);
@@ -12,7 +12,7 @@ const defComposeCallback = set => ({ target: { value } }) => {
 const CanListen = ({
   subscribeId, initialValue, testId, countRender, children,
 }) => {
-  const state = useSubscribeInterstateStatic(subscribeId, initialValue);
+  const state = useSubscribeInterstate(subscribeId, initialValue);
   useEffect(() => {
     countRender();
   });
@@ -92,7 +92,7 @@ const CanListenAndUpdate = ({
   children,
 }) => {
   const setState = useSetInterstate(subscribeId, initialValue);
-  const state = useSubscribeInterstateStatic(subscribeId);
+  const state = useSubscribeInterstate(subscribeId);
   const callback = useCallback(composeCallback(setState), [composeCallback, setState]);
   useEffect(() => {
     countRender();
