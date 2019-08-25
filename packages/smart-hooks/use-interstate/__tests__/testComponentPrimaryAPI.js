@@ -12,7 +12,7 @@ const defComposeCallback = set => ({ target: { value } }) => {
 const CanListen = ({
   subscribeId, initialValue, testId, countRender, children,
 }) => {
-  const [, useSubscribe] = useInterstate(subscribeId, initialValue);
+  const [useSubscribe] = useInterstate(subscribeId, initialValue);
   const state = useSubscribe();
   useEffect(() => {
     countRender();
@@ -51,7 +51,7 @@ const CanUpdate = ({
   countRender,
   children,
 }) => {
-  const [setState] = useInterstate(subscribeId, initialValue);
+  const [, setState] = useInterstate(subscribeId, initialValue);
   const callback = useCallback(composeCallback(setState), [composeCallback, setState]);
   useEffect(() => {
     countRender();
@@ -92,7 +92,7 @@ const CanListenAndUpdate = ({
   countRender,
   children,
 }) => {
-  const [setState, useSubscribe] = useInterstate(subscribeId, initialValue);
+  const [useSubscribe, setState] = useInterstate(subscribeId, initialValue);
   const state = useSubscribe();
   const callback = useCallback(composeCallback(setState), [composeCallback, setState]);
   useEffect(() => {

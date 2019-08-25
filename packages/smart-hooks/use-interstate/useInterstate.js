@@ -68,8 +68,8 @@ const useSubscribeInterstate = (id, initialValue) => {
 
 const useInterstate = (id, initialValue) => {
   const setInterstate = useSetInterstate(id, initialValue);
-  const useSubscribeInterstate = () => useSubscribe(id);
-  return useMemo(() => [setInterstate, useSubscribeInterstate], [id]);
+  const useSubscribeInterstateDynamic = () => useSubscribe(id);
+  return useMemo(() => [useSubscribeInterstateDynamic, setInterstate], [id]);
 };
 
 export default useInterstate;
