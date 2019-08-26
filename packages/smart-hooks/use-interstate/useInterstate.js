@@ -1,9 +1,15 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useEffect, useState } from 'react';
 import getNewStore from '../../../src/utils/getStore';
 
 const store = getNewStore();
+
+const checkId = (id) => {
+  const type = typeof id;
+  if (!(type === 'string' || type === 'number' || type === 'symbol')) {
+    throw new TypeError('Subscription id type should be number, string, or symbol');
+  }
+};
 
 const FactoryOfSetInterstate = id => (newValue) => {
   const { value, setters } = store.get(id);
@@ -45,6 +51,7 @@ const useSubscribe = (id) => {
 };
 
 const useSetInterstate = (id, initialValue) => {
+  checkId(id);
   const setInterstate = useMemo(() => FactoryOfSetInterstate(id), [id]);
 
   useMemo(() => {
