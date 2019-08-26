@@ -2,6 +2,7 @@
 /* eslint-env jest */
 
 import React from 'react';
+import { PropTypes } from 'prop-types';
 
 const checkInitializationConcurrency = imports => () => {
   const {
@@ -54,8 +55,6 @@ const valuesRemainAfterTreeUnmount = imports => () => {
   const subscribeId = '1';
   const testId1 = 'updater';
   const testId2 = 'listener';
-  const countRender1 = jest.fn();
-  const countRender2 = jest.fn();
   const altComposeCallback = set => ({ target: { value } }) => {
     set(old => (old || '') + value);
   };
@@ -66,14 +65,12 @@ const valuesRemainAfterTreeUnmount = imports => () => {
           subscribeId,
           testId: testId1,
           composeCallback: altComposeCallback,
-          countRender: countRender1,
         }}
       />
       <CanListen
         {...{
           subscribeId,
           testId: testId2,
-          countRender: countRender2,
         }}
       />
     </>
@@ -95,6 +92,63 @@ const valuesRemainAfterTreeUnmount = imports => () => {
   unmount();
 };
 
+const rerenderWithInitValueResetState = imports => () => {
+  const { render, CanListen, CanUpdate } = imports;
+  const subscribeId1 = '1';
+  const subscribeId2 = '2';
+  const testId1 = 'updater';
+  const testId2 = 'listener';
+
+  const TestComponent = ({ init, id }) => (
+    <>
+      <CanUpdate
+        {...{
+          subscribeId: id,
+          testId: testId1,
+        }}
+      />
+      {init !== null && (
+        <CanListen
+          {...{
+            subscribeId: id,
+            testId: testId2,
+            initialValue: init,
+          }}
+        />
+      )}
+    </>
+  );
+
+  TestComponent.propTypes = {
+    init: PropTypes.string,
+    id: PropTypes.string,
+  };
+
+  TestComponent.defaultProps = {
+    init: undefined,
+    id: subscribeId1,
+  };
+
+  const {
+    rerender, fireNode, getTextFromNode, unmount,
+  } = render(<TestComponent />);
+  expect(getTextFromNode(testId2)).toBe('');
+  fireNode(testId1, 'good');
+  expect(getTextFromNode(testId2)).toBe('good');
+  rerender(<TestComponent init={null} />);
+  rerender(<TestComponent init="bad" />);
+  expect(getTextFromNode(testId2)).toBe('bad');
+  fireNode(testId1, 'fair');
+  expect(getTextFromNode(testId2)).toBe('fair');
+  rerender(<TestComponent />);
+  expect(getTextFromNode(testId2)).toBe('fair');
+  rerender(<TestComponent init="ugly" id={subscribeId2} />);
+  expect(getTextFromNode(testId2)).toBe('ugly');
+  rerender(<TestComponent init="fun" id={subscribeId2} />);
+  expect(getTextFromNode(testId2)).toBe('ugly');
+  unmount();
+};
+
 describe('Test useInterstate functionality for primary API', () => {
   const imports = {};
 
@@ -108,6 +162,11 @@ describe('Test useInterstate functionality for primary API', () => {
   test('check initialization concurrency', checkInitializationConcurrency(imports));
 
   test('values remain after tree unmount', valuesRemainAfterTreeUnmount(imports));
+
+  test(
+    'rerendering with init value reset state to this value',
+    rerenderWithInitValueResetState(imports),
+  );
 });
 
 describe('Test useInterstate functionality for secondary API', () => {
@@ -123,4 +182,9 @@ describe('Test useInterstate functionality for secondary API', () => {
   test('check initialization concurrency', checkInitializationConcurrency(imports));
 
   test('values remain after tree unmount', valuesRemainAfterTreeUnmount(imports));
+
+  test(
+    'rerendering with init value reset state to this value',
+    rerenderWithInitValueResetState(imports),
+  );
 });
