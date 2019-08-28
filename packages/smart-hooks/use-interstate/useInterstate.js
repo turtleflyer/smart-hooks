@@ -1,8 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo, useEffect, useState } from 'react';
+import React, {
+  useMemo, useEffect, useState, createContext, useContext,
+} from 'react';
 import getNewStore from '../../../src/utils/getStore';
 
-const store = getNewStore();
+const globalStore = getNewStore();
+
+const ScopeContext = createContext();
+
+// eslint-disable-next-line react/prop-types
+const ProvideScope = ({ children }) => {
+  const isolatedStore = useMemo(() => getNewStore(), []);
+
+  return (
+    <ScopeContext.Provider value={{ store: isolatedStore }}>{children}</ScopeContext.Provider>
+  );
+};
 
 const checkId = (id) => {
   const type = typeof id;
@@ -11,7 +24,7 @@ const checkId = (id) => {
   }
 };
 
-const FactoryOfSetInterstate = id => (newValue) => {
+const factoryOfSetInterstate = (id, store) => (newValue) => {
   const { value, setters } = store.get(id);
   const newActualValue = typeof newValue === 'function' ? newValue(value) : newValue;
 
@@ -27,15 +40,23 @@ const FactoryOfSetInterstate = id => (newValue) => {
   }
 };
 
+const useStore = () => {
+  const context = useContext(ScopeContext);
+  const isolatedStore = context && context.store;
+
+  return isolatedStore || globalStore;
+};
+
 const useSubscribe = (id) => {
   const [, set] = useState(true);
+  const store = useStore();
 
   useMemo(() => {
     store.set(id, {
       ...store.get(id),
       setters: [...store.get(id).setters, set],
     });
-  }, [id]);
+  }, [id, store]);
 
   useEffect(
     () => () => {
@@ -51,8 +72,9 @@ const useSubscribe = (id) => {
 };
 
 const useSetInterstate = (id, initialValue) => {
-  checkId(id);
-  const setInterstate = useMemo(() => FactoryOfSetInterstate(id), [id]);
+  useMemo(() => checkId(id), [id]);
+  const store = useStore();
+  const setInterstate = useMemo(() => factoryOfSetInterstate(id, store), [id, store]);
 
   useMemo(() => {
     if (initialValue !== undefined) {
@@ -75,4 +97,4 @@ const useInterstate = (id, initialValue) => {
 };
 
 export default useInterstate;
-export { useSubscribeInterstate, useSetInterstate };
+export { ProvideScope, useSubscribeInterstate, useSetInterstate };
