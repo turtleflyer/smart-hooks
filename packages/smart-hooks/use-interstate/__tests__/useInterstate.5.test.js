@@ -273,7 +273,7 @@ describe('Test useInterstate functionality for primary API', () => {
     });
   });
 
-  test('testContext', testContext(imports));
+  test('ProvideScope works', testContext(imports));
 });
 
 describe('Test useInterstate functionality for secondary API', () => {
@@ -286,5 +286,5 @@ describe('Test useInterstate functionality for secondary API', () => {
     });
   });
 
-  test('testContext', testContext(imports));
+  test('ProvideScope works', testContext(imports));
 });
