@@ -28,7 +28,7 @@ describe('Test useSmartRef functionality', () => {
     });
   });
 
-  test('ref binding and update work', async () => {
+  test('ref binding and update work', () => {
     const mainCounter = new Counter();
     const actionsStoreFakes = [...Array(5)].map(() => ({}));
     const actionsCounters = [...Array(5)].map(() => new Counter());
@@ -120,7 +120,7 @@ describe('Test useSmartRef functionality', () => {
       fake2: undefined,
     };
 
-    const { rerender, unmount } = await render(
+    const { rerender, unmount } = render(
       <TestComponent scenario={[1, 1, 1, 1, 1]} fake1="red" fake2="green" />,
     );
     expect(mainCounter.toHaveBeenCalledTimes).toBe(1);
@@ -148,7 +148,7 @@ describe('Test useSmartRef functionality', () => {
     );
     expect(elements).toEqual(['1', '1', '1', '1', '1']);
 
-    await rerender(<TestComponent scenario={[1, 1, 1, 1, 1]} fake1="yellow" fake2="brown" />);
+    rerender(<TestComponent scenario={[1, 1, 1, 1, 1]} fake1="yellow" fake2="brown" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(2);
     expect(actionsCounters.map(c => c.toHaveBeenCalledTimes)).toEqual([1, 1, 1, 1, 1]);
     actionsStoreFakes.reduce(
@@ -174,7 +174,7 @@ describe('Test useSmartRef functionality', () => {
     );
     expect(elements).toEqual(['1', '1', '1', '1', '1']);
 
-    await rerender(<TestComponent scenario={[2, 2, 2, 2, 2]} fake1="magenta" fake2="cyan" />);
+    rerender(<TestComponent scenario={[2, 2, 2, 2, 2]} fake1="magenta" fake2="cyan" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(3);
     expect(actionsCounters.map(c => c.toHaveBeenCalledTimes)).toEqual([2, 2, 2, 2, 2]);
     actionsStoreFakes.reduce(
@@ -206,7 +206,7 @@ describe('Test useSmartRef functionality', () => {
     );
     expect(elements).toEqual(['2', '2', '2', '2', '2']);
 
-    await rerender(<TestComponent scenario={[1, 1, 1, 1, 1]} fake1="pink" fake2="cyan" />);
+    rerender(<TestComponent scenario={[1, 1, 1, 1, 1]} fake1="pink" fake2="cyan" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(4);
     expect(actionsCounters.map(c => c.toHaveBeenCalledTimes)).toEqual([3, 3, 3, 3, 3]);
     actionsStoreFakes.reduce(
@@ -238,7 +238,7 @@ describe('Test useSmartRef functionality', () => {
     );
     expect(elements).toEqual(['1', '1', '1', '1', '1']);
 
-    await rerender(<TestComponent scenario={[2, 2, 2, 2, 2]} fake1="pink" fake2="blue" />);
+    rerender(<TestComponent scenario={[2, 2, 2, 2, 2]} fake1="pink" fake2="blue" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(5);
     expect(actionsCounters.map(c => c.toHaveBeenCalledTimes)).toEqual([4, 4, 4, 4, 4]);
     actionsStoreFakes.reduce(
@@ -270,7 +270,7 @@ describe('Test useSmartRef functionality', () => {
     );
     expect(elements).toEqual(['2', '2', '2', '2', '2']);
 
-    await rerender(<TestComponent scenario={[1, 1, 1, 2, 2]} fake1="pink" fake2="grey" />);
+    rerender(<TestComponent scenario={[1, 1, 1, 2, 2]} fake1="pink" fake2="grey" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(6);
     expect(actionsCounters.map(c => c.toHaveBeenCalledTimes)).toEqual([5, 5, 5, 4, 4]);
     actionsStoreFakes.reduce(
@@ -319,7 +319,7 @@ describe('Test useSmartRef functionality', () => {
     );
   });
 
-  test('different schemes of passed arguments work', async () => {
+  test('different schemes of passed arguments work', () => {
     const mainCounter = new Counter();
     const counters = [...Array(6)].map(() => new Counter());
     const storeFakes = [];
@@ -410,26 +410,26 @@ describe('Test useSmartRef functionality', () => {
       writeRefs: false,
     };
 
-    const { rerender, unmount } = await render(<TestComponent scenario={1} fake="Texas" />);
+    const { rerender, unmount } = render(<TestComponent scenario={1} fake="Texas" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(1);
     expect(counters.map(c => c.toHaveBeenCalledTimes)).toEqual([1, 1, 1, 1, 1, 1]);
     expect(storeFakes).toEqual(['Texas', 'Texas', 'Texas', 'Texas', 'Texas', 'Texas']);
     expect(elements).toEqual(['1', '1', '1', '1', '1', '1']);
 
-    await rerender(<TestComponent scenario={1} fake="Texas" writeRefs />);
+    rerender(<TestComponent scenario={1} fake="Texas" writeRefs />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(2);
     expect(counters.map(c => c.toHaveBeenCalledTimes)).toEqual([1, 1, 1, 1, 1, 1]);
     expect(storeFakes).toEqual(['Texas', 'Texas', 'Texas', 'Texas', 'Texas', 'Texas']);
     expect(elements).toEqual(['1', '1', '1', '1', '1', '1']);
     expect(elementsRefs).toEqual({ elementRef1: '1', elementRef3: '1', elementRef5: '1' });
 
-    await rerender(<TestComponent scenario={2} fake="Montana" />);
+    rerender(<TestComponent scenario={2} fake="Montana" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(3);
     expect(counters.map(c => c.toHaveBeenCalledTimes)).toEqual([2, 2, 2, 2, 2, 2]);
     expect(storeFakes).toEqual(['Montana', 'Montana', 'Texas', 'Texas', 'Montana', 'Montana']);
     expect(elements).toEqual(['2', '2', '2', '2', '2', '2']);
 
-    await rerender(<TestComponent scenario={2} fake="Montana" writeRefs />);
+    rerender(<TestComponent scenario={2} fake="Montana" writeRefs />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(4);
     expect(counters.map(c => c.toHaveBeenCalledTimes)).toEqual([2, 2, 2, 2, 2, 2]);
     expect(storeFakes).toEqual(['Montana', 'Montana', 'Texas', 'Texas', 'Montana', 'Montana']);
