@@ -22,12 +22,13 @@ const getAssets = () => {
 
   const getRefCallback = actualRef => (el) => {
     store.ref = el;
+    if (actualRef) {
+      // eslint-disable-next-line no-param-reassign
+      actualRef.current = el;
+    }
+
     if (el) {
       store.handler(el);
-      if (actualRef) {
-        // eslint-disable-next-line no-param-reassign
-        actualRef.current = el;
-      }
       refreshHandler();
     }
   };
