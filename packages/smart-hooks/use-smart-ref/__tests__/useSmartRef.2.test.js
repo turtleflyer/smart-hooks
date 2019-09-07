@@ -81,30 +81,22 @@ describe('Test useSmartRef functionality', () => {
   });
 
   test('dynamically changing ref works', () => {
-    const recordRefs = {};
-    const checkRecordRefs = rec => Object.entries(rec).reduce(
-      (reflect, [key, element]) => ({ ...reflect, [key]: element.getAttribute('data-key') }),
-      {},
-    );
+    let recordRefs;
+    const checkRecordRefs = rec => rec.map(ref => ref.current.getAttribute('data-key'));
 
     const TestComponent = ({ scenario }) => {
-      const refElement1 = useRef();
-      const refElement2 = useRef();
+      recordRefs = [useRef(), useRef()];
 
-      const usedRefElement = scenario === 1 ? refElement1 : refElement2;
+      const usedRefElement = scenario === 1 ? recordRefs[0] : recordRefs[1];
 
       const ref = useSmartRef(() => {}, usedRefElement);
-
-      useEffect(() => {
-        Object.assign(recordRefs, { el1: refElement1.current, el2: refElement2.current });
-      });
 
       return (
         <>
           <div data-key="1" ref={ref}>
             test
           </div>
-          <div data-key="2" ref={scenario === 1 ? refElement2 : refElement1}>
+          <div data-key="2" ref={scenario === 1 ? recordRefs[1] : recordRefs[0]}>
             test
           </div>
         </>
@@ -116,10 +108,10 @@ describe('Test useSmartRef functionality', () => {
     };
 
     const { rerender, unmount } = render(<TestComponent scenario={1} />);
-    expect(checkRecordRefs(recordRefs)).toEqual({ el1: '1', el2: '2' });
+    expect(checkRecordRefs(recordRefs)).toEqual(['1', '2']);
 
     rerender(<TestComponent scenario={2} />);
-    expect(checkRecordRefs(recordRefs)).toEqual({ el1: '2', el2: '1' });
+    expect(checkRecordRefs(recordRefs)).toEqual(['2', '1']);
 
     unmount();
   });
