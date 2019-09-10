@@ -65,4 +65,4 @@ const useSmartRef = (effect, ref, deps) => {
   return refCallback;
 };
 
-export default useSmartRef;
+export { useSmartRef };

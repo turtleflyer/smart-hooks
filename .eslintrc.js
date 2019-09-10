@@ -21,5 +21,6 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
     'no-plusplus': 'off',
+    'import/prefer-default-export': 'off',
   },
 };

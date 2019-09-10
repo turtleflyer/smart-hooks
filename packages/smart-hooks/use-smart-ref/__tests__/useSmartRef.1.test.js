@@ -23,7 +23,7 @@ describe('Test useSmartRef functionality', () => {
 
   beforeEach(() => {
     jest.isolateModules(() => {
-      ({ default: useSmartRef } = require('../useSmartRef'));
+      ({ useSmartRef } = require('../useSmartRef'));
       ({ Counter } = require('./prerequisite'));
     });
   });
