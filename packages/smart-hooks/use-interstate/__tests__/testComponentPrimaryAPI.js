@@ -3,7 +3,7 @@
 
 import React, { useCallback, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
-import useInterstate, { ProvideScope } from '../useInterstate';
+import { useInterstate, ProvideScope } from '../useInterstate';
 
 const defComposeCallback = set => ({ target: { value } }) => {
   set(value);
@@ -129,4 +129,6 @@ CanListenAndUpdate.defaultProps = {
   children: null,
 };
 
-export { CanListen, CanUpdate, CanListenAndUpdate, ProvideScope };
+export {
+  CanListen, CanUpdate, CanListenAndUpdate, ProvideScope,
+};

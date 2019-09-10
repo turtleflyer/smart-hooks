@@ -12,9 +12,7 @@ const ScopeContext = createContext();
 const ProvideScope = ({ children }) => {
   const isolatedStore = useMemo(() => getNewStore(), []);
 
-  return (
-    <ScopeContext.Provider value={{ store: isolatedStore }}>{children}</ScopeContext.Provider>
-  );
+  return <ScopeContext.Provider value={{ store: isolatedStore }}>{children}</ScopeContext.Provider>;
 };
 
 const checkId = (id) => {
@@ -96,5 +94,6 @@ const useInterstate = (id, initialValue) => {
   return [useSubscribeInterstateDynamic, setInterstate];
 };
 
-export default useInterstate;
-export { ProvideScope, useSubscribeInterstate, useSetInterstate };
+export {
+  useInterstate, useSubscribeInterstate, useSetInterstate, ProvideScope,
+};
