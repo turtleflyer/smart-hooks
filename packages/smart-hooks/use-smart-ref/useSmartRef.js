@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useEffect } from 'react';
 
-const getRefAndDeps = (ref, deps) => (Array.isArray(ref) ? [undefined, ref] : [ref, deps]);
-
 const getAssets = () => {
   const store = {};
 
@@ -38,14 +36,10 @@ const getAssets = () => {
   return [store, conditionalClean, getRefCallback];
 };
 
-const useSmartRef = (effect, ref, deps) => {
-  const [actualRef, actualDeps] = useMemo(() => getRefAndDeps(ref, deps), [ref, deps]);
-
+const useSmartRef = (effect, ref) => {
   const [store, conditionalClean, getRefCallback] = useMemo(() => getAssets(store), []);
 
-  useMemo(() => {
-    store.effect = effect;
-  }, actualDeps);
+  store.effect = effect;
 
   useEffect(() => {
     if (!store.ref) {
@@ -60,7 +54,7 @@ const useSmartRef = (effect, ref, deps) => {
     [],
   );
 
-  const refCallback = useMemo(() => getRefCallback(actualRef), [actualRef]);
+  const refCallback = useMemo(() => getRefCallback(ref), [ref]);
 
   return refCallback;
 };
