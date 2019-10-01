@@ -1,13 +1,11 @@
-/* eslint-disable global-require */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-env jest */
-import React, { useRef } from 'react';
-import { PropTypes } from 'prop-types';
 import { render } from '@testing-library/react';
+import React, { useRef } from 'react';
+import { useSmartRef as useSmartRefT } from '../useSmartRef';
+import { Counter as CounterT } from './prerequisite';
 
 describe('Test useSmartRef functionality', () => {
-  let useSmartRef;
-  let Counter;
+  let useSmartRef: typeof useSmartRefT;
+  let Counter: typeof CounterT;
 
   beforeEach(() => {
     jest.isolateModules(() => {
@@ -18,59 +16,49 @@ describe('Test useSmartRef functionality', () => {
 
   test('ref binding and update work', () => {
     const mainCounter = new Counter();
-    let storeFake;
+    let storeFake: string | undefined;
     const actionCounter = new Counter();
-    const actionWork = (fake) => {
+    const actionWork = (fake: string) => {
       actionCounter.count();
       storeFake = fake;
     };
-    let storeFakeAfterClean;
+    let storeFakeAfterClean: string | undefined;
     const cleanCounter = new Counter();
-    const cleanUpWork = (fake) => {
+    const cleanUpWork = (fake: string) => {
       cleanCounter.count();
       storeFakeAfterClean = fake;
     };
-    let dataKeyOfElement;
-    let dataKeyFromRef;
+    let dataKeyOfElement: string | undefined | null;
+    let dataKeyFromRef: string | undefined | null;
 
-    const TestComponent = ({ scenario, fake, writeRefs }) => {
+    const TestComponent = ({ scenario, fake, writeRefs = false }
+      : { scenario: 1 | 2, fake: string, writeRefs?: boolean }) => {
       mainCounter.count();
 
-      const elementRef = useRef();
+      const elementRef = useRef<HTMLDivElement | null>();
 
       const ref = useSmartRef((e) => {
         actionWork(fake);
-        dataKeyOfElement = e.getAttribute('data-key');
+        dataKeyOfElement = e && e.getAttribute('data-key');
         return () => {
           cleanUpWork(fake);
         };
       }, elementRef);
 
       if (writeRefs) {
-        dataKeyFromRef = elementRef.current.getAttribute('data-key');
+        dataKeyFromRef = elementRef.current
+          && elementRef.current.getAttribute('data-key');
       }
 
       return (
         <>
-          {scenario === 1 ? (
-            <div key="1" data-key="1" ref={ref} />
-          ) : (
-            <div key="2" data-key="2" ref={ref} />
-          )}
+          {
+            scenario === 1
+              ? (<div key="1" data-key="1" ref={ref} />)
+              : (<div key="2" data-key="2" ref={ref} />)
+          }
         </>
       );
-    };
-
-    TestComponent.propTypes = {
-      scenario: PropTypes.oneOf([1, 2]).isRequired,
-      // eslint-disable-next-line react/forbid-prop-types
-      fake: PropTypes.any,
-      writeRefs: PropTypes.bool,
-    };
-
-    TestComponent.defaultProps = {
-      fake: undefined,
-      writeRefs: false,
     };
 
     const { rerender, unmount } = render(<TestComponent scenario={1} fake="red" />);
@@ -80,7 +68,7 @@ describe('Test useSmartRef functionality', () => {
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(0);
     expect(storeFakeAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} fake="red" writeRefs />);
+    rerender(<TestComponent scenario={1} fake="red" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
     rerender(<TestComponent scenario={1} fake="yellow" />);
@@ -90,7 +78,7 @@ describe('Test useSmartRef functionality', () => {
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(0);
     expect(storeFakeAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} fake="yellow" writeRefs />);
+    rerender(<TestComponent scenario={1} fake="yellow" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
     rerender(<TestComponent scenario={2} fake="magenta" />);
@@ -100,7 +88,7 @@ describe('Test useSmartRef functionality', () => {
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(1);
     expect(storeFakeAfterClean).toBe('red');
     expect(dataKeyOfElement).toBe('2');
-    rerender(<TestComponent scenario={2} fake="magenta" writeRefs />);
+    rerender(<TestComponent scenario={2} fake="magenta" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('2');
 
     rerender(<TestComponent scenario={1} fake="pink" />);
@@ -110,7 +98,7 @@ describe('Test useSmartRef functionality', () => {
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(2);
     expect(storeFakeAfterClean).toBe('magenta');
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} fake="pink" writeRefs />);
+    rerender(<TestComponent scenario={1} fake="pink" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
     unmount();

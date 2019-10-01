@@ -1,40 +1,41 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env jest */
-import React, { useRef } from 'react';
-import { PropTypes } from 'prop-types';
 import { render } from '@testing-library/react';
+import React, { useRef } from 'react';
+import { useSmartRef as useSmartRefT } from '../useSmartRef';
+import { Counter as CounterT } from './prerequisite';
 
 describe('Test useSmartRef functionality', () => {
-  let useSmartRef;
-  let Counter;
+  let useSmartRef: typeof useSmartRefT;
+  let Counter: typeof CounterT;
 
   beforeEach(() => {
     jest.isolateModules(() => {
-      ({ useSmartRef } = require('../useSmartRef'));
-      ({ Counter } = require('./prerequisite'));
+      ({ useSmartRef } = require('../useSmartRef.ts'));
+      ({ Counter } = require('./prerequisite.ts'));
     });
   });
 
   test('cleaning after element unmount works', () => {
     const mainCounter = new Counter();
     const actionCounter = new Counter();
-    let storeActionFake;
-    const actionHandler = (fake) => {
+    let storeActionFake: string | undefined;
+    const actionHandler = (fake: string) => {
       actionCounter.count();
       storeActionFake = fake;
     };
     const cleanerCounter = new Counter();
-    let storeCleanerFake;
-    const cleanerHandler = (fake) => {
+    let storeCleanerFake: string | undefined;
+    const cleanerHandler = (fake: string) => {
       cleanerCounter.count();
       storeCleanerFake = fake;
     };
-    let refElement;
+    let refElement: React.MutableRefObject<HTMLElement | undefined | null> | undefined;
 
-    const TestComponent = ({ scenario, fake }) => {
+    const TestComponent = ({ scenario, fake }: { scenario: 1 | 2; fake: string }) => {
       mainCounter.count();
-      refElement = useRef();
+      refElement = useRef<HTMLElement | null>();
 
       const ref = useSmartRef(() => {
         actionHandler(fake);
@@ -44,24 +45,8 @@ describe('Test useSmartRef functionality', () => {
       }, refElement);
 
       return (
-        <div>
-          {scenario === 1 && (
-            <div data-key="element" ref={ref}>
-              test
-            </div>
-          )}
-        </div>
+        <div> {scenario === 1 && (<div data-key="element" ref={ref}>test</div>)} </div>
       );
-    };
-
-    TestComponent.propTypes = {
-      scenario: PropTypes.oneOf([1, 2]).isRequired,
-      // eslint-disable-next-line react/forbid-prop-types
-      fake: PropTypes.any,
-    };
-
-    TestComponent.defaultProps = {
-      fake: undefined,
     };
 
     const { rerender, unmount } = render(<TestComponent scenario={1} fake="right" />);
@@ -70,7 +55,9 @@ describe('Test useSmartRef functionality', () => {
     expect(storeActionFake).toBe('right');
     expect(cleanerCounter.toHaveBeenCalledTimes).toBe(0);
     expect(storeCleanerFake).toBe(undefined);
-    expect(refElement.current.getAttribute('data-key')).toBe('element');
+    expect(refElement
+      && refElement.current
+      && refElement.current.getAttribute('data-key')).toBe('element');
 
     rerender(<TestComponent scenario={2} fake="left" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(2);
@@ -78,7 +65,7 @@ describe('Test useSmartRef functionality', () => {
     expect(storeActionFake).toBe('right');
     expect(cleanerCounter.toHaveBeenCalledTimes).toBe(1);
     expect(storeCleanerFake).toBe('right');
-    expect(refElement.current).toBeNull();
+    expect(refElement && refElement.current).toBeNull();
 
     rerender(<TestComponent scenario={1} fake="up" />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(3);
@@ -93,30 +80,32 @@ describe('Test useSmartRef functionality', () => {
   });
 
   test('dynamically changing ref works', () => {
-    let recordRefs;
-    const checkRecordRefs = rec => rec.map(ref => ref.current.getAttribute('data-key'));
+    let recordRefs:
+      Array<React.RefObject<HTMLDivElement>> | undefined;
+    const checkRecordRefs = (rec?: Array<React.RefObject<HTMLElement>>) =>
+      rec && rec.map((ref) => ref.current && ref.current.getAttribute('data-key'));
 
-    const TestComponent = ({ scenario }) => {
-      recordRefs = [useRef(), useRef()];
+    const TestComponent = ({ scenario }: { scenario: 1 | 2 }) => {
+      recordRefs = [
+        useRef<HTMLDivElement>(null),
+        useRef<HTMLDivElement>(null),
+      ];
 
-      const usedRefElement = scenario === 1 ? recordRefs[0] : recordRefs[1];
+      const currentRef = scenario === 1 ? recordRefs[0] : recordRefs[1];
 
-      const ref = useSmartRef(() => {}, usedRefElement);
+      // tslint:disable-next-line: no-empty
+      const ref = useSmartRef(() => { }, currentRef);
 
       return (
         <>
           <div data-key="1" ref={ref}>
             test
-          </div>
+            </div>
           <div data-key="2" ref={scenario === 1 ? recordRefs[1] : recordRefs[0]}>
             test
-          </div>
+            </div>
         </>
       );
-    };
-
-    TestComponent.propTypes = {
-      scenario: PropTypes.oneOf([1, 2]).isRequired,
     };
 
     const { rerender, unmount } = render(<TestComponent scenario={1} />);
