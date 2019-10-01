@@ -78,42 +78,4 @@ describe('Test useSmartRef functionality', () => {
     expect(cleanerCounter.toHaveBeenCalledTimes).toBe(2);
     expect(storeCleanerFake).toBe('up');
   });
-
-  test('dynamically changing ref works', () => {
-    let recordRefs:
-      Array<React.RefObject<HTMLDivElement>> | undefined;
-    const checkRecordRefs = (rec?: Array<React.RefObject<HTMLElement>>) =>
-      rec && rec.map((ref) => ref.current && ref.current.getAttribute('data-key'));
-
-    const TestComponent = ({ scenario }: { scenario: 1 | 2 }) => {
-      recordRefs = [
-        useRef<HTMLDivElement>(null),
-        useRef<HTMLDivElement>(null),
-      ];
-
-      const currentRef = scenario === 1 ? recordRefs[0] : recordRefs[1];
-
-      // tslint:disable-next-line: no-empty
-      const ref = useSmartRef(() => { }, currentRef);
-
-      return (
-        <>
-          <div data-key="1" ref={ref}>
-            test
-            </div>
-          <div data-key="2" ref={scenario === 1 ? recordRefs[1] : recordRefs[0]}>
-            test
-            </div>
-        </>
-      );
-    };
-
-    const { rerender, unmount } = render(<TestComponent scenario={1} />);
-    expect(checkRecordRefs(recordRefs)).toEqual(['1', '2']);
-
-    rerender(<TestComponent scenario={2} />);
-    expect(checkRecordRefs(recordRefs)).toEqual(['2', '1']);
-
-    unmount();
-  });
 });

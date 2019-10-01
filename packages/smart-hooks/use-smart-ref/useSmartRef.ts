@@ -64,7 +64,7 @@ const useSmartRef: useSmartRefType = (effect, ref) => {
     [],
   );
 
-  const refCallback = useMemo(() => getRefCallback(ref), [ref]);
+  const refCallback = useMemo(() => getRefCallback(ref), []);
 
   return refCallback;
 };
