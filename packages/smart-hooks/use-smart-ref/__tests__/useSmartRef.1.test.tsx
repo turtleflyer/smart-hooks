@@ -14,7 +14,7 @@ describe('Test useSmartRef functionality', () => {
     });
   });
 
-  test('ref binding and update work', () => {
+  test('ref binding and update works', () => {
     const mainCounter = new Counter();
     let storeFake: string | undefined;
     const actionCounter = new Counter();
