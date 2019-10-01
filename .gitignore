@@ -3,3 +3,4 @@ dist/
 lab/
 lerna-debug.log
 .vscode/
+ts/
