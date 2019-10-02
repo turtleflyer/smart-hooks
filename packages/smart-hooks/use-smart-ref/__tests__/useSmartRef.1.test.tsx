@@ -54,51 +54,51 @@ describe('Test useSmartRef functionality', () => {
         <>
           {
             scenario === 1
-              ? (<div key="1" data-key="1" ref={ref} />)
-              : (<div key="2" data-key="2" ref={ref} />)
+              ? (<div key='1' data-key='1' ref={ref} />)
+              : (<div key='2' data-key='2' ref={ref} />)
           }
         </>
       );
     };
 
-    const { rerender, unmount } = render(<TestComponent scenario={1} fake="red" />);
+    const { rerender, unmount } = render(<TestComponent scenario={1} fake='red' />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(1);
     expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
     expect(storeFake).toBe('red');
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(0);
     expect(storeFakeAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} fake="red" writeRefs={true} />);
+    rerender(<TestComponent scenario={1} fake='red' writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
-    rerender(<TestComponent scenario={1} fake="yellow" />);
+    rerender(<TestComponent scenario={1} fake='yellow' />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(3);
     expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
     expect(storeFake).toBe('red');
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(0);
     expect(storeFakeAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} fake="yellow" writeRefs={true} />);
+    rerender(<TestComponent scenario={1} fake='yellow' writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
-    rerender(<TestComponent scenario={2} fake="magenta" />);
+    rerender(<TestComponent scenario={2} fake='magenta' />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(5);
     expect(actionCounter.toHaveBeenCalledTimes).toBe(2);
     expect(storeFake).toBe('magenta');
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(1);
     expect(storeFakeAfterClean).toBe('red');
     expect(dataKeyOfElement).toBe('2');
-    rerender(<TestComponent scenario={2} fake="magenta" writeRefs={true} />);
+    rerender(<TestComponent scenario={2} fake='magenta' writeRefs={true} />);
     expect(dataKeyFromRef).toBe('2');
 
-    rerender(<TestComponent scenario={1} fake="pink" />);
+    rerender(<TestComponent scenario={1} fake='pink' />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(7);
     expect(actionCounter.toHaveBeenCalledTimes).toBe(3);
     expect(storeFake).toBe('pink');
     expect(cleanCounter.toHaveBeenCalledTimes).toBe(2);
     expect(storeFakeAfterClean).toBe('magenta');
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} fake="pink" writeRefs={true} />);
+    rerender(<TestComponent scenario={1} fake='pink' writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
     unmount();
@@ -138,11 +138,11 @@ describe('Test useSmartRef functionality', () => {
       }, refElement);
 
       return (
-        <div> {scenario === 1 && (<div data-key="element" ref={ref}>test</div>)} </div>
+        <div> {scenario === 1 && (<div data-key='element' ref={ref}>test</div>)} </div>
       );
     };
 
-    const { rerender, unmount } = render(<TestComponent scenario={1} fake="right" />);
+    const { rerender, unmount } = render(<TestComponent scenario={1} fake='right' />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(1);
     expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
     expect(storeActionFake).toBe('right');
@@ -152,7 +152,7 @@ describe('Test useSmartRef functionality', () => {
       && refElement.current
       && refElement.current.getAttribute('data-key')).toBe('element');
 
-    rerender(<TestComponent scenario={2} fake="left" />);
+    rerender(<TestComponent scenario={2} fake='left' />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(2);
     expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
     expect(storeActionFake).toBe('right');
@@ -160,7 +160,7 @@ describe('Test useSmartRef functionality', () => {
     expect(storeCleanerFake).toBe('right');
     expect(refElement && refElement.current).toBeNull();
 
-    rerender(<TestComponent scenario={1} fake="up" />);
+    rerender(<TestComponent scenario={1} fake='up' />);
     expect(mainCounter.toHaveBeenCalledTimes).toBe(3);
     expect(actionCounter.toHaveBeenCalledTimes).toBe(2);
     expect(storeActionFake).toBe('up');

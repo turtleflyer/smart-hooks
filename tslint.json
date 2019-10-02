@@ -8,7 +8,10 @@
   "jsRules": {},
   "rules": {
     "member-access": false,
-    "quotemark": false,
+    "quotemark": [
+      true,
+      "single"
+    ],
     "no-implicit-dependencies": [
       true,
       [
@@ -21,7 +24,8 @@
       true,
       90
     ],
-    "jsx-no-multiline-js": false
+    "jsx-no-multiline-js": false,
+    "react-hooks-nesting": "error"
   },
   "rulesDirectory": []
 }
