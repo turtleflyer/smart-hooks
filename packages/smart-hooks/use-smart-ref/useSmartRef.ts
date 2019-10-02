@@ -15,7 +15,7 @@ interface Store<T extends HTMLElement> {
   effect: Effect<T>;
 }
 
-type useSmartRefType = <T extends HTMLElement>(
+type UseSmartRef = <T extends HTMLElement>(
   effect: Effect<T>,
   ref?: React.MutableRefObject<T | undefined | null>,
 ) => RefCallback<T>;
@@ -46,7 +46,7 @@ const getAssets = (): [Store<any>, () => void, GetRefCallback] => {
   return [store, conditionalClean, getRefCallback];
 };
 
-const useSmartRef: useSmartRefType = (effect, ref) => {
+const useSmartRef: UseSmartRef = (effect, ref) => {
   const [store, conditionalClean, getRefCallback] = useMemo(() => getAssets(), []);
 
   store.effect = effect;
