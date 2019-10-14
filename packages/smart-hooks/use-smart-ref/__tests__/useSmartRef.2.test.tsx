@@ -35,4 +35,30 @@ describe('Test useSmartRef functionality', () => {
 
       unmount();
     });
+
+  test('type parameter for useSmartRef works correctly',
+    () => {
+      const TestComponent = () => {
+        const commonElementRef = useRef();
+        const spanElementRef = useRef<HTMLSpanElement>();
+        const divRefCallback = useSmartRef(
+          (el: HTMLDivElement | null) => null,
+          commonElementRef,
+        );
+        const spanRefCallback = useSmartRef<HTMLSpanElement>(() => null, spanElementRef);
+        const commonRefCallback = useSmartRef(() => null, spanElementRef);
+        return (
+          <>
+            <div ref={divRefCallback} />
+            <span ref={spanRefCallback} />
+            <a ref={commonRefCallback} />
+          </>
+
+        );
+      };
+
+      const { unmount } = render(<TestComponent />);
+
+      unmount();
+    });
 });
