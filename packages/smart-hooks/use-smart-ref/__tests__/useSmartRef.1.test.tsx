@@ -130,7 +130,7 @@ describe('Test useSmartRef functionality', () => {
       mainCounter.count();
       refElement = useRef<HTMLElement | null>();
 
-      const ref = useSmartRef(() => {
+      const ref = useSmartRef<HTMLDivElement>(() => {
         actionHandler(fake);
         return () => {
           cleanerHandler(fake);

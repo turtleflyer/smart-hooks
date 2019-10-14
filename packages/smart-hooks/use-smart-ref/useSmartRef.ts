@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 type Effect<T extends HTMLElement> =
-  (el?: T | null) => (() => void) | void;
+  (el: T | null) => (() => void) | void;
 
 type RefCallback<T extends HTMLElement> = (el: T | null) => void;
 
@@ -17,7 +17,7 @@ interface Store<T extends HTMLElement> {
 
 type UseSmartRef = <T extends HTMLElement>(
   effect: Effect<T>,
-  ref?: React.MutableRefObject<T | undefined | null>,
+  ref?: React.MutableRefObject<HTMLElement | undefined | null>,
 ) => RefCallback<T>;
 
 const getAssets = (): [Store<any>, () => void, GetRefCallback] => {
