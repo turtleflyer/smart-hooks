@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 type Effect<T extends HTMLElement> =
-  (el: T | null) => (() => void) | void;
+  (el: T | null) => void | (() => void) | null | undefined;
 
 type RefCallback<T extends HTMLElement> = (el: T | null) => void;
 
@@ -10,7 +10,7 @@ type GetRefCallback = <T extends HTMLElement>(
 ) => RefCallback<T>;
 
 interface Store<T extends HTMLElement> {
-  clean?: (() => void) | void;
+  clean?: void | (() => void) | null;
   element: T | null;
   effect: Effect<T>;
 }
