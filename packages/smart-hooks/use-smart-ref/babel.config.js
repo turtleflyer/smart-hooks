@@ -2,7 +2,7 @@ module.exports = {
   presets: [
     '@babel/typescript',
     [
-      '@babel/env',
+      '@babel/preset-env',
       {
         targets: {
           browsers: ['last 2 versions', 'safari >= 7'],
