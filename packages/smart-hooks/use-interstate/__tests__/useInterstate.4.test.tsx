@@ -1,12 +1,11 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-env jest */
 import React from 'react';
-import { PropTypes } from 'prop-types';
+import { PrerequisiteImport } from './prerequisite';
+import { APIImport } from './testComponentPrimaryAPI';
 
-const testContext = imports => () => {
-  const {
-    render, getLastMaps, CanListenAndUpdate, CanListen, ProvideScope,
-  } = imports;
+interface PrimaryAPIMergedImport extends PrerequisiteImport, APIImport {}
+
+const testContext = (imports: PrimaryAPIMergedImport) => () => {
+  const { render, getLastMap, CanListenAndUpdate, CanListen, Scope } = imports;
 
   const subscribeId1 = 1;
   const subscribeId2 = 2;
@@ -23,7 +22,13 @@ const testContext = imports => () => {
   const countRender5 = jest.fn();
   const countRender6 = jest.fn();
 
-  const IsolatedBlock = ({ initialValue, listenerId }) => (
+  const IsolatedBlock = ({
+    initialValue,
+    listenerId,
+  }: {
+    initialValue?: string;
+    listenerId: number;
+  }) => (
     <>
       <CanListenAndUpdate
         {...{
@@ -50,18 +55,15 @@ const testContext = imports => () => {
     </>
   );
 
-  IsolatedBlock.propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    initialValue: PropTypes.any,
-    listenerId: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.symbol])
-      .isRequired,
-  };
-
-  IsolatedBlock.defaultProps = {
-    initialValue: undefined,
-  };
-
-  const TestComponent = ({ isolate, initialValue, listenerId }) => (
+  const TestComponent = ({
+    isolate = false,
+    initialValue,
+    listenerId,
+  }: {
+    isolate?: boolean;
+    initialValue?: string;
+    listenerId: number;
+  }) => (
     <>
       <CanListenAndUpdate
         {...{
@@ -85,36 +87,21 @@ const testContext = imports => () => {
         }}
       />
       {isolate ? (
-        <ProvideScope>
+        <Scope>
           <IsolatedBlock {...{ initialValue, listenerId }} />
-        </ProvideScope>
+        </Scope>
       ) : (
         <IsolatedBlock {...{ initialValue, listenerId }} />
       )}
     </>
   );
 
-  TestComponent.propTypes = {
-    isolate: PropTypes.bool,
-    // eslint-disable-next-line react/forbid-prop-types
-    initialValue: PropTypes.any,
-    listenerId: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.symbol])
-      .isRequired,
-  };
-
-  TestComponent.defaultProps = {
-    initialValue: undefined,
-    isolate: false,
-  };
-
-  const {
-    fireNode, getTextFromNode, rerender, unmount,
-  } = render(
+  const { fireNode, getTextFromNode, rerender, unmount } = render(
     <TestComponent listenerId={subscribeId1} />,
   );
-  const maps1 = getLastMaps();
-  expect(maps1.map.get(subscribeId1).setters.length).toBe(4);
-  expect(maps1.map.get(subscribeId2).setters.length).toBe(2);
+  const map1 = getLastMap();
+  expect((map1.get(subscribeId1) as { setters: any[] }).setters.length).toBe(4);
+  expect((map1.get(subscribeId2) as { setters: any[] }).setters.length).toBe(2);
   fireNode(testId1, 'bus');
   expect(getTextFromNode(testId1)).toBe('bus');
   expect(getTextFromNode(testId2)).toBe('');
@@ -143,12 +130,12 @@ const testContext = imports => () => {
   expect(countRender5).toHaveBeenCalledTimes(2);
   expect(countRender6).toHaveBeenCalledTimes(3);
 
-  rerender(<TestComponent isolate listenerId={subscribeId1} />);
-  const maps2 = getLastMaps();
-  expect(maps1.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps1.map.get(subscribeId2).setters.length).toBe(1);
-  expect(maps2.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps2.map.get(subscribeId2).setters.length).toBe(1);
+  rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
+  const map2 = getLastMap();
+  expect((map1.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map1.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
+  expect((map2.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map2.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
   fireNode(testId1, 'truck');
   expect(getTextFromNode(testId1)).toBe('truck');
   expect(getTextFromNode(testId2)).toBe('boat');
@@ -171,10 +158,10 @@ const testContext = imports => () => {
   expect(countRender6).toHaveBeenCalledTimes(5);
 
   rerender(<TestComponent listenerId={subscribeId2} />);
-  expect(maps1.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps1.map.get(subscribeId2).setters.length).toBe(4);
-  expect(maps2.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps2.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map1.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map1.get(subscribeId2) as { setters: any[] }).setters.length).toBe(4);
+  expect((map2.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map2.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
   expect(getTextFromNode(testId1)).toBe('truck');
   expect(getTextFromNode(testId2)).toBe('boat');
   expect(getTextFromNode(testId3)).toBe('boat');
@@ -188,14 +175,14 @@ const testContext = imports => () => {
   expect(countRender5).toHaveBeenCalledTimes(4);
   expect(countRender6).toHaveBeenCalledTimes(6);
 
-  rerender(<TestComponent isolate listenerId={subscribeId1} />);
-  const maps3 = getLastMaps();
-  expect(maps1.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps1.map.get(subscribeId2).setters.length).toBe(1);
-  expect(maps2.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps2.map.get(subscribeId2).setters.length).toBe(0);
-  expect(maps3.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps3.map.get(subscribeId2).setters.length).toBe(1);
+  rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
+  const map3 = getLastMap();
+  expect((map1.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map1.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
+  expect((map2.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map2.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
+  expect((map3.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map3.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
   expect(getTextFromNode(testId1)).toBe('truck');
   expect(getTextFromNode(testId2)).toBe('boat');
   expect(getTextFromNode(testId3)).toBe('truck');
@@ -210,12 +197,12 @@ const testContext = imports => () => {
   expect(countRender6).toHaveBeenCalledTimes(7);
 
   rerender(<TestComponent listenerId={subscribeId1} initialValue="train" />);
-  expect(maps1.map.get(subscribeId1).setters.length).toBe(4);
-  expect(maps1.map.get(subscribeId2).setters.length).toBe(2);
-  expect(maps2.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps2.map.get(subscribeId2).setters.length).toBe(0);
-  expect(maps3.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps3.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map1.get(subscribeId1) as { setters: any[] }).setters.length).toBe(4);
+  expect((map1.get(subscribeId2) as { setters: any[] }).setters.length).toBe(2);
+  expect((map2.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map2.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
+  expect((map3.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map3.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
   expect(getTextFromNode(testId1)).toBe('train');
   expect(getTextFromNode(testId2)).toBe('boat');
   expect(getTextFromNode(testId3)).toBe('train');
@@ -229,16 +216,16 @@ const testContext = imports => () => {
   expect(countRender5).toHaveBeenCalledTimes(6);
   expect(countRender6).toHaveBeenCalledTimes(8);
 
-  rerender(<TestComponent isolate listenerId={subscribeId2} initialValue="bike" />);
-  const maps4 = getLastMaps();
-  expect(maps1.map.get(subscribeId1).setters.length).toBe(1);
-  expect(maps1.map.get(subscribeId2).setters.length).toBe(2);
-  expect(maps2.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps2.map.get(subscribeId2).setters.length).toBe(0);
-  expect(maps3.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps3.map.get(subscribeId2).setters.length).toBe(0);
-  expect(maps4.map.get(subscribeId1).setters.length).toBe(1);
-  expect(maps4.map.get(subscribeId2).setters.length).toBe(2);
+  rerender(<TestComponent isolate={true} listenerId={subscribeId2} initialValue="bike" />);
+  const map4 = getLastMap();
+  expect((map1.get(subscribeId1) as { setters: any[] }).setters.length).toBe(1);
+  expect((map1.get(subscribeId2) as { setters: any[] }).setters.length).toBe(2);
+  expect((map2.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map2.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
+  expect((map3.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map3.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
+  expect((map4.get(subscribeId1) as { setters: any[] }).setters.length).toBe(1);
+  expect((map4.get(subscribeId2) as { setters: any[] }).setters.length).toBe(2);
   expect(getTextFromNode(testId1)).toBe('train');
   expect(getTextFromNode(testId2)).toBe('boat');
   expect(getTextFromNode(testId3)).toBe('boat');
@@ -253,22 +240,21 @@ const testContext = imports => () => {
   expect(countRender6).toHaveBeenCalledTimes(9);
 
   unmount();
-  expect(maps1.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps1.map.get(subscribeId2).setters.length).toBe(0);
-  expect(maps2.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps2.map.get(subscribeId2).setters.length).toBe(0);
-  expect(maps3.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps3.map.get(subscribeId2).setters.length).toBe(0);
-  expect(maps4.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps4.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map1.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map1.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
+  expect((map2.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map2.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
+  expect((map3.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map3.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
+  expect((map4.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map4.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
 };
 
 describe('Test useInterstate functionality for primary API', () => {
-  const imports = {};
+  const imports: PrimaryAPIMergedImport = {} as PrimaryAPIMergedImport;
 
   beforeEach(() => {
     jest.isolateModules(() => {
-      // eslint-disable-next-line global-require
       Object.assign(imports, require('./prerequisite'), require('./testComponentPrimaryAPI'));
     });
   });
@@ -277,11 +263,10 @@ describe('Test useInterstate functionality for primary API', () => {
 });
 
 describe('Test useInterstate functionality for secondary API', () => {
-  const imports = {};
+  const imports: PrimaryAPIMergedImport = {} as PrimaryAPIMergedImport;
 
   beforeEach(() => {
     jest.isolateModules(() => {
-      // eslint-disable-next-line global-require
       Object.assign(imports, require('./prerequisite'), require('./testComponentSecondAPI'));
     });
   });

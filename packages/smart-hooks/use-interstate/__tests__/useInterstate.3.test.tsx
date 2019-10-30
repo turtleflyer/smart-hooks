@@ -1,12 +1,11 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-env jest */
+import React, { useCallback, useState } from 'react';
+import { PrerequisiteImport } from './prerequisite';
+import { APIImport } from './testComponentPrimaryAPI';
 
-import React, { useState, useCallback } from 'react';
+interface PrimaryAPIMergedImport extends PrerequisiteImport, APIImport {}
 
-const dynamicSubscriptionWorks = imports => () => {
-  const {
-    render, getLastMaps, CanListen, CanUpdate, CanListenAndUpdate, fireEvent,
-  } = imports;
+const dynamicSubscriptionWorks = (imports: PrimaryAPIMergedImport) => () => {
+  const { render, getLastMap, CanListen, CanUpdate, CanListenAndUpdate, fireEvent } = imports;
 
   const subscribeId1 = '1';
   const subscribeId2 = '2';
@@ -94,10 +93,8 @@ const dynamicSubscriptionWorks = imports => () => {
     </>
   );
 
-  const {
-    fireNode, getTextFromNode, getByTestId, unmount,
-  } = render(<TestComponent />);
-  const maps = getLastMaps();
+  const { fireNode, getTextFromNode, getByTestId, unmount } = render(<TestComponent />);
+  const map = getLastMap();
   expect(getTextFromNode(testId1)).toBe('sun');
   expect(getTextFromNode(testId4)).toBe('sun');
   fireNode(testId1, 'venus');
@@ -107,8 +104,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(2);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
   expect(getTextFromNode(testId1)).toBe('venus');
@@ -121,8 +118,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(4);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(1);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(1);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(1);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '3' } });
   expect(getTextFromNode(testId1)).toBe('mars');
@@ -135,8 +132,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(6);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '1' } });
   expect(getTextFromNode(testId1)).toBe('uranus');
@@ -145,8 +142,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(7);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
   expect(getTextFromNode(testId4)).toBe('mercury');
@@ -154,8 +151,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(8);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(1);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(1);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(1);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '4' } });
   expect(getTextFromNode(testId4)).toBe('mercury');
@@ -163,8 +160,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(9);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(1);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(1);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(1);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '1' } });
   expect(getTextFromNode(testId1)).toBe('uranus');
@@ -173,8 +170,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(10);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '3' } });
   expect(getTextFromNode(testId1)).toBe('uranus');
@@ -183,8 +180,8 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(11);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(2);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
 
   fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
   expect(getTextFromNode(testId1)).toBe('uranus');
@@ -193,20 +190,19 @@ const dynamicSubscriptionWorks = imports => () => {
   expect(countRender2).toHaveBeenCalledTimes(1);
   expect(countRender3).toHaveBeenCalledTimes(1);
   expect(countRender4).toHaveBeenCalledTimes(12);
-  expect(maps.map.get(subscribeId1).setters.length).toBe(1);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(1);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(1);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
 
   unmount();
-  expect(maps.map.get(subscribeId1).setters.length).toBe(0);
-  expect(maps.map.get(subscribeId2).setters.length).toBe(0);
+  expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(0);
+  expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
 };
 
 describe('Test useInterstate functionality for primary API', () => {
-  const imports = {};
+  const imports: PrimaryAPIMergedImport = {} as PrimaryAPIMergedImport;
 
   beforeEach(() => {
     jest.isolateModules(() => {
-      // eslint-disable-next-line global-require
       Object.assign(imports, require('./prerequisite'), require('./testComponentPrimaryAPI'));
     });
   });
@@ -215,11 +211,10 @@ describe('Test useInterstate functionality for primary API', () => {
 });
 
 describe('Test useInterstate functionality for secondary API', () => {
-  const imports = {};
+  const imports: PrimaryAPIMergedImport = {} as PrimaryAPIMergedImport;
 
   beforeEach(() => {
     jest.isolateModules(() => {
-      // eslint-disable-next-line global-require
       Object.assign(imports, require('./prerequisite'), require('./testComponentSecondAPI'));
     });
   });
