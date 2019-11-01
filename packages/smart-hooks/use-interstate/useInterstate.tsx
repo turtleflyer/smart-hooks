@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { MapKey, Store, storeFactory } from '../../../src/utils/storeFactory';
+import { MapKey, Store, storeFactory } from './storeFactory';
 
 const globalStore = storeFactory();
 

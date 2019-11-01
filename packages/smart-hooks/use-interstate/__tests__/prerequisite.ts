@@ -1,15 +1,15 @@
 // tslint:disable-next-line: no-implicit-dependencies
 import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render } from '@testing-library/react';
-import * as mockedStoryFactory from '../../../../src/utils/storeFactory';
-import { StoreMap } from '../../../../src/utils/storeFactory';
+import * as mockedStoryFactory from '../storeFactory';
+import { StoreMap } from '../storeFactory';
 import { SetInterstate } from '../useInterstate';
 
 const { getLastMap } = mockedStoryFactory as typeof mockedStoryFactory & {
   getLastMap: () => StoreMap;
 };
 
-jest.mock('../../../../src/utils/storeFactory.ts');
+jest.mock('../storeFactory.ts');
 
 type ArgsType<T> = T extends (...args: infer R) => any ? R : any;
 type FirstArrayMember<T> = T extends [infer R, ...any[]] ? R : any;
