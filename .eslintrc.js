@@ -22,5 +22,6 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
     'no-plusplus': 'off',
     'import/prefer-default-export': 'off',
+    'arrow-parens': 'off',
   },
 };
