@@ -1,36 +1,22 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
 import babel from 'rollup-plugin-babel';
+import bundleTypesDeclaration from '../../../bundleTypesDeclaration';
 import pkg from './package.json';
+import tsconfig from './tsconfig.json';
+import determineInput from '../../../determineInput';
 
-const extensions = ['.js', '.jsx', '.ts', '.tsx'];
-
+const input = determineInput(tsconfig);
 const name = 'useSmartRef';
 
 export default {
-  input: './useSmartRef.ts',
+  input,
 
-  // Specify here external modules which you don't want to
-  // include in your bundle (for instance: 'lodash',
-  // 'moment' etc.)
-  // https://rollupjs.org/guide/en#external-e-external
   external: ['react'],
 
-  plugins: [
-    // Allows node_modules resolution
-    resolve({ extensions }),
-
-    // Allow bundling cjs modules. Rollup doesn't understand cjs
-    commonjs(),
-
-    // Compile TypeScript/JavaScript files
-    babel({ extensions }),
-  ],
+  plugins: [babel({ extensions: ['.js'] }), bundleTypesDeclaration(input, pkg.types)],
 
   output: [
     {
-      // dir: 'dist',
       file: pkg.main,
       format: 'cjs',
     },
@@ -43,7 +29,6 @@ export default {
       format: 'iife',
       name,
 
-      // https://rollupjs.org/guide/en#output-globals-g-globals
       globals: {
         react: 'React',
       },

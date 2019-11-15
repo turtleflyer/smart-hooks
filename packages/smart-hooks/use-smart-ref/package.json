@@ -2,9 +2,10 @@
   "name": "@smart-hooks/use-smart-ref",
   "version": "1.1.2",
   "description": "Extends useRef logic",
-  "main": "dist/use-smart-ref.cjs.js",
-  "module": "dist/use-smart-ref.esm.js",
-  "browser": "dist/use-smart-ref.umd.js",
+  "main": "./dist/use-smart-ref.cjs.js",
+  "module": "./dist/use-smart-ref.esm.js",
+  "browser": "./dist/use-smart-ref.umd.js",
+  "types": "./dist/use-smart-ref.d.ts",
   "files": [
     "dist"
   ],
@@ -13,9 +14,9 @@
   },
   "scripts": {
     "test": "jest",
-    "bundle": "npm run build:types && npm run build:js",
-    "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "rollup -c"
+    "bundle": "npm run build:js && npm run build:types && rollup -c",
+    "build:js": "tsc",
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir ./dist"
   },
   "repository": {
     "type": "git",
