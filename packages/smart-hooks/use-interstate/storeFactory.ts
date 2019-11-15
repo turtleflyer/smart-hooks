@@ -1,5 +1,3 @@
-import react from 'react';
-
 type MapKey = string | number | symbol;
 
 interface MapEntry {
@@ -13,15 +11,15 @@ class Store {
   storeMap: StoreMap = new Map<MapKey, MapEntry>();
 
   get(key: MapKey) {
-    return (this.storeMap.get(key) !== undefined
-      || this.storeMap.set(key, { setters: [] }))
-      && this.storeMap.get(key) as MapEntry;
+    return (
+      (this.storeMap.get(key) !== undefined || this.storeMap.set(key, { setters: [] })) &&
+      (this.storeMap.get(key) as MapEntry)
+    );
   }
 
   set(id: MapKey, value: MapEntry) {
     this.storeMap.set(id, value);
   }
-
 }
 
 const storeFactory = () => new Store();
