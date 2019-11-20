@@ -1,4 +1,5 @@
-import { useSmartRef as useSmartRefD } from '../useSmartRef';
+import { useSmartRef } from '../useSmartRef';
+import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 
 class Counter {
   toHaveBeenCalledTimes: number = 0;
@@ -12,14 +13,24 @@ class Counter {
   }
 }
 
-type CounterT = typeof Counter;
+interface AssetsImport {
+  executionCountersFactory: typeof executionCountersFactory;
+}
+
+interface UseSmartRefImport {
+  useSmartRef: typeof useSmartRef;
+}
+
 interface TestParameter {
-  assets: {
-    Counter: CounterT;
-    useSmartRef: typeof useSmartRefD;
-  };
+  assets: AssetsImport & UseSmartRefImport;
 }
 
 type TestDescription = (p: TestParameter) => [string, () => void];
 
-export { Counter, CounterT, TestParameter, TestDescription };
+export {
+  executionCountersFactory,
+  AssetsImport,
+  UseSmartRefImport,
+  TestParameter,
+  TestDescription,
+};

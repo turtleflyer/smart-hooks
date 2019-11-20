@@ -1,6 +1,5 @@
 import refBindingUpdate from './tests/refBindingUpdate';
-import { CounterT, TestParameter } from './testsAssets';
-import { useSmartRef as useSmartRefD } from '../useSmartRef';
+import { AssetsImport, UseSmartRefImport, TestParameter } from './testsAssets';
 import cleaningAfterUnmount from './tests/cleaningAfterUnmount';
 import testOmittingOptionalAPI from './tests/testOmittingOptionalAPI';
 import typeParameter from './tests/typeParameter';
@@ -11,9 +10,9 @@ const mainTestSuit = (packagePath: string) =>
 
     beforeEach(() => {
       jest.isolateModules(() => {
-        const { Counter } = require('./testsAssets') as { Counter: CounterT };
-        const { useSmartRef } = require(packagePath) as { useSmartRef: typeof useSmartRefD };
-        testParameter.assets = { Counter, useSmartRef };
+        const { executionCountersFactory } = require('./testsAssets') as AssetsImport;
+        const { useSmartRef } = require(packagePath) as UseSmartRefImport;
+        testParameter.assets = { executionCountersFactory, useSmartRef };
       });
     });
     test(...refBindingUpdate(testParameter));

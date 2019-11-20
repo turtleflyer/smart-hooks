@@ -6,16 +6,16 @@ const cleaningAfterUnmount: TestDescription = p => [
   'cleaning after element unmount works',
   () => {
     const {
-      assets: { Counter, useSmartRef },
+      assets: { executionCountersFactory, useSmartRef },
     } = p;
-    const mainCounter = new Counter();
-    const actionCounter = new Counter();
+    const mainCounter = executionCountersFactory();
+    const actionCounter = executionCountersFactory();
     let storeActionFake: string | undefined;
     const actionHandler = (fake: string) => {
       actionCounter.count();
       storeActionFake = fake;
     };
-    const cleanerCounter = new Counter();
+    const cleanerCounter = executionCountersFactory();
     let storeCleanerFake: string | undefined;
     const cleanerHandler = (fake: string) => {
       cleanerCounter.count();
@@ -47,32 +47,32 @@ const cleaningAfterUnmount: TestDescription = p => [
     };
 
     const { rerender, unmount } = render(<TestComponent scenario={1} fake="right" />);
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(1);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(1);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeActionFake).toBe('right');
-    expect(cleanerCounter.toHaveBeenCalledTimes).toBe(0);
+    expect(cleanerCounter.howManyTimesBeenCalled()).toBe(0);
     expect(storeCleanerFake).toBe(undefined);
     expect(refElement && refElement.current && refElement.current.getAttribute('data-key')).toBe(
       'element',
     );
 
     rerender(<TestComponent scenario={2} fake="left" />);
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(2);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(2);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeActionFake).toBe('right');
-    expect(cleanerCounter.toHaveBeenCalledTimes).toBe(1);
+    expect(cleanerCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeCleanerFake).toBe('right');
     expect(refElement && refElement.current).toBeNull();
 
     rerender(<TestComponent scenario={1} fake="up" />);
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(3);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(2);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(3);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(2);
     expect(storeActionFake).toBe('up');
-    expect(cleanerCounter.toHaveBeenCalledTimes).toBe(1);
+    expect(cleanerCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeCleanerFake).toBe('right');
 
     unmount();
-    expect(cleanerCounter.toHaveBeenCalledTimes).toBe(2);
+    expect(cleanerCounter.howManyTimesBeenCalled()).toBe(2);
     expect(storeCleanerFake).toBe('up');
   },
 ];

@@ -6,17 +6,17 @@ const refBindingUpdate: TestDescription = p => [
   'ref binding and updating works',
   () => {
     const {
-      assets: { Counter, useSmartRef },
+      assets: { executionCountersFactory, useSmartRef },
     } = p;
-    const mainCounter = new Counter();
+    const mainCounter = executionCountersFactory();
     let storeFake: string | undefined;
-    const actionCounter = new Counter();
+    const actionCounter = executionCountersFactory();
     const actionWork = (fake: string) => {
       actionCounter.count();
       storeFake = fake;
     };
     let storeFakeAfterClean: string | undefined;
-    const cleanCounter = new Counter();
+    const cleanCounter = executionCountersFactory();
     const cleanUpWork = (fake: string) => {
       cleanCounter.count();
       storeFakeAfterClean = fake;
@@ -61,50 +61,50 @@ const refBindingUpdate: TestDescription = p => [
     };
 
     const { rerender, unmount } = render(<TestComponent scenario={1} fake="red" />);
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(1);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(1);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeFake).toBe('red');
-    expect(cleanCounter.toHaveBeenCalledTimes).toBe(0);
+    expect(cleanCounter.howManyTimesBeenCalled()).toBe(0);
     expect(storeFakeAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
     rerender(<TestComponent scenario={1} fake="red" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
     rerender(<TestComponent scenario={1} fake="yellow" />);
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(3);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(1);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(3);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeFake).toBe('red');
-    expect(cleanCounter.toHaveBeenCalledTimes).toBe(0);
+    expect(cleanCounter.howManyTimesBeenCalled()).toBe(0);
     expect(storeFakeAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
     rerender(<TestComponent scenario={1} fake="yellow" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
     rerender(<TestComponent scenario={2} fake="magenta" />);
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(5);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(2);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(5);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(2);
     expect(storeFake).toBe('magenta');
-    expect(cleanCounter.toHaveBeenCalledTimes).toBe(1);
+    expect(cleanCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeFakeAfterClean).toBe('red');
     expect(dataKeyOfElement).toBe('2');
     rerender(<TestComponent scenario={2} fake="magenta" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('2');
 
     rerender(<TestComponent scenario={1} fake="pink" />);
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(7);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(3);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(7);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(3);
     expect(storeFake).toBe('pink');
-    expect(cleanCounter.toHaveBeenCalledTimes).toBe(2);
+    expect(cleanCounter.howManyTimesBeenCalled()).toBe(2);
     expect(storeFakeAfterClean).toBe('magenta');
     expect(dataKeyOfElement).toBe('1');
     rerender(<TestComponent scenario={1} fake="pink" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
     unmount();
-    expect(mainCounter.toHaveBeenCalledTimes).toBe(8);
-    expect(actionCounter.toHaveBeenCalledTimes).toBe(3);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(8);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(3);
     expect(storeFake).toBe('pink');
-    expect(cleanCounter.toHaveBeenCalledTimes).toBe(3);
+    expect(cleanCounter.howManyTimesBeenCalled()).toBe(3);
     expect(storeFakeAfterClean).toBe('pink');
     expect(dataKeyOfElement).toBe('1');
   },
