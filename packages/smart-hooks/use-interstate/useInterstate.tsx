@@ -118,6 +118,7 @@ export {
   useInterstate,
   useSubscribeInterstate,
   useSetInterstate,
+  MapKey as StateKey,
   Scope,
   UseSubscribeInterstateDynamic,
   SetInterstate,
