@@ -80,12 +80,13 @@ const mainTestSuit = (packagePath: string, shouldTestPerformance: boolean) =>
     beforeEach(() => {
       jest.isolateModules(() => {
         const {
-          CanListenDependsOnAPI,
-          CanUpdateDependsOnAPI,
-          CanListenAndUpdateDependsOnAPI,
           render,
           getLastMap,
           fireEvent,
+          executionCountersFactory,
+          CanListenDependsOnAPI,
+          CanUpdateDependsOnAPI,
+          CanListenAndUpdateDependsOnAPI,
         } = require('./testsAssets') as AssetsImport;
         const {
           useInterstate,
@@ -98,6 +99,7 @@ const mainTestSuit = (packagePath: string, shouldTestPerformance: boolean) =>
           render,
           getLastMap,
           fireEvent,
+          executionCountersFactory,
           CanListenDependsOnAPI,
           CanUpdateDependsOnAPI,
           CanListenAndUpdateDependsOnAPI,

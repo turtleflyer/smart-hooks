@@ -5,7 +5,7 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
   'Scope component works',
   () => {
     const {
-      assets: { render, getLastMap, Scope },
+      assets: { render, getLastMap, Scope, executionCountersFactory },
     } = p;
     const { CanListen, CanListenAndUpdate } = createTestComponents(p);
 
@@ -17,12 +17,12 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
     const testId4 = 'forth';
     const testId5 = 'fifth';
     const testId6 = 'sixth';
-    const countRender1 = jest.fn();
-    const countRender2 = jest.fn();
-    const countRender3 = jest.fn();
-    const countRender4 = jest.fn();
-    const countRender5 = jest.fn();
-    const countRender6 = jest.fn();
+    const countRender1 = executionCountersFactory();
+    const countRender2 = executionCountersFactory();
+    const countRender3 = executionCountersFactory();
+    const countRender4 = executionCountersFactory();
+    const countRender5 = executionCountersFactory();
+    const countRender6 = executionCountersFactory();
 
     const IsolatedBlock = ({
       initialValue,
@@ -36,7 +36,7 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
           {...{
             subscribeId: subscribeId1,
             testId: testId4,
-            countRender: countRender4,
+            countRender: countRender4.count,
             initialValue,
           }}
         />
@@ -44,14 +44,14 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
           {...{
             subscribeId: subscribeId2,
             testId: testId5,
-            countRender: countRender5,
+            countRender: countRender5.count,
           }}
         />
         <CanListen
           {...{
             subscribeId: listenerId,
             testId: testId6,
-            countRender: countRender6,
+            countRender: countRender6.count,
           }}
         />
       </>
@@ -71,21 +71,21 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
           {...{
             subscribeId: subscribeId1,
             testId: testId1,
-            countRender: countRender1,
+            countRender: countRender1.count,
           }}
         />
         <CanListenAndUpdate
           {...{
             subscribeId: subscribeId2,
             testId: testId2,
-            countRender: countRender2,
+            countRender: countRender2.count,
           }}
         />
         <CanListen
           {...{
             subscribeId: listenerId,
             testId: testId3,
-            countRender: countRender3,
+            countRender: countRender3.count,
           }}
         />
         {isolate ? (
@@ -127,12 +127,12 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
     expect(getTextFromNode(testId4)).toBe('car');
     expect(getTextFromNode(testId5)).toBe('boat');
     expect(getTextFromNode(testId6)).toBe('car');
-    expect(countRender1).toHaveBeenCalledTimes(3);
-    expect(countRender2).toHaveBeenCalledTimes(2);
-    expect(countRender3).toHaveBeenCalledTimes(3);
-    expect(countRender4).toHaveBeenCalledTimes(3);
-    expect(countRender5).toHaveBeenCalledTimes(2);
-    expect(countRender6).toHaveBeenCalledTimes(3);
+    expect(countRender1.howManyTimesBeenCalled()).toBe(3);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(2);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(3);
+    expect(countRender4.howManyTimesBeenCalled()).toBe(3);
+    expect(countRender5.howManyTimesBeenCalled()).toBe(2);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(3);
 
     rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
     const map2 = getLastMap();
@@ -156,12 +156,12 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
     expect(getTextFromNode(testId4)).toBe('plane');
     expect(getTextFromNode(testId5)).toBe('');
     expect(getTextFromNode(testId6)).toBe('plane');
-    expect(countRender1).toHaveBeenCalledTimes(5);
-    expect(countRender2).toHaveBeenCalledTimes(3);
-    expect(countRender3).toHaveBeenCalledTimes(5);
-    expect(countRender4).toHaveBeenCalledTimes(5);
-    expect(countRender5).toHaveBeenCalledTimes(3);
-    expect(countRender6).toHaveBeenCalledTimes(5);
+    expect(countRender1.howManyTimesBeenCalled()).toBe(5);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(3);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(5);
+    expect(countRender4.howManyTimesBeenCalled()).toBe(5);
+    expect(countRender5.howManyTimesBeenCalled()).toBe(3);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(5);
 
     rerender(<TestComponent listenerId={subscribeId2} />);
     if (shouldTestPerformance) {
@@ -176,12 +176,12 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
     expect(getTextFromNode(testId4)).toBe('truck');
     expect(getTextFromNode(testId5)).toBe('boat');
     expect(getTextFromNode(testId6)).toBe('boat');
-    expect(countRender1).toHaveBeenCalledTimes(6);
-    expect(countRender2).toHaveBeenCalledTimes(4);
-    expect(countRender3).toHaveBeenCalledTimes(6);
-    expect(countRender4).toHaveBeenCalledTimes(6);
-    expect(countRender5).toHaveBeenCalledTimes(4);
-    expect(countRender6).toHaveBeenCalledTimes(6);
+    expect(countRender1.howManyTimesBeenCalled()).toBe(6);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(4);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(6);
+    expect(countRender4.howManyTimesBeenCalled()).toBe(6);
+    expect(countRender5.howManyTimesBeenCalled()).toBe(4);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(6);
 
     rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
     const map3 = getLastMap();
@@ -199,12 +199,12 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
     expect(getTextFromNode(testId4)).toBe('');
     expect(getTextFromNode(testId5)).toBe('');
     expect(getTextFromNode(testId6)).toBe('');
-    expect(countRender1).toHaveBeenCalledTimes(7);
-    expect(countRender2).toHaveBeenCalledTimes(5);
-    expect(countRender3).toHaveBeenCalledTimes(7);
-    expect(countRender4).toHaveBeenCalledTimes(7);
-    expect(countRender5).toHaveBeenCalledTimes(5);
-    expect(countRender6).toHaveBeenCalledTimes(7);
+    expect(countRender1.howManyTimesBeenCalled()).toBe(7);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(5);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(7);
+    expect(countRender4.howManyTimesBeenCalled()).toBe(7);
+    expect(countRender5.howManyTimesBeenCalled()).toBe(5);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(7);
 
     rerender(<TestComponent listenerId={subscribeId1} initialValue="train" />);
     if (shouldTestPerformance) {
@@ -221,12 +221,12 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
     expect(getTextFromNode(testId4)).toBe('train');
     expect(getTextFromNode(testId5)).toBe('boat');
     expect(getTextFromNode(testId6)).toBe('train');
-    expect(countRender1).toHaveBeenCalledTimes(9);
-    expect(countRender2).toHaveBeenCalledTimes(6);
-    expect(countRender3).toHaveBeenCalledTimes(9);
-    expect(countRender4).toHaveBeenCalledTimes(8);
-    expect(countRender5).toHaveBeenCalledTimes(6);
-    expect(countRender6).toHaveBeenCalledTimes(8);
+    expect(countRender1.howManyTimesBeenCalled()).toBe(9);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(6);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(9);
+    expect(countRender4.howManyTimesBeenCalled()).toBe(8);
+    expect(countRender5.howManyTimesBeenCalled()).toBe(6);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(8);
 
     rerender(<TestComponent isolate={true} listenerId={subscribeId2} initialValue="bike" />);
     const map4 = getLastMap();
@@ -246,12 +246,12 @@ const testContext: TestDescription = (p, createTestComponents, shouldTestPerform
     expect(getTextFromNode(testId4)).toBe('bike');
     expect(getTextFromNode(testId5)).toBe('');
     expect(getTextFromNode(testId6)).toBe('');
-    expect(countRender1).toHaveBeenCalledTimes(10);
-    expect(countRender2).toHaveBeenCalledTimes(7);
-    expect(countRender3).toHaveBeenCalledTimes(10);
-    expect(countRender4).toHaveBeenCalledTimes(9);
-    expect(countRender5).toHaveBeenCalledTimes(7);
-    expect(countRender6).toHaveBeenCalledTimes(9);
+    expect(countRender1.howManyTimesBeenCalled()).toBe(10);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(7);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(10);
+    expect(countRender4.howManyTimesBeenCalled()).toBe(9);
+    expect(countRender5.howManyTimesBeenCalled()).toBe(7);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(9);
 
     unmount();
     if (shouldTestPerformance) {

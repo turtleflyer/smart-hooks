@@ -12,6 +12,7 @@ import {
   useSetInterstate,
 } from '../useInterstate';
 import React, { useCallback, useEffect } from 'react';
+import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 
 const { getLastMap } = mockedStoryFactory as typeof mockedStoryFactory & {
   getLastMap: () => mockedStoryFactory.StoreMap;
@@ -58,7 +59,7 @@ interface TestComponentsProps {
   initialValue?: number | string;
   testId?: string;
   composeCallback?: (...args: any[]) => any;
-  countRender?: (...args: any[]) => any;
+  countRender?: () => void;
   children?: React.ReactChild | React.ReactChild[];
 }
 type UseAPItoListen = (subscribeId: StateKey, initialValue: any) => any;
@@ -79,7 +80,7 @@ const CanListenDependsOnAPI: ComponentDependsOnAPI<UseAPItoListen> = useAPI => (
   subscribeId,
   initialValue,
   testId = '',
-  countRender = () => null,
+  countRender = () => {},
   children,
 }) => {
   const state = useAPI(subscribeId, initialValue);
@@ -100,7 +101,7 @@ const CanUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoUpdate> = useAPI => (
   initialValue,
   testId = '',
   composeCallback = defaultComposeCallback,
-  countRender = () => null,
+  countRender = () => {},
   children,
 }) => {
   const setState = useAPI(subscribeId, initialValue);
@@ -122,7 +123,7 @@ const CanListenAndUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoListenAndUpd
   initialValue,
   testId = '',
   composeCallback = defaultComposeCallback,
-  countRender = () => null,
+  countRender = () => {},
   children,
 }) => {
   const [state, setState] = useAPI(subscribeId, initialValue);
@@ -153,21 +154,14 @@ interface AssetsImport {
   render: typeof newRender;
   getLastMap: typeof getLastMap;
   fireEvent: typeof fireEvent;
-  defaultComposeCallback: typeof defaultComposeCallback;
+  executionCountersFactory: typeof executionCountersFactory;
   CanListenDependsOnAPI: typeof CanListenDependsOnAPI;
   CanUpdateDependsOnAPI: typeof CanUpdateDependsOnAPI;
   CanListenAndUpdateDependsOnAPI: typeof CanListenAndUpdateDependsOnAPI;
 }
 
 interface TestParameter {
-  assets: {
-    render: typeof newRender;
-    getLastMap: typeof getLastMap;
-    fireEvent: typeof fireEvent;
-    CanListenDependsOnAPI: typeof CanListenDependsOnAPI;
-    CanUpdateDependsOnAPI: typeof CanUpdateDependsOnAPI;
-    CanListenAndUpdateDependsOnAPI: typeof CanListenAndUpdateDependsOnAPI;
-  } & UseInterstateImport;
+  assets: AssetsImport & UseInterstateImport;
 }
 
 type TestDescription = (
@@ -188,7 +182,7 @@ export {
   newRender as render,
   getLastMap,
   fireEvent,
-  defaultComposeCallback,
+  executionCountersFactory,
   CanListenDependsOnAPI,
   CanUpdateDependsOnAPI,
   CanListenAndUpdateDependsOnAPI,
