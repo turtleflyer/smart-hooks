@@ -6,7 +6,7 @@ import testOmittingOptionalAPI from './tests/testOmittingOptionalAPI';
 import typeParameter from './tests/typeParameter';
 
 const mainTestSuit = (packagePath: string) =>
-  describe('Test useSmartRef functionality', () => {
+  describe('Test useSmartRef correctness', () => {
     const testParameter: TestParameter = {} as TestParameter;
 
     beforeEach(() => {

@@ -74,7 +74,7 @@ const testCases: Array<[string, CreateTestComponents]> = [
 ];
 
 const mainTestSuit = (packagePath: string, shouldTestPerformance: boolean) =>
-  describe.each(testCases)('Test useSmartRef functionality %s', (name, createTestComponents) => {
+  describe.each(testCases)('Test useSmartRef correctness %s', (name, createTestComponents) => {
     const testParameter: TestParameter = {} as TestParameter;
 
     beforeEach(() => {
