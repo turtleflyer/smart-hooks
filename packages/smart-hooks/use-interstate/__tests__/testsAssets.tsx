@@ -4,7 +4,6 @@ import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render } from '@testing-library/react';
 import * as mockedStoryFactory from '../storeFactory';
 import {
-  StateKey,
   Scope,
   SetInterstate,
   useInterstate,
@@ -53,21 +52,29 @@ function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
   return { ...fromRender, fireNode, getTextFromNode };
 }
 
-type ComposeCallback = (set: SetInterstate) => ({ target: { value } }: any) => void;
+type FieldsValue = string;
+type InterstateID = string | number;
+
+type ComposeCallback = (
+  set: SetInterstate<FieldsValue>,
+) => ({ target: { value } }: { target: { value: string } }) => void;
 interface TestComponentsProps {
-  subscribeId: string | number;
-  initialValue?: number | string;
+  subscribeId: InterstateID;
+  initialValue?: FieldsValue;
   testId?: string;
   composeCallback?: (...args: any[]) => any;
   countRender?: () => void;
   children?: React.ReactChild | React.ReactChild[];
 }
-type UseAPItoListen = (subscribeId: StateKey, initialValue: any) => any;
-type UseAPItoUpdate = (subscribeId: StateKey, initialValue: any) => (p: any) => void;
+type UseAPItoListen = (subscribeId: InterstateID, initialValue?: FieldsValue) => FieldsValue;
+type UseAPItoUpdate = (
+  subscribeId: InterstateID,
+  initialValue?: FieldsValue,
+) => (p: FieldsValue) => void;
 type UseAPItoListenAndUpdate = (
-  subscribeId: StateKey,
-  initialValue: any,
-) => [any, (p: any) => void];
+  subscribeId: InterstateID,
+  initialValue?: FieldsValue,
+) => [FieldsValue, (p: FieldsValue) => void];
 type ComponentDependsOnAPI<T extends UseAPItoListen | UseAPItoUpdate | UseAPItoListenAndUpdate> = (
   useAPI: T,
 ) => React.FunctionComponent<TestComponentsProps>;
@@ -183,6 +190,8 @@ export {
   getLastMap,
   fireEvent,
   executionCountersFactory,
+  FieldsValue,
+  InterstateID,
   CanListenDependsOnAPI,
   CanUpdateDependsOnAPI,
   CanListenAndUpdateDependsOnAPI,

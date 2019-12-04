@@ -12,6 +12,7 @@ import valuesRemainAfterTreeUnmount from './tests/valuesRemainAfterTreeUnmount';
 import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetState';
 import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
 import testContext from './tests/testContext';
+import checkTypes from './tests/checkTypes';
 
 const testCases: Array<[string, CreateTestComponents]> = [
   [
@@ -74,7 +75,7 @@ const testCases: Array<[string, CreateTestComponents]> = [
 ];
 
 const mainTestSuit = (packagePath: string, shouldTestPerformance: boolean) =>
-  describe.each(testCases)('Test useSmartRef correctness %s', (name, createTestComponents) => {
+  describe.each(testCases)('Test useInterstate correctness %s', (name, createTestComponents) => {
     const testParameter: TestParameter = {} as TestParameter;
 
     beforeEach(() => {
@@ -124,6 +125,10 @@ const mainTestSuit = (packagePath: string, shouldTestPerformance: boolean) =>
     );
     test(...dynamicSubscriptionWorks(testParameter, createTestComponents, shouldTestPerformance));
     test(...testContext(testParameter, createTestComponents, shouldTestPerformance));
+
+    if (name === '(using primary API)') {
+      test(...checkTypes(testParameter, createTestComponents, shouldTestPerformance));
+    }
   });
 
 export default mainTestSuit;

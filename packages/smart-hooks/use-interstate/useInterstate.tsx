@@ -1,3 +1,5 @@
+// tslint:disable: ban-types
+
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { MapKey, Store, storeFactory } from './storeFactory';
 
@@ -17,26 +19,34 @@ const Scope = ({ children }: { children: React.ReactChild | React.ReactChild[] }
   return <ScopeContext.Provider value={{ store: isolatedStore }}>{children}</ScopeContext.Provider>;
 };
 
-type SetInterstate = (v: any) => void;
+type InterstateParam<T> = Exclude<T, Function> | ((oldV: T) => T);
+type InitializeParam<T> = Exclude<InterstateParam<T>, undefined | ((oldV: T) => T)> | (() => T);
 
-const factoryOfSetInterstate: <K extends MapKey>(stateKey: K, store: Store) => SetInterstate = (
-  stateKey,
-  store,
-) => valueToSet => {
-  const { value, setters } = store.get(stateKey);
-  const newActualValue = typeof valueToSet === 'function' ? valueToSet(value) : valueToSet;
+type SetInterstate<T> = (p: InterstateParam<T>) => void;
 
-  if (value !== newActualValue) {
-    store.set(stateKey, {
-      ...store.get(stateKey),
-      value: newActualValue,
-    });
+function isFunction(p: any): p is Function {
+  return typeof p === 'function';
+}
 
-    setters.forEach(callback => {
-      callback((v: boolean) => !v);
-    });
-  }
-};
+function factoryOfSetInterstate<T, K extends MapKey>(stateKey: K, store: Store): SetInterstate<T> {
+  return valueToSet => {
+    const entry = store.get(stateKey);
+    const value = entry.value as T;
+    const setters = entry.setters;
+    const newActualValue = isFunction(valueToSet) ? valueToSet(value) : valueToSet;
+
+    if (value !== newActualValue) {
+      store.set(stateKey, {
+        ...store.get(stateKey),
+        value: newActualValue,
+      });
+
+      setters.forEach(callback => {
+        callback((v: boolean) => !v);
+      });
+    }
+  };
+}
 
 function chooseStore(context: ScopeContextValue) {
   const scopedStore = context && context.store;
@@ -72,7 +82,7 @@ function removeSetterFromMap<K extends MapKey>(
   });
 }
 
-function useSubscribe<K extends MapKey>(stateKey: K) {
+function useSubscribe<T, K extends MapKey>(stateKey: K): T {
   const [, set] = useState<boolean>(true);
   const store = useStore();
 
@@ -83,34 +93,45 @@ function useSubscribe<K extends MapKey>(stateKey: K) {
   return store.get(stateKey).value;
 }
 
-function setInterstateConditional(setInterstate: SetInterstate, initialValue: any) {
+// Initializing usInterstate without init value (or
+// undefined value) preserves the last recorded value. If it
+// is needed to set value to undefined on the stage of
+// initializing then pass the function parameter () => undefined;
+function setInterstateConditional<T>(
+  setInterstate: SetInterstate<T>,
+  initialValue?: InitializeParam<T>,
+) {
   if (initialValue !== undefined) {
     setInterstate(initialValue);
   }
 }
 
-function useSetInterstate<T, K extends MapKey>(stateKey: K, initialValue?: T) {
+function useSetInterstate<T, K extends MapKey = MapKey>(
+  stateKey: K,
+  initialValue?: InitializeParam<T>,
+) {
   const store = useStore();
-  const setInterstate = useMemo(() => factoryOfSetInterstate(stateKey, store), [stateKey]);
+  const setInterstate = useMemo(() => factoryOfSetInterstate<T, K>(stateKey, store), [stateKey]);
 
   useMemo(() => setInterstateConditional(setInterstate, initialValue), [stateKey]);
 
   return setInterstate;
 }
 
-function useSubscribeInterstate<T, K extends MapKey = MapKey>(stateKey: K, initialValue?: T) {
-  useSetInterstate(stateKey, initialValue);
-  return useSubscribe(stateKey);
+function useSubscribeInterstate<T, K extends MapKey = MapKey>(
+  stateKey: K,
+  initialValue?: InitializeParam<T>,
+) {
+  useSetInterstate<T, K>(stateKey, initialValue);
+  return useSubscribe<T, K>(stateKey);
 }
-
-type UseSubscribeInterstateDynamic = () => any;
 
 function useInterstate<T, K extends MapKey = MapKey>(
   stateKey: K,
-  initialValue?: T,
-): [UseSubscribeInterstateDynamic, SetInterstate] {
-  const setInterstate = useSetInterstate(stateKey, initialValue);
-  const useSubscribeInterstateDynamic = () => useSubscribe(stateKey);
+  initialValue?: InitializeParam<T>,
+): [() => T, SetInterstate<T>] {
+  const setInterstate = useSetInterstate<T, K>(stateKey, initialValue);
+  const useSubscribeInterstateDynamic = () => useSubscribe<T, K>(stateKey);
   return [useSubscribeInterstateDynamic, setInterstate];
 }
 
@@ -120,6 +141,7 @@ export {
   useSetInterstate,
   MapKey as StateKey,
   Scope,
-  UseSubscribeInterstateDynamic,
+  InterstateParam,
+  InitializeParam,
   SetInterstate,
 };
