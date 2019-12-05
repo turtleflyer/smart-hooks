@@ -80,7 +80,7 @@ const checkTypes: TestDescription = p => [
     const id5: StateKey = Symbol();
     const initValue5: InitializeParam<string> = 'right';
     let testType5: string | boolean | number;
-    const bindValue51: InterstateParam<boolean> = false;
+    const bindValue51: InterstateParam<string | boolean> = false;
     const bindValue52: InterstateParam<string | boolean> = (s: number | string | boolean) => 'left';
     const CheckTypesExplicitly5 = () => {
       const [useSubscribe, setInterstate] = useInterstate<string | boolean, number | symbol>(
@@ -101,7 +101,7 @@ const checkTypes: TestDescription = p => [
     const id6: StateKey = Symbol();
     const initValue6: InitializeParam<string> = 'right';
     let testType6: string | boolean | number;
-    const bindValue61: InterstateParam<boolean> = false;
+    const bindValue61: InterstateParam<string | boolean> = false;
     const bindValue62: InterstateParam<string | boolean> = (s: number | string | boolean) => 'left';
     const CheckTypesExplicitly6 = () => {
       const setInterstate = useSetInterstate<string | boolean, number | symbol>(id6, initValue6);
