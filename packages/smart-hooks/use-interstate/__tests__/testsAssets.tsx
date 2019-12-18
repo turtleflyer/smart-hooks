@@ -13,11 +13,11 @@ import {
 import React, { useCallback, useEffect } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 
-const { getLastMap } = mockedStoryFactory as typeof mockedStoryFactory & {
-  getLastMap: () => mockedStoryFactory.StoreMap;
-};
-
 jest.mock('../storeFactory.ts');
+
+const { getLastMap } = mockedStoryFactory as typeof mockedStoryFactory & {
+  getLastMap: () => Map<any, any>;
+};
 
 type ArgsType<T> = T extends (...args: infer R) => any ? R : any;
 type FirstArrayMember<T> = T extends [infer R, ...any[]] ? R : any;
@@ -28,24 +28,20 @@ function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
 
   const fireNode = (testId: string, value: string) => {
     const element = getByTestId(testId);
-    fireEvent.change(
-      element.nodeName === 'INPUT'
-        ? (element as HTMLElement)
-        : (element.querySelector('input') as HTMLElement),
-      {
-        target: { value },
-      },
-    );
+    if (element) {
+      const inputChild = element.querySelector(`[data-testid=${testId}] > input`);
+      if (inputChild) {
+        fireEvent.change(inputChild, {
+          target: { value },
+        });
+      }
+    }
   };
 
   const getTextFromNode = (testId: string) => {
     const element = getByTestId(testId);
-    const elementWithText =
-      !element.firstChild || element.firstChild.nodeName === '#text'
-        ? (element as HTMLElement)
-        : (element.querySelector('div') as HTMLElement);
-    return elementWithText.firstChild
-      ? (elementWithText.firstChild as HTMLElement).textContent
+    return element && element.firstChild && element.firstChild.nodeName === '#text'
+      ? element.firstChild.textContent
       : '';
   };
 
@@ -118,10 +114,10 @@ const CanUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoUpdate> = useAPI => (
   });
 
   return (
-    <>
-      <input data-testid={testId} value="" onChange={callback} />
+    <div data-testid={testId}>
+      <input value="" onChange={callback} />
       {children ? <div>{children}</div> : null}
-    </>
+    </div>
   );
 };
 
@@ -141,11 +137,9 @@ const CanListenAndUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoListenAndUpd
 
   return (
     <div data-testid={testId}>
+      {state}
       <input value="" onChange={callback} />
-      <div>
-        {state}
-        {children}
-      </div>
+      <div>{children}</div>
     </div>
   );
 };
