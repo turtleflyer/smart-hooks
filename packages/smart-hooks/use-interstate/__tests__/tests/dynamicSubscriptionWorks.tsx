@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { TestDescription } from '../testsAssets';
+debugger;
 
 const dynamicSubscriptionWorks: TestDescription = (
   p,
@@ -103,7 +104,7 @@ const dynamicSubscriptionWorks: TestDescription = (
     const map = getLastMap();
     expect(getTextFromNode(testId1)).toBe('sun');
     expect(getTextFromNode(testId4)).toBe('sun');
-    fireNode(testId1, 'venus');
+    fireNode(testId4, 'venus');
     expect(getTextFromNode(testId1)).toBe('venus');
     expect(getTextFromNode(testId4)).toBe('venus');
     expect(countRender1.howManyTimesBeenCalled()).toBe(3);

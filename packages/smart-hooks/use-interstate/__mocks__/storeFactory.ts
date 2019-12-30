@@ -1,19 +1,15 @@
-import { Store as StoreT, StoreMap } from '../storeFactory';
+import { Store } from '../storeFactory';
 
-const { Store }:
-  { Store: typeof StoreT; }
-  = jest.requireActual('../storeFactory.ts');
+const { storeFactory }: { storeFactory: () => Store } = jest.requireActual('../storeFactory.ts');
 
-let lastStore: StoreMap;
+let lastMap: Map<any, any>;
 
-class StoreForTest extends Store {
-  constructor() {
-    super();
-    lastStore = this.storeMap;
-  }
-}
+const bypassStoreFactory = () => {
+  const store = storeFactory();
+  lastMap = store.getStoreMap();
+  return store;
+};
 
-const bypassStoreFactory = () => new StoreForTest();
-const getLastMap = () => lastStore;
+const getLastMap = () => lastMap;
 
 export { bypassStoreFactory as storeFactory, getLastMap };

@@ -30,28 +30,20 @@ function isFunction(p: any): p is Function {
 
 function factoryOfSetInterstate<T, K extends MapKey>(stateKey: K, store: Store): SetInterstate<T> {
   return valueToSet => {
-    const entry = store.get(stateKey);
-    const value = entry.value as T;
-    const setters = entry.setters;
+    const value = store.getValue(stateKey) as T;
     const newActualValue = isFunction(valueToSet) ? valueToSet(value) : valueToSet;
 
     if (value !== newActualValue) {
-      store.set(stateKey, {
-        ...store.get(stateKey),
-        value: newActualValue,
-      });
-
-      setters.forEach(callback => {
-        callback((v: boolean) => !v);
-      });
+      store.setValue(stateKey, newActualValue);
+      store.triggerSetters(stateKey);
     }
   };
 }
 
 function chooseStore(context: ScopeContextValue) {
-  const scopedStore = context && context.store;
+  const storeFromScope = context && context.store;
 
-  return scopedStore || globalStore;
+  return storeFromScope || globalStore;
 }
 
 function useStore() {
@@ -60,50 +52,15 @@ function useStore() {
   return useMemo(() => chooseStore(context), []);
 }
 
-function addSetterToMap<K extends MapKey>(
-  store: Store,
-  stateKey: K,
-  setter: React.Dispatch<React.SetStateAction<boolean>>,
-) {
-  store.set(stateKey, {
-    ...store.get(stateKey),
-    setters: [...store.get(stateKey).setters, setter],
-  });
-}
-
-function removeSetterFromMap<K extends MapKey>(
-  store: Store,
-  stateKey: K,
-  setter: React.Dispatch<React.SetStateAction<boolean>>,
-) {
-  store.set(stateKey, {
-    ...store.get(stateKey),
-    setters: store.get(stateKey).setters.filter(s => s !== setter),
-  });
-}
-
 function useSubscribe<T, K extends MapKey>(stateKey: K): T {
-  const [, set] = useState<boolean>(true);
+  const [, setter] = useState<boolean>(true);
   const store = useStore();
 
-  useMemo(() => addSetterToMap(store, stateKey, set), [stateKey]);
+  useMemo(() => store.addSetter(stateKey, setter), [stateKey]);
 
-  useEffect(() => () => removeSetterFromMap(store, stateKey, set), [stateKey]);
+  useEffect(() => () => store.removeSetter(stateKey, setter), [stateKey]);
 
-  return store.get(stateKey).value;
-}
-
-// Initializing usInterstate without init value (or
-// undefined value) preserves the last recorded value. If it
-// is needed to set value to undefined on the stage of
-// initializing then pass the function parameter () => undefined;
-function setInterstateConditional<T>(
-  setInterstate: SetInterstate<T>,
-  initialValue?: InitializeParam<T>,
-) {
-  if (initialValue !== undefined) {
-    setInterstate(initialValue);
-  }
+  return store.getValue(stateKey);
 }
 
 function useSetInterstate<T, K extends MapKey = MapKey>(
@@ -113,7 +70,18 @@ function useSetInterstate<T, K extends MapKey = MapKey>(
   const store = useStore();
   const setInterstate = useMemo(() => factoryOfSetInterstate<T, K>(stateKey, store), [stateKey]);
 
-  useMemo(() => setInterstateConditional(setInterstate, initialValue), [stateKey]);
+  useMemo(() => {
+    store.initEntry(stateKey);
+
+    // Initializing usInterstate without init value (or
+    // undefined value) preserves the last recorded value.
+    // If it is needed to set value to undefined on the
+    // stage of initializing then pass the function
+    // parameter () => undefined;
+    if (initialValue !== undefined) {
+      setInterstate(initialValue);
+    }
+  }, [stateKey]);
 
   return setInterstate;
 }
