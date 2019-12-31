@@ -28,7 +28,7 @@ function isFunction(p: any): p is Function {
   return typeof p === 'function';
 }
 
-function factoryOfSetInterstate<T, K extends MapKey>(stateKey: K, store: Store): SetInterstate<T> {
+function factoryOfSetInterstate<T>(stateKey: MapKey, store: Store): SetInterstate<T> {
   return valueToSet => {
     const value = store.getValue(stateKey) as T;
     const newActualValue = isFunction(valueToSet) ? valueToSet(value) : valueToSet;
@@ -52,7 +52,7 @@ function useStore() {
   return useMemo(() => chooseStore(context), []);
 }
 
-function useSubscribe<T, K extends MapKey>(stateKey: K): T {
+function useSubscribe<T>(stateKey: MapKey): T {
   const [, setter] = useState<boolean>(true);
   const store = useStore();
 
@@ -63,12 +63,9 @@ function useSubscribe<T, K extends MapKey>(stateKey: K): T {
   return store.getValue(stateKey);
 }
 
-function useSetInterstate<T, K extends MapKey = MapKey>(
-  stateKey: K,
-  initialValue?: InitializeParam<T>,
-) {
+function useSetInterstate<T>(stateKey: MapKey, initialValue?: InitializeParam<T>) {
   const store = useStore();
-  const setInterstate = useMemo(() => factoryOfSetInterstate<T, K>(stateKey, store), [stateKey]);
+  const setInterstate = useMemo(() => factoryOfSetInterstate<T>(stateKey, store), [stateKey]);
 
   useMemo(() => {
     store.initEntry(stateKey);
@@ -86,20 +83,17 @@ function useSetInterstate<T, K extends MapKey = MapKey>(
   return setInterstate;
 }
 
-function useSubscribeInterstate<T, K extends MapKey = MapKey>(
-  stateKey: K,
-  initialValue?: InitializeParam<T>,
-) {
-  useSetInterstate<T, K>(stateKey, initialValue);
-  return useSubscribe<T, K>(stateKey);
+function useSubscribeInterstate<T>(stateKey: MapKey, initialValue?: InitializeParam<T>) {
+  useSetInterstate<T>(stateKey, initialValue);
+  return useSubscribe<T>(stateKey);
 }
 
-function useInterstate<T, K extends MapKey = MapKey>(
-  stateKey: K,
+function useInterstate<T>(
+  stateKey: MapKey,
   initialValue?: InitializeParam<T>,
 ): [() => T, SetInterstate<T>] {
-  const setInterstate = useSetInterstate<T, K>(stateKey, initialValue);
-  const useSubscribeInterstateDynamic = () => useSubscribe<T, K>(stateKey);
+  const setInterstate = useSetInterstate<T>(stateKey, initialValue);
+  const useSubscribeInterstateDynamic = () => useSubscribe<T>(stateKey);
   return [useSubscribeInterstateDynamic, setInterstate];
 }
 
