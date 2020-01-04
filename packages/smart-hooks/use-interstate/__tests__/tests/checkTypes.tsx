@@ -114,8 +114,9 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesExplicitly6 />);
 
     const id7: StateKey = '7';
-    const initValue7: InitializeParam<(p: string) => boolean> = () => (sn: string | number) =>
-      sn === '';
+    const initValue7: InitializeParam<(p: string) => boolean | string> = () => (
+      sn: string | number,
+    ) => sn === '';
     let testType7: (n: string, k: { a: boolean }) => boolean | string | number | { b: symbol };
     const bindValue7: InterstateParam<(p: string) => boolean | string> = () => (snb: string) =>
       snb === '';
@@ -135,8 +136,9 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesExplicitly7 />);
 
     const id8: StateKey = '8';
-    const initValue8: InitializeParam<(p: string) => boolean> = () => (sn: string | number) =>
-      sn === '';
+    const initValue8: InitializeParam<(p: string) => boolean | string> = () => (
+      sn: string | number,
+    ) => sn === '';
     let testType8: (n: string, k: { a: boolean }) => boolean | string | number | { b: symbol };
     const bindValue8: InterstateParam<(p: string) => boolean | string> = () => (snb: string) =>
       snb === '';

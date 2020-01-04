@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import { TestDescription } from '../testsAssets';
-debugger;
 
 const dynamicSubscriptionWorks: TestDescription = (
   p,
@@ -16,11 +15,11 @@ const dynamicSubscriptionWorks: TestDescription = (
 
     const subscribeId1 = '1';
     const subscribeId2 = '2';
-    const testId1 = 'first';
-    const testId2 = 'second';
-    const testId3 = 'third';
-    const testId4 = 'forth';
-    const testId5 = 'fifth';
+    const testId1 = 'a';
+    const testId2 = 'b';
+    const testId3 = 'c';
+    const testId4 = 'd';
+    const testId5 = 'e';
     const countRender1 = executionCountersFactory();
     const countRender2 = executionCountersFactory();
     const countRender3 = executionCountersFactory();
@@ -48,6 +47,11 @@ const dynamicSubscriptionWorks: TestDescription = (
 
           case '4':
             setInitialValue('neptune');
+            break;
+
+          case '5':
+            setSubscribeId(subscribeId1);
+            setInitialValue(() => (prevState: string) => prevState + ' is far');
             break;
 
           default:
@@ -216,6 +220,18 @@ const dynamicSubscriptionWorks: TestDescription = (
     if (shouldTestPerformance) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(1);
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(1);
+    }
+
+    fireEvent.change(getByTestId(testId5), { target: { value: '5' } });
+    expect(getTextFromNode(testId1)).toBe('uranus is far');
+    expect(getTextFromNode(testId4)).toBe('uranus is far');
+    expect(countRender1.howManyTimesBeenCalled()).toBe(7);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(1);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(1);
+    expect(countRender4.howManyTimesBeenCalled()).toBe(13);
+    if (shouldTestPerformance) {
+      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(2);
+      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(0);
     }
 
     unmount();

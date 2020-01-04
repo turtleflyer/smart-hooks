@@ -66,7 +66,7 @@ const testCases: Array<[string, CreateTestComponents]> = [
         CanListenAndUpdate: CanListenAndUpdateDependsOnAPI((subscribeId, initialValue) => {
           return [
             useSubscribeInterstate(subscribeId, initialValue),
-            useSetInterstate(subscribeId, initialValue),
+            useSetInterstate(subscribeId),
           ];
         }),
       };

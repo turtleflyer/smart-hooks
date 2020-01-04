@@ -20,7 +20,7 @@ const Scope = ({ children }: { children: React.ReactChild | React.ReactChild[] }
 };
 
 type InterstateParam<T> = Exclude<T, Function> | ((oldV: T) => T);
-type InitializeParam<T> = Exclude<InterstateParam<T>, undefined | ((oldV: T) => T)> | (() => T);
+type InitializeParam<T> = Exclude<InterstateParam<T>, undefined>;
 
 type SetInterstate<T> = (p: InterstateParam<T>) => void;
 
