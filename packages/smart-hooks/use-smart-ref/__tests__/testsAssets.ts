@@ -1,18 +1,6 @@
 import { useSmartRef } from '../useSmartRef';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 
-class Counter {
-  toHaveBeenCalledTimes: number = 0;
-
-  count() {
-    this.toHaveBeenCalledTimes++;
-  }
-
-  reset() {
-    this.toHaveBeenCalledTimes = 0;
-  }
-}
-
 interface AssetsImport {
   executionCountersFactory: typeof executionCountersFactory;
 }
