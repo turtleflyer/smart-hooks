@@ -9,8 +9,5 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
-  },
-  "files": [
-    "useSmartRef.ts"
-  ]
+  }
 }

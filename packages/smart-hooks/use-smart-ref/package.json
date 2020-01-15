@@ -16,8 +16,8 @@
     "test:pre": "jest pre",
     "test:post": "jest post",
     "bundle": "npm run build:js && npm run build:types && rollup -c",
-    "build:js": "tsc",
-    "build:types": "tsc --emitDeclarationOnly --declaration --outDir ./dist"
+    "build:js": "tsc -p ./tsbundle.json",
+    "build:types": "tsc -p ./tsbundle.json --emitDeclarationOnly --declaration --outDir ./dist"
   },
   "repository": {
     "type": "git",

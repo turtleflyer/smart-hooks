@@ -2,10 +2,10 @@
 import babel from 'rollup-plugin-babel';
 import bundleTypesDeclaration from '../../../bundleTypesDeclaration';
 import pkg from './package.json';
-import tsconfig from './tsconfig.json';
+import tsbundle from './tsbundle.json';
 import determineInput from '../../../determineInput';
 
-const input = determineInput(tsconfig);
+const input = determineInput(tsbundle);
 const name = 'useInterstate';
 
 export default {
@@ -13,7 +13,10 @@ export default {
 
   external: ['react'],
 
-  plugins: [babel({ extensions: ['.js'] }), bundleTypesDeclaration(input, pkg.types)],
+  plugins: [
+    babel({ extensions: ['.js'] }),
+    bundleTypesDeclaration(input, pkg.types),
+  ],
 
   output: [
     {
