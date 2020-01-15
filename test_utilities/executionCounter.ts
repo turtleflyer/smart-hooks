@@ -23,4 +23,4 @@ function executionCountersFactory(): ExecutionCounter {
   };
 }
 
-export { executionCountersFactory };
+export { executionCountersFactory, ExecutionCounter };
