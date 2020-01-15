@@ -13,7 +13,8 @@
     "arrow-parens": { "severity": "off" },
     "object-literal-sort-keys": { "severity": "off" },
     "no-empty": [true, "allow-empty-functions"],
-    "ordered-imports": false
+    "ordered-imports": false,
+    "jsx-wrap-multiline": false
   },
   "rulesDirectory": []
 }
