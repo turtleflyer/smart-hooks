@@ -1,0 +1,39 @@
+{
+  "name": "@smart-hooks/use-smart-memo",
+  "version": "1.0.0",
+  "description": "Extends useRef logic",
+  "main": "./dist/use-smart-memo.cjs.js",
+  "module": "./dist/use-smart-memo.esm.js",
+  "browser": "./dist/use-smart-memo.umd.js",
+  "types": "./dist/use-smart-memo.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test:pre": "jest pre",
+    "test:post": "jest post",
+    "bundle": "npm run build:js && npm run build:types && rollup -c",
+    "build:js": "tsc -p ./tsbundle.json",
+    "build:types": "tsc -p ./tsbundle.json --emitDeclarationOnly --declaration --outDir ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turtleflyer/smart-hooks.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Andrei Kovalev <turtlefly@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/turtleflyer/smart-hooks/issues"
+  },
+  "homepage": "https://github.com/turtleflyer/smart-hooks#readme",
+  "peerDependencies": {
+    "react": "^16.9.0"
+  },
+  "gitHead": "9a47ccf24e6f09b4f17ebf01516e8c4833f2290f"
+}
