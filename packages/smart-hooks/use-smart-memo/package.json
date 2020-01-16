@@ -1,7 +1,7 @@
 {
   "name": "@smart-hooks/use-smart-memo",
   "version": "1.0.0",
-  "description": "Extends useRef logic",
+  "description": "Make useMemo predictable",
   "main": "./dist/use-smart-memo.cjs.js",
   "module": "./dist/use-smart-memo.esm.js",
   "browser": "./dist/use-smart-memo.umd.js",
