@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import React, { useRef } from 'react';
+import React from 'react';
 import { TestDescription } from '../testsAssets';
 import { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
 
