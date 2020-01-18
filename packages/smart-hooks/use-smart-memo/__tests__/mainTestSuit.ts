@@ -1,5 +1,6 @@
 import { AssetsImport, UseSmartMemoImport, TestParameter } from './testsAssets';
 import checkRecalculation from './tests/checkRecalculation';
+import generalFunctionality from './tests/generalFunctionality';
 
 const mainTestSuit = (packagePath: string) =>
   describe('Test useSmartMemo correctness', () => {
@@ -15,6 +16,7 @@ const mainTestSuit = (packagePath: string) =>
       });
     });
 
+    test(...generalFunctionality(testParameter));
     test(...checkRecalculation(testParameter));
   });
 
