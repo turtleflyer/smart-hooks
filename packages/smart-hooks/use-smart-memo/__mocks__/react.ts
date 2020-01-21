@@ -1,10 +1,19 @@
-function useMemo<T>(
+import { flagManager } from '../__tests__/testFlags';
+const react = jest.requireActual('react');
+const { useMemo } = react;
+
+function mockUseMemo<T>(
   factory: () => T,
-  // tslint:disable-next-line: variable-name
-  _deps: ReadonlyArray<any> | undefined,
+  deps: ReadonlyArray<any> | undefined,
 ) {
-  return factory();
+  if (flagManager.read('MOCK_USE_MEMO')) {
+    flagManager.set('PROOF_OF_MOCK', 'mocked');
+    return factory();
+  } else {
+    flagManager.set('PROOF_OF_MOCK', 'original');
+    // tslint:disable-next-line: react-hooks-nesting
+    return useMemo(factory, deps);
+  }
 }
 
-const react = jest.requireActual('react');
-module.exports = { ...react, useMemo };
+module.exports = { ...react, useMemo: mockUseMemo };
