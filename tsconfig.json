@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ESNEXT",
+    "module": "es2015",
+    "jsx": "react",
+    "outDir": "./ts",
+    "strict": true,
+    "alwaysStrict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  }
+}
