@@ -1,3 +1,6 @@
 import mainTestSuit from '../mainTestSuit';
+import { flagManager } from '../testFlags';
 
-mainTestSuit('../dist/use-interstate.cjs.js', false);
+flagManager.set('SHOULD_TEST_PERFORMANCE', false);
+
+mainTestSuit('../dist/use-interstate.cjs.js');

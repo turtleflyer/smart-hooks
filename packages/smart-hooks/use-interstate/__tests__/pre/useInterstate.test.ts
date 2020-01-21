@@ -1,3 +1,6 @@
 import mainTestSuit from '../mainTestSuit';
+import { flagManager } from '../testFlags';
 
-mainTestSuit('../useInterstate.tsx', true);
+flagManager.set('SHOULD_TEST_PERFORMANCE', true);
+
+mainTestSuit('../useInterstate.tsx');

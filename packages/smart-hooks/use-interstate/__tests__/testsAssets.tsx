@@ -29,7 +29,9 @@ function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
   const fireNode = (testId: string, value: string) => {
     const element = getByTestId(testId);
     if (element) {
-      const inputChild = element.querySelector(`[data-testid=${testId}] > input`);
+      const inputChild = element.querySelector(
+        `[data-testid=${testId}] > input`,
+      );
       if (inputChild) {
         fireEvent.change(inputChild, {
           target: { value },
@@ -40,7 +42,9 @@ function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
 
   const getTextFromNode = (testId: string) => {
     const element = getByTestId(testId);
-    return element && element.firstChild && element.firstChild.nodeName === '#text'
+    return element &&
+      element.firstChild &&
+      element.firstChild.nodeName === '#text'
       ? element.firstChild.textContent
       : '';
   };
@@ -62,7 +66,10 @@ interface TestComponentsProps {
   countRender?: () => void;
   children?: React.ReactChild | React.ReactChild[];
 }
-type UseAPItoListen = (subscribeId: InterstateID, initialValue?: FieldsValue) => FieldsValue;
+type UseAPItoListen = (
+  subscribeId: InterstateID,
+  initialValue?: FieldsValue,
+) => FieldsValue;
 type UseAPItoUpdate = (
   subscribeId: InterstateID,
   initialValue?: FieldsValue,
@@ -71,11 +78,13 @@ type UseAPItoListenAndUpdate = (
   subscribeId: InterstateID,
   initialValue?: FieldsValue,
 ) => [FieldsValue, (p: FieldsValue) => void];
-type ComponentDependsOnAPI<T extends UseAPItoListen | UseAPItoUpdate | UseAPItoListenAndUpdate> = (
-  useAPI: T,
-) => React.FunctionComponent<TestComponentsProps>;
+type ComponentDependsOnAPI<
+  T extends UseAPItoListen | UseAPItoUpdate | UseAPItoListenAndUpdate
+> = (useAPI: T) => React.FunctionComponent<TestComponentsProps>;
 
-const defaultComposeCallback: ComposeCallback = set => ({ target: { value } }) => {
+const defaultComposeCallback: ComposeCallback = set => ({
+  target: { value },
+}) => {
   set(value);
 };
 
@@ -108,7 +117,10 @@ const CanUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoUpdate> = useAPI => (
   children,
 }) => {
   const setState = useAPI(subscribeId, initialValue);
-  const callback = useCallback(composeCallback(setState), [composeCallback, setState]);
+  const callback = useCallback(composeCallback(setState), [
+    composeCallback,
+    setState,
+  ]);
   useEffect(() => {
     countRender();
   });
@@ -130,7 +142,10 @@ const CanListenAndUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoListenAndUpd
   children,
 }) => {
   const [state, setState] = useAPI(subscribeId, initialValue);
-  const callback = useCallback(composeCallback(setState), [composeCallback, setState]);
+  const callback = useCallback(composeCallback(setState), [
+    composeCallback,
+    setState,
+  ]);
   useEffect(() => {
     countRender();
   });
@@ -168,7 +183,6 @@ interface TestParameter {
 type TestDescription = (
   p: TestParameter,
   createTestComponents: CreateTestComponents,
-  shouldTestPerformance: boolean,
 ) => [string, () => void];
 
 type CreateTestComponents = (

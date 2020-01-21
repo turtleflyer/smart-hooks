@@ -1,10 +1,10 @@
 import React from 'react';
 import { TestDescription, ComposeCallback } from '../testsAssets';
+import { flagManager } from '../testFlags';
 
 const valuesRemainAfterTreeUnmount: TestDescription = (
   p,
   createTestComponents,
-  shouldTestPerformance,
 ) => [
   'values remain after tree unmount',
   () => {
@@ -15,7 +15,9 @@ const valuesRemainAfterTreeUnmount: TestDescription = (
     const subscribeId = '1';
     const testId1 = 'updater';
     const testId2 = 'listener';
-    const altComposeCallback: ComposeCallback = set => ({ target: { value } }) => {
+    const altComposeCallback: ComposeCallback = set => ({
+      target: { value },
+    }) => {
       set((old: string) => (old || '') + value);
     };
     const TestComponent = () => (
@@ -36,20 +38,26 @@ const valuesRemainAfterTreeUnmount: TestDescription = (
       </>
     );
 
-    const { unmount, rerender, fireNode, getTextFromNode } = render(<TestComponent />);
+    const { unmount, rerender, fireNode, getTextFromNode } = render(
+      <TestComponent />,
+    );
     const map = getLastMap();
     expect(getTextFromNode(testId2)).toBe('');
 
     fireNode(testId1, 'g');
     fireNode(testId1, 'e');
     expect(getTextFromNode(testId2)).toBe('ge');
-    if (shouldTestPerformance) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(1);
+    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
+        1,
+      );
     }
 
     unmount();
-    if (shouldTestPerformance) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(0);
+    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
+        0,
+      );
     }
 
     rerender(<TestComponent />);
@@ -58,13 +66,17 @@ const valuesRemainAfterTreeUnmount: TestDescription = (
     fireNode(testId1, 'f');
     fireNode(testId1, 'r');
     expect(getTextFromNode(testId2)).toBe('gefr');
-    if (shouldTestPerformance) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(1);
+    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
+        1,
+      );
     }
 
     unmount();
-    if (shouldTestPerformance) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(0);
+    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
+        0,
+      );
     }
   },
 ];

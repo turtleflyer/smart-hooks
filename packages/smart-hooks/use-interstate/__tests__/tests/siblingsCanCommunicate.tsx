@@ -1,11 +1,8 @@
 import React from 'react';
 import { TestDescription } from '../testsAssets';
+import { flagManager } from '../testFlags';
 
-const siblingsCanCommunicate: TestDescription = (
-  p,
-  createTestComponents,
-  shouldTestPerformance,
-) => [
+const siblingsCanCommunicate: TestDescription = (p, createTestComponents) => [
   'siblings can communicate',
   () => {
     const {
@@ -44,13 +41,17 @@ const siblingsCanCommunicate: TestDescription = (
     expect(getTextFromNode(testId2)).toBe('cat');
     expect(countRender1.howManyTimesBeenCalled()).toBe(1);
     expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    if (shouldTestPerformance) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(1);
+    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
+        1,
+      );
     }
 
     unmount();
-    if (shouldTestPerformance) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(0);
+    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
+        0,
+      );
     }
   },
 ];
