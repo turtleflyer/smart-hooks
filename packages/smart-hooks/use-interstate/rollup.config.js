@@ -11,7 +11,7 @@ const name = 'useInterstate';
 export default {
   input,
 
-  external: ['react'],
+  external: ['react', '@smart-hooks/use-smart-memo'],
 
   plugins: [
     babel({ extensions: ['.js'] }),
@@ -34,6 +34,7 @@ export default {
 
       globals: {
         react: 'React',
+        '@smart-hooks/use-smart-memo': 'useSmartMemo',
       },
     },
   ],
