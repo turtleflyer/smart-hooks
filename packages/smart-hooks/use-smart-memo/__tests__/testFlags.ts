@@ -5,7 +5,7 @@ interface TestFlags {
   PROOF_OF_MOCK: string;
 }
 
-const testFlagsDefault = {
+const testFlagsDefault: TestFlags = {
   MOCK_USE_MEMO: false,
   PROOF_OF_MOCK: '',
 };

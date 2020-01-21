@@ -4,7 +4,7 @@ interface TestFlags {
   SHOULD_TEST_PERFORMANCE: boolean;
 }
 
-const testFlagsDefault = {
+const testFlagsDefault: TestFlags = {
   SHOULD_TEST_PERFORMANCE: true,
 };
 
