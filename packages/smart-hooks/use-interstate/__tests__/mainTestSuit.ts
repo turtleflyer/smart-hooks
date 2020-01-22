@@ -13,6 +13,7 @@ import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetS
 import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
 import testContext from './tests/testContext';
 import checkTypes from './tests/checkTypes';
+import { flagManager } from './testFlags';
 
 const testCases: Array<[string, CreateTestComponents]> = [
   [
@@ -87,57 +88,82 @@ const mainTestSuit = (packagePath: string) =>
     (name, createTestComponents) => {
       const testParameter: TestParameter = {} as TestParameter;
 
-      beforeEach(() => {
-        jest.isolateModules(() => {
-          const {
-            render,
-            getLastMap,
-            fireEvent,
-            executionCountersFactory,
-            CanListenDependsOnAPI,
-            CanUpdateDependsOnAPI,
-            CanListenAndUpdateDependsOnAPI,
-          } = require('./testsAssets') as AssetsImport;
-          const {
-            useInterstate,
-            useSubscribeInterstate,
-            useSetInterstate,
-            Scope,
-          } = require(packagePath) as UseInterstateImport;
+      describe.each([
+        [
+          'using original useMemo',
+          () => flagManager.set('MOCK_USE_MEMO', false),
+          'original',
+        ],
+        [
+          'using mocked useMemo',
+          () => flagManager.set('MOCK_USE_MEMO', true),
+          'mocked',
+        ],
+      ])('%s', (n, setMock, proofOfMock) => {
+        beforeAll(() => {
+          flagManager.set('PROOF_OF_MOCK', '');
+        });
 
-          testParameter.assets = {
-            render,
-            getLastMap,
-            fireEvent,
-            executionCountersFactory,
-            CanListenDependsOnAPI,
-            CanUpdateDependsOnAPI,
-            CanListenAndUpdateDependsOnAPI,
-            useInterstate,
-            useSubscribeInterstate,
-            useSetInterstate,
-            Scope,
-          };
+        beforeEach(() => {
+          setMock();
+          jest.isolateModules(() => {
+            const {
+              render,
+              getLastMap,
+              fireEvent,
+              executionCountersFactory,
+              CanListenDependsOnAPI,
+              CanUpdateDependsOnAPI,
+              CanListenAndUpdateDependsOnAPI,
+            } = require('./testsAssets') as AssetsImport;
+            const {
+              useInterstate,
+              useSubscribeInterstate,
+              useSetInterstate,
+              Scope,
+            } = require(packagePath) as UseInterstateImport;
+
+            testParameter.assets = {
+              render,
+              getLastMap,
+              fireEvent,
+              executionCountersFactory,
+              CanListenDependsOnAPI,
+              CanUpdateDependsOnAPI,
+              CanListenAndUpdateDependsOnAPI,
+              useInterstate,
+              useSubscribeInterstate,
+              useSetInterstate,
+              Scope,
+            };
+          });
+        });
+
+        test(...siblingsCanCommunicate(testParameter, createTestComponents));
+        test(...sophisticatedStructure(testParameter, createTestComponents));
+        test(
+          ...checkInitializationConcurrency(testParameter, createTestComponents),
+        );
+        test(
+          ...valuesRemainAfterTreeUnmount(testParameter, createTestComponents),
+        );
+        test(
+          ...rerenderWithInitValueResetState(
+            testParameter,
+            createTestComponents,
+          ),
+        );
+        test(...dynamicSubscriptionWorks(testParameter, createTestComponents));
+        test(...testContext(testParameter, createTestComponents));
+
+        if (name === '(using primary API)') {
+          test(...checkTypes(testParameter, createTestComponents));
+        }
+
+        test('proof of mock', () => {
+          expect(flagManager.read('PROOF_OF_MOCK')).toBe(proofOfMock);
         });
       });
-
-      test(...siblingsCanCommunicate(testParameter, createTestComponents));
-      test(...sophisticatedStructure(testParameter, createTestComponents));
-      test(
-        ...checkInitializationConcurrency(testParameter, createTestComponents),
-      );
-      test(
-        ...valuesRemainAfterTreeUnmount(testParameter, createTestComponents),
-      );
-      test(
-        ...rerenderWithInitValueResetState(testParameter, createTestComponents),
-      );
-      test(...dynamicSubscriptionWorks(testParameter, createTestComponents));
-      test(...testContext(testParameter, createTestComponents));
-
-      if (name === '(using primary API)') {
-        test(...checkTypes(testParameter, createTestComponents));
-      }
     },
   );
 
