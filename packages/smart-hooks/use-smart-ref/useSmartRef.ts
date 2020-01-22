@@ -1,70 +1,56 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
-type Effect<T extends HTMLElement> =
-  (el: T | null) => void | (() => void) | null | undefined;
-
-type RefCallback<T extends HTMLElement> = (el: T | null) => void;
-
-type GetRefCallback = <T extends HTMLElement>(
-  ref?: React.MutableRefObject<T | undefined | null>,
-) => RefCallback<T>;
+type Effect<T extends HTMLElement> = (el: T) => (() => void) | undefined;
 
 interface Store<T extends HTMLElement> {
-  clean?: void | (() => void) | null;
+  clean?: () => void;
   element: T | null;
   effect: Effect<T>;
 }
 
-type UseSmartRef = <T extends HTMLElement>(
+const useSmartRef = <T extends HTMLElement>(
   effect: Effect<T>,
-  ref?: React.MutableRefObject<HTMLElement | undefined | null>,
-) => RefCallback<T>;
+  ref?: React.MutableRefObject<HTMLElement | null>,
+) => {
+  const [store] = useState({} as Store<T>);
+  store.effect = effect;
 
-const getAssets = (): [Store<any>, () => void, GetRefCallback] => {
-  // tslint:disable-next-line: no-object-literal-type-assertion
-  const store: Store<any> = {} as Store<any>;
-
-  const conditionalClean = () => {
+  function cleanIfDefined() {
     if (typeof store.clean === 'function') {
       store.clean();
       store.clean = undefined;
     }
-  };
+  }
 
-  const getRefCallback: GetRefCallback = (ref) => (el) => {
-    store.element = el;
-    if (ref) {
-      ref.current = el;
-    }
-
-    if (el) {
-      conditionalClean();
-      store.clean = store.effect(el);
-    }
-  };
-
-  return [store, conditionalClean, getRefCallback];
-};
-
-const useSmartRef: UseSmartRef = (effect, ref) => {
-  const [store, conditionalClean, getRefCallback] = useMemo(() => getAssets(), []);
-
-  store.effect = effect;
-
+  /**
+   * If at the moment useEffect being executed store.element
+   * stores null then that means the element with
+   * "ref={refCallback}" expression has been unmounted and
+   * cleaning executes
+   */
   useEffect(() => {
     if (!store.element) {
-      conditionalClean();
+      cleanIfDefined();
     }
   });
 
   useEffect(
     () => () => {
-      conditionalClean();
+      cleanIfDefined();
     },
     [],
   );
 
-  const refCallback = useMemo(() => getRefCallback(ref), []);
+  const [refCallback] = useState(() => (el: T | null) => {
+    store.element = el;
+    if (ref) {
+      ref.current = el;
+    }
+    if (el) {
+      cleanIfDefined();
+      store.clean = store.effect(el);
+    }
+  });
 
   return refCallback;
 };
