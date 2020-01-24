@@ -29,7 +29,7 @@ const refBindingUpdate: TestDescription = p => [
       fake,
       writeRefs = false,
     }: {
-      scenario: 1 | 2;
+      scenario: 1 | 2 | 3;
       fake: string;
       writeRefs?: boolean;
     }) => {
@@ -46,21 +46,34 @@ const refBindingUpdate: TestDescription = p => [
       }, elementRef);
 
       if (writeRefs) {
-        dataKeyFromRef = elementRef.current && elementRef.current.getAttribute('data-key');
+        dataKeyFromRef =
+          elementRef.current && elementRef.current.getAttribute('data-key');
       }
 
       return (
         <>
-          {scenario === 1 ? (
-            <div key="1" data-key="1" ref={ref} />
-          ) : (
-            <div key="2" data-key="2" ref={ref} />
-          )}
+          {(() => {
+            switch (scenario) {
+              case 1:
+                return <div key="1" data-key="1" ref={ref} />;
+
+              case 2:
+                return <div key="2" data-key="2" ref={ref} />;
+
+              case 3:
+                return;
+
+              default:
+                break;
+            }
+          })()}
         </>
       );
     };
 
-    const { rerender, unmount } = render(<TestComponent scenario={1} fake="red" />);
+    const { rerender, unmount } = render(
+      <TestComponent scenario={1} fake="red" />,
+    );
     expect(mainCounter.howManyTimesBeenCalled()).toBe(1);
     expect(actionCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeFake).toBe('red');
@@ -100,8 +113,18 @@ const refBindingUpdate: TestDescription = p => [
     rerender(<TestComponent scenario={1} fake="pink" writeRefs={true} />);
     expect(dataKeyFromRef).toBe('1');
 
+    rerender(<TestComponent scenario={3} fake="brown" />);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(9);
+    expect(actionCounter.howManyTimesBeenCalled()).toBe(3);
+    expect(storeFake).toBe('pink');
+    expect(cleanCounter.howManyTimesBeenCalled()).toBe(3);
+    expect(storeFakeAfterClean).toBe('pink');
+    expect(dataKeyOfElement).toBe('1');
+    rerender(<TestComponent scenario={3} fake="brown" writeRefs={true} />);
+    expect(dataKeyFromRef).toBe(null);
+
     unmount();
-    expect(mainCounter.howManyTimesBeenCalled()).toBe(8);
+    expect(mainCounter.howManyTimesBeenCalled()).toBe(10);
     expect(actionCounter.howManyTimesBeenCalled()).toBe(3);
     expect(storeFake).toBe('pink');
     expect(cleanCounter.howManyTimesBeenCalled()).toBe(3);
