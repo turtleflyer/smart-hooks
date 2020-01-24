@@ -10,17 +10,21 @@ const testOmittingOptionalAPI: TestDescription = p => [
     } = p;
     let recordElement: HTMLDivElement | undefined | null;
     const TestComponent = ({ dataKey }: { dataKey: string }) => {
-      const ref = useSmartRef((el: HTMLDivElement | null) => {
+      const ref = useSmartRef((el: HTMLDivElement) => {
         recordElement = el;
       });
       return <div data-key={dataKey} ref={ref} />;
     };
 
     const { rerender, unmount } = render(<TestComponent dataKey="Baltimore" />);
-    expect(recordElement && recordElement.getAttribute('data-key')).toBe('Baltimore');
+    expect(recordElement && recordElement.getAttribute('data-key')).toBe(
+      'Baltimore',
+    );
 
     rerender(<TestComponent dataKey="Los Angeles" />);
-    expect(recordElement && recordElement.getAttribute('data-key')).toBe('Los Angeles');
+    expect(recordElement && recordElement.getAttribute('data-key')).toBe(
+      'Los Angeles',
+    );
 
     unmount();
   },

@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 
-type Effect<T extends HTMLElement> = (el: T) => (() => void) | undefined;
+type Effect<T extends HTMLElement> = (el: T) => void | (() => void) | undefined;
 
 interface Store<T extends HTMLElement> {
-  clean?: () => void;
+  clean?: void | (() => void);
   element: T | null;
   effect: Effect<T>;
 }
 
 const useSmartRef = <T extends HTMLElement>(
   effect: Effect<T>,
-  ref?: React.MutableRefObject<HTMLElement | null>,
+  ref?: React.MutableRefObject<HTMLElement | null | undefined>,
 ) => {
   const [store] = useState({} as Store<T>);
   store.effect = effect;

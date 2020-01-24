@@ -11,9 +11,11 @@ const typeParameter: TestDescription = p => [
     const TestComponent = () => {
       const commonElementRef = useRef();
       const spanElementRef = useRef<HTMLSpanElement>();
-      const divRefCallback = useSmartRef((el: HTMLDivElement | null) => null, commonElementRef);
-      const spanRefCallback = useSmartRef<HTMLSpanElement>(() => null, spanElementRef);
-      const commonRefCallback = useSmartRef(() => null, spanElementRef);
+      const divRefCallback = useSmartRef((el: HTMLDivElement) => {},
+      commonElementRef);
+      const spanRefCallback = useSmartRef<HTMLSpanElement>(() => {},
+      spanElementRef);
+      const commonRefCallback = useSmartRef(() => {}, spanElementRef);
       return (
         <>
           <div ref={divRefCallback} />
