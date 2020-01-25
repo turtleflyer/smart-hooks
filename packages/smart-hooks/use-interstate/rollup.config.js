@@ -2,6 +2,7 @@
 import babel from 'rollup-plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import { uglify } from 'rollup-plugin-uglify';
 import pkg from './package.json';
 import tsbundle from './tsbundle.json';
 import { determineInput } from '../../../bundle_utilities/determineInput';
@@ -35,7 +36,7 @@ export default [
 
     external: ['react'],
 
-    plugins: [babel({ extensions: ['.js'] }), resolve(), commonjs()],
+    plugins: [babel({ extensions: ['.js'] }), resolve(), commonjs(), uglify()],
 
     output: [
       {
