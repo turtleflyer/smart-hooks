@@ -21,9 +21,17 @@ const cleaningAfterUnmount: TestDescription = p => [
       cleanerCounter.count();
       storeCleanerFake = fake;
     };
-    let refElement: React.MutableRefObject<HTMLElement | undefined | null> | undefined;
+    let refElement:
+      | React.MutableRefObject<HTMLElement | undefined | null>
+      | undefined;
 
-    const TestComponent = ({ scenario, fake }: { scenario: 1 | 2; fake: string }) => {
+    const TestComponent = ({
+      scenario,
+      fake,
+    }: {
+      scenario: 1 | 2;
+      fake: string;
+    }) => {
       mainCounter.count();
       refElement = useRef<HTMLElement | null>();
 
@@ -36,25 +44,28 @@ const cleaningAfterUnmount: TestDescription = p => [
 
       return (
         <div>
-          {' '}
           {scenario === 1 && (
             <div data-key="element" ref={ref}>
               test
             </div>
-          )}{' '}
+          )}
         </div>
       );
     };
 
-    const { rerender, unmount } = render(<TestComponent scenario={1} fake="right" />);
+    const { rerender, unmount } = render(
+      <TestComponent scenario={1} fake="right" />,
+    );
     expect(mainCounter.howManyTimesBeenCalled()).toBe(1);
     expect(actionCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeActionFake).toBe('right');
     expect(cleanerCounter.howManyTimesBeenCalled()).toBe(0);
     expect(storeCleanerFake).toBe(undefined);
-    expect(refElement && refElement.current && refElement.current.getAttribute('data-key')).toBe(
-      'element',
-    );
+    expect(
+      refElement &&
+        refElement.current &&
+        refElement.current.getAttribute('data-key'),
+    ).toBe('element');
 
     rerender(<TestComponent scenario={2} fake="left" />);
     expect(mainCounter.howManyTimesBeenCalled()).toBe(2);
