@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 type Effect<T extends HTMLElement> = (el: T) => void | (() => void) | undefined;
 
@@ -41,7 +41,7 @@ const useSmartRef = <T extends HTMLElement>(
     [],
   );
 
-  const [refCallback] = useState(() => (el: T | null) => {
+  const refCallback = useCallback((el: T | null) => {
     store.element = el;
     if (ref) {
       ref.current = el;
@@ -50,7 +50,7 @@ const useSmartRef = <T extends HTMLElement>(
       cleanIfDefined();
       store.clean = store.effect(el);
     }
-  });
+  }, []);
 
   return refCallback;
 };
