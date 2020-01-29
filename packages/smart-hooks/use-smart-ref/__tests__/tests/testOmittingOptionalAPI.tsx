@@ -3,7 +3,7 @@ import React from 'react';
 import { TestDescription } from '../testsAssets';
 
 const testOmittingOptionalAPI: TestDescription = p => [
-  'use smartRef without optional ref parameter and returned cleaning function',
+  'use smartRef without optional ref parameter when it returns cleaning function',
   () => {
     const {
       assets: { useSmartRef },
