@@ -22,7 +22,7 @@ const cleaningAfterUnmount: TestDescription = p => [
       storeCleanerFake = fake;
     };
     let refElement:
-      | React.MutableRefObject<HTMLElement | undefined | null>
+      | React.MutableRefObject<HTMLDivElement | undefined | null>
       | undefined;
 
     const TestComponent = ({
@@ -33,7 +33,7 @@ const cleaningAfterUnmount: TestDescription = p => [
       fake: string;
     }) => {
       mainCounter.count();
-      refElement = useRef<HTMLElement | null>();
+      refElement = useRef<HTMLDivElement | null>();
 
       const ref = useSmartRef<HTMLDivElement>(() => {
         actionHandler(fake);

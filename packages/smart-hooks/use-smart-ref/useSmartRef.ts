@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 
 type Effect<T extends HTMLElement> = (el: T) => void | (() => void) | undefined;
+type RefCallback<T extends HTMLElement> = (el: T | null) => void;
 
 interface Store<T extends HTMLElement> {
   clean?: void | (() => void);
@@ -10,7 +11,7 @@ interface Store<T extends HTMLElement> {
 
 const useSmartRef = <T extends HTMLElement>(
   effect: Effect<T>,
-  ref?: React.MutableRefObject<HTMLElement | null | undefined>,
+  ref?: React.MutableRefObject<T | null | undefined>,
 ) => {
   const [store] = useState({} as Store<T>);
   store.effect = effect;
@@ -41,7 +42,7 @@ const useSmartRef = <T extends HTMLElement>(
     [],
   );
 
-  const refCallback = useCallback((el: T | null) => {
+  const refCallback = useCallback<RefCallback<T>>((el: T | null) => {
     store.element = el;
     if (ref) {
       ref.current = el;
