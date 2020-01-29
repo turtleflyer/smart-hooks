@@ -56,4 +56,4 @@ const useSmartRef = <T extends HTMLElement>(
   return refCallback;
 };
 
-export { useSmartRef };
+export { useSmartRef, RefCallback };
