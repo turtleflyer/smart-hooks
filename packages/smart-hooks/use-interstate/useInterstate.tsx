@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useMemo,
   useState,
+  useCallback,
 } from 'react';
 import { MapKey, Store, storeFactory } from './storeFactory';
 import { useSmartMemo } from '@smart-hooks/use-smart-memo';
@@ -65,8 +66,8 @@ function useSetInterstate<T>(
   initialValue?: InitializeParam<T>,
 ) {
   const store = useStore();
-  const setInterstate = useMemo<SetInterstate<T>>(
-    () => valueToSet => {
+  const setInterstate = useCallback<SetInterstate<T>>(
+    valueToSet => {
       const value = store.getValue(stateKey) as T;
       const newActualValue = isFunction(valueToSet)
         ? valueToSet(value)
