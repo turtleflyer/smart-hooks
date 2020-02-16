@@ -1,6 +1,7 @@
 import { AssetsImport, UseSmartMemoImport, TestParameter } from './testsAssets';
 import checkRecalculation from './tests/checkRecalculation';
 import generalFunctionality from './tests/generalFunctionality';
+import edgeCases from './tests/edgeCases';
 import { flagManager } from './testFlags';
 
 const mainTestSuit = (packagePath: string) =>
@@ -35,6 +36,7 @@ const mainTestSuit = (packagePath: string) =>
 
     test(...generalFunctionality(testParameter));
     test(...checkRecalculation(testParameter));
+    test(...edgeCases(testParameter));
 
     test('proof of mock', () => {
       expect(flagManager.read('PROOF_OF_MOCK')).toBe(proofOfMock);
