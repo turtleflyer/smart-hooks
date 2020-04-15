@@ -4,3 +4,4 @@ lab/
 lerna-debug.log
 .vscode/
 ts/
+_gsdata_/
