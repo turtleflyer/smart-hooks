@@ -2,16 +2,12 @@ import React from 'react';
 import { TestDescription, ComposeCallback } from '../testsAssets';
 import { flagManager } from '../testFlags';
 
-const valuesRemainAfterTreeUnmount: TestDescription = (
-  p,
-  createTestComponents,
-) => [
+const valuesRemainAfterTreeUnmount: TestDescription = p => [
   'values remain after tree unmount',
   () => {
     const {
-      assets: { render, getLastMap },
+      assets: { render, getLastMap, CanListen, CanUpdate },
     } = p;
-    const { CanListen, CanUpdate } = createTestComponents(p);
     const subscribeId = '1';
     const testId1 = 'updater';
     const testId2 = 'listener';
@@ -39,7 +35,7 @@ const valuesRemainAfterTreeUnmount: TestDescription = (
     );
 
     const { unmount, rerender, fireNode, getTextFromNode } = render(
-      <TestComponent />,
+      <TestComponent />
     );
     const map = getLastMap();
     expect(getTextFromNode(testId2)).toBe('');
@@ -49,14 +45,14 @@ const valuesRemainAfterTreeUnmount: TestDescription = (
     expect(getTextFromNode(testId2)).toBe('ge');
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
 
@@ -68,14 +64,14 @@ const valuesRemainAfterTreeUnmount: TestDescription = (
     expect(getTextFromNode(testId2)).toBe('gefr');
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
   },

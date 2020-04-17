@@ -2,15 +2,19 @@ import React from 'react';
 import { TestDescription, ComposeCallback } from '../testsAssets';
 import { flagManager } from '../testFlags';
 
-const sophisticatedStructure: TestDescription = (p, createTestComponents) => [
+const sophisticatedStructure: TestDescription = p => [
   'sophisticated structure can communicate',
   () => {
     const {
-      assets: { render, getLastMap, executionCountersFactory },
+      assets: {
+        render,
+        getLastMap,
+        executionCountersFactory,
+        CanListen,
+        CanUpdate,
+        CanListenAndUpdate,
+      },
     } = p;
-    const { CanListen, CanUpdate, CanListenAndUpdate } = createTestComponents(
-      p,
-    );
     const subscribeId1 = '1';
     const subscribeId2 = '2';
     const testId1 = 'first';
@@ -184,20 +188,20 @@ const sophisticatedStructure: TestDescription = (p, createTestComponents) => [
     expect(countRender9.howManyTimesBeenCalled()).toBe(3);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        5,
+        5
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        3,
+        3
       );
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
   },

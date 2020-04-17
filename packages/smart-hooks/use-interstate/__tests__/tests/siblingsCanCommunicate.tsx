@@ -2,13 +2,18 @@ import React from 'react';
 import { TestDescription } from '../testsAssets';
 import { flagManager } from '../testFlags';
 
-const siblingsCanCommunicate: TestDescription = (p, createTestComponents) => [
+const siblingsCanCommunicate: TestDescription = p => [
   'siblings can communicate',
   () => {
     const {
-      assets: { render, getLastMap, executionCountersFactory },
+      assets: {
+        render,
+        getLastMap,
+        executionCountersFactory,
+        CanListen,
+        CanUpdate,
+      },
     } = p;
-    const { CanListen, CanUpdate } = createTestComponents(p);
     const subscribeId = '1';
     const testId1 = 'updater';
     const testId2 = 'listener';
@@ -43,14 +48,14 @@ const siblingsCanCommunicate: TestDescription = (p, createTestComponents) => [
     expect(countRender2.howManyTimesBeenCalled()).toBe(2);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
   },

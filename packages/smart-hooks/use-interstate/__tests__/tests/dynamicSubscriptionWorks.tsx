@@ -1,16 +1,22 @@
 import React, { useCallback, useState } from 'react';
 import { TestDescription } from '../testsAssets';
 import { flagManager } from '../testFlags';
+import { InterstateInitializeParam } from '../../useInterstate';
 
-const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
+const dynamicSubscriptionWorks: TestDescription = p => [
   'dynamic subscription works',
   () => {
     const {
-      assets: { render, getLastMap, fireEvent, executionCountersFactory },
+      assets: {
+        render,
+        getLastMap,
+        fireEvent,
+        executionCountersFactory,
+        CanListen,
+        CanUpdate,
+        CanListenAndUpdate,
+      },
     } = p;
-    const { CanListen, CanUpdate, CanListenAndUpdate } = createTestComponents(
-      p,
-    );
 
     const subscribeId1 = '1';
     const subscribeId2 = '2';
@@ -26,7 +32,9 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
 
     const Dynamic = () => {
       const [subscribeId, setSubscribeId] = useState('1');
-      const [initialValue, setInitialValue] = useState();
+      const [initialValue, setInitialValue] = useState<
+        InterstateInitializeParam<string>
+      >();
 
       const scenario = useCallback(({ target: { value } }) => {
         switch (value) {
@@ -104,7 +112,7 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     );
 
     const { fireNode, getTextFromNode, getByTestId, unmount } = render(
-      <TestComponent />,
+      <TestComponent />
     );
     const map = getLastMap();
     expect(getTextFromNode(testId1)).toBe('sun');
@@ -118,10 +126,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(2);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2,
+        2
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
 
@@ -138,10 +146,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(4);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
     }
 
@@ -158,10 +166,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(6);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2,
+        2
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
 
@@ -174,10 +182,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(7);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2,
+        2
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
 
@@ -189,10 +197,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(8);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
     }
 
@@ -204,10 +212,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(9);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
     }
 
@@ -220,10 +228,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(10);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2,
+        2
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
 
@@ -236,10 +244,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(11);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2,
+        2
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
 
@@ -252,10 +260,10 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(12);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1,
+        1
       );
     }
 
@@ -268,20 +276,20 @@ const dynamicSubscriptionWorks: TestDescription = (p, createTestComponents) => [
     expect(countRender4.howManyTimesBeenCalled()).toBe(13);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2,
+        2
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
       expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0,
+        0
       );
     }
   },

@@ -5,12 +5,12 @@ import { fireEvent, render } from '@testing-library/react';
 import * as mockedStoryFactory from '../storeFactory';
 import {
   Scope,
-  SetInterstate,
   useInterstate,
   useSubscribeInterstate,
   useSetInterstate,
+  InterstateInitializeParam,
 } from '../useInterstate';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 
 jest.mock('../storeFactory.ts');
@@ -30,7 +30,7 @@ function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
     const element = getByTestId(testId);
     if (element) {
       const inputChild = element.querySelector(
-        `[data-testid=${testId}] > input`,
+        `[data-testid=${testId}] > input`
       );
       if (inputChild) {
         fireEvent.change(inputChild, {
@@ -53,34 +53,21 @@ function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
 }
 
 type FieldsValue = string;
+type InitType = InterstateInitializeParam<FieldsValue>;
 type InterstateID = string | number;
 
 type ComposeCallback = (
-  set: SetInterstate<FieldsValue>,
+  set: (v: InterstateInitializeParam<FieldsValue>) => void
 ) => ({ target: { value } }: { target: { value: string } }) => void;
+
 interface TestComponentsProps {
   subscribeId: InterstateID;
-  initialValue?: FieldsValue;
+  initialValue?: InitType;
   testId?: string;
   composeCallback?: (...args: any[]) => any;
   countRender?: () => void;
   children?: React.ReactChild | React.ReactChild[];
 }
-type UseAPItoListen = (
-  subscribeId: InterstateID,
-  initialValue?: FieldsValue,
-) => FieldsValue;
-type UseAPItoUpdate = (
-  subscribeId: InterstateID,
-  initialValue?: FieldsValue,
-) => (p: FieldsValue) => void;
-type UseAPItoListenAndUpdate = (
-  subscribeId: InterstateID,
-  initialValue?: FieldsValue,
-) => [FieldsValue, (p: FieldsValue) => void];
-type ComponentDependsOnAPI<
-  T extends UseAPItoListen | UseAPItoUpdate | UseAPItoListenAndUpdate
-> = (useAPI: T) => React.FunctionComponent<TestComponentsProps>;
 
 const defaultComposeCallback: ComposeCallback = set => ({
   target: { value },
@@ -88,14 +75,15 @@ const defaultComposeCallback: ComposeCallback = set => ({
   set(value);
 };
 
-const CanListenDependsOnAPI: ComponentDependsOnAPI<UseAPItoListen> = useAPI => ({
+const CanListen: React.FunctionComponent<TestComponentsProps> = ({
   subscribeId,
   initialValue,
   testId = '',
   countRender = () => {},
   children,
 }) => {
-  const state = useAPI(subscribeId, initialValue);
+  const [useSubscribe] = useInterstate(subscribeId, initialValue);
+  const state = useSubscribe();
   useEffect(() => {
     countRender();
   });
@@ -108,7 +96,7 @@ const CanListenDependsOnAPI: ComponentDependsOnAPI<UseAPItoListen> = useAPI => (
   );
 };
 
-const CanUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoUpdate> = useAPI => ({
+const CanUpdate: React.FunctionComponent<TestComponentsProps> = ({
   subscribeId,
   initialValue,
   testId = '',
@@ -116,8 +104,8 @@ const CanUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoUpdate> = useAPI => (
   countRender = () => {},
   children,
 }) => {
-  const setState = useAPI(subscribeId, initialValue);
-  const callback = useCallback(composeCallback(setState), [
+  const [, setState] = useInterstate(subscribeId, initialValue);
+  const callback = useMemo(() => composeCallback(setState), [
     composeCallback,
     setState,
   ]);
@@ -133,7 +121,7 @@ const CanUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoUpdate> = useAPI => (
   );
 };
 
-const CanListenAndUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoListenAndUpdate> = useAPI => ({
+const CanListenAndUpdate: React.FunctionComponent<TestComponentsProps> = ({
   subscribeId,
   initialValue,
   testId = '',
@@ -141,8 +129,9 @@ const CanListenAndUpdateDependsOnAPI: ComponentDependsOnAPI<UseAPItoListenAndUpd
   countRender = () => {},
   children,
 }) => {
-  const [state, setState] = useAPI(subscribeId, initialValue);
-  const callback = useCallback(composeCallback(setState), [
+  const [useSubscribe, setState] = useInterstate(subscribeId, initialValue);
+  const state = useSubscribe();
+  const callback = useMemo(() => composeCallback(setState), [
     composeCallback,
     setState,
   ]);
@@ -171,27 +160,16 @@ interface AssetsImport {
   getLastMap: typeof getLastMap;
   fireEvent: typeof fireEvent;
   executionCountersFactory: typeof executionCountersFactory;
-  CanListenDependsOnAPI: typeof CanListenDependsOnAPI;
-  CanUpdateDependsOnAPI: typeof CanUpdateDependsOnAPI;
-  CanListenAndUpdateDependsOnAPI: typeof CanListenAndUpdateDependsOnAPI;
+  CanListen: React.FunctionComponent<TestComponentsProps>;
+  CanUpdate: React.FunctionComponent<TestComponentsProps>;
+  CanListenAndUpdate: React.FunctionComponent<TestComponentsProps>;
 }
 
 interface TestParameter {
   assets: AssetsImport & UseInterstateImport;
 }
 
-type TestDescription = (
-  p: TestParameter,
-  createTestComponents: CreateTestComponents,
-) => [string, () => void];
-
-type CreateTestComponents = (
-  p: TestParameter,
-) => {
-  CanListen: React.FunctionComponent<TestComponentsProps>;
-  CanUpdate: React.FunctionComponent<TestComponentsProps>;
-  CanListenAndUpdate: React.FunctionComponent<TestComponentsProps>;
-};
+type TestDescription = (p: TestParameter) => [string, () => void];
 
 export {
   newRender as render,
@@ -200,13 +178,12 @@ export {
   executionCountersFactory,
   FieldsValue,
   InterstateID,
-  CanListenDependsOnAPI,
-  CanUpdateDependsOnAPI,
-  CanListenAndUpdateDependsOnAPI,
+  CanListen,
+  CanUpdate,
+  CanListenAndUpdate,
   TestParameter,
   TestDescription,
   ComposeCallback,
   AssetsImport,
   UseInterstateImport,
-  CreateTestComponents,
 };

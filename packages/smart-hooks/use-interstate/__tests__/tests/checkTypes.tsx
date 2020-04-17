@@ -1,12 +1,21 @@
 import React, { useEffect } from 'react';
 import { TestDescription } from '../testsAssets';
-import { StateKey, InitializeParam, InterstateParam } from '../../useInterstate';
+import {
+  StateKey,
+  InterstateInitializeParam,
+  InterstateParam,
+} from '../../useInterstate';
 
 const checkTypes: TestDescription = p => [
   'types are consistent',
   () => {
     const {
-      assets: { render, useInterstate, useSetInterstate, useSubscribeInterstate },
+      assets: {
+        render,
+        useInterstate,
+        useSetInterstate,
+        useSubscribeInterstate,
+      },
     } = p;
 
     const id1 = 1;
@@ -46,9 +55,11 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesImplicitly2 />);
 
     const id3 = 3;
-    const initValue3 = () => (sn: string | number) => (sn === '' ? false : 'go');
+    const initValue3 = () => (sn: string | number) =>
+      sn === '' ? false : 'go';
     let testType3: (n: number, k: { a: boolean }) => boolean | string | number;
-    const bindValue3 = () => (snb: string | number | boolean) => (snb === 0 ? false : 'go');
+    const bindValue3 = () => (snb: string | number | boolean) =>
+      snb === 0 ? false : 'go';
     const CheckTypesImplicitly3 = () => {
       const [useSubscribe, setInterstate] = useInterstate(id3, initValue3);
       testType3 = useSubscribe();
@@ -62,9 +73,11 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesImplicitly3 />);
 
     const id4 = 4;
-    const initValue4 = () => (sn: string | number) => (sn === '' ? false : 'go');
+    const initValue4 = () => (sn: string | number) =>
+      sn === '' ? false : 'go';
     let testType4: (n: number, k: { a: boolean }) => boolean | string | number;
-    const bindValue4 = () => (snb: string | number | boolean) => (snb === 0 ? false : 'go');
+    const bindValue4 = () => (snb: string | number | boolean) =>
+      snb === 0 ? false : 'go';
     const CheckTypesImplicitly4 = () => {
       const setInterstate = useSetInterstate(id4, initValue4);
       testType4 = useSubscribeInterstate(id4);
@@ -78,12 +91,17 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesImplicitly4 />);
 
     const id5: StateKey = Symbol();
-    const initValue5: InitializeParam<string> = 'right';
+    const initValue5: InterstateInitializeParam<string> = 'right';
     let testType5: string | boolean | number;
     const bindValue51: InterstateParam<string | boolean> = false;
-    const bindValue52: InterstateParam<string | boolean> = (s: number | string | boolean) => 'left';
+    const bindValue52: InterstateParam<string | boolean> = (
+      s: number | string | boolean
+    ) => 'left';
     const CheckTypesExplicitly5 = () => {
-      const [useSubscribe, setInterstate] = useInterstate<string | boolean>(id5, initValue5);
+      const [useSubscribe, setInterstate] = useInterstate<string | boolean>(
+        id5,
+        initValue5
+      );
       testType5 = useSubscribe();
       useEffect(() => {
         setInterstate(bindValue51);
@@ -96,10 +114,12 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesExplicitly5 />);
 
     const id6: StateKey = Symbol();
-    const initValue6: InitializeParam<string> = 'right';
+    const initValue6: InterstateInitializeParam<string> = 'right';
     let testType6: string | boolean | number;
     const bindValue61: InterstateParam<string | boolean> = false;
-    const bindValue62: InterstateParam<string | boolean> = (s: number | string | boolean) => 'left';
+    const bindValue62: InterstateParam<string | boolean> = (
+      s: number | string | boolean
+    ) => 'left';
     const CheckTypesExplicitly6 = () => {
       const setInterstate = useSetInterstate<string | boolean>(id6, initValue6);
       testType6 = useSubscribeInterstate<string | boolean>(id6);
@@ -114,17 +134,20 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesExplicitly6 />);
 
     const id7: StateKey = '7';
-    const initValue7: InitializeParam<(p: string) => boolean | string> = () => (
-      sn: string | number,
-    ) => sn === '';
-    let testType7: (n: string, k: { a: boolean }) => boolean | string | number | { b: symbol };
-    const bindValue7: InterstateParam<(p: string) => boolean | string> = () => (snb: string) =>
-      snb === '';
+    const initValue7: InterstateInitializeParam<(
+      p: string
+    ) => boolean | string> = () => (sn: string | number) => sn === '';
+    let testType7: (
+      n: string,
+      k: { a: boolean }
+    ) => boolean | string | number | { b: symbol };
+    const bindValue7: InterstateParam<(p: string) => boolean | string> = () => (
+      snb: string
+    ) => snb === '';
     const CheckTypesExplicitly7 = () => {
-      const [useSubscribe, setInterstate] = useInterstate<(p: string) => boolean | string>(
-        id7,
-        initValue7,
-      );
+      const [useSubscribe, setInterstate] = useInterstate<
+        (p: string) => boolean | string
+      >(id7, initValue7);
       testType7 = useSubscribe();
       useEffect(() => {
         setInterstate(bindValue7);
@@ -136,14 +159,21 @@ const checkTypes: TestDescription = p => [
     render(<CheckTypesExplicitly7 />);
 
     const id8: StateKey = '8';
-    const initValue8: InitializeParam<(p: string) => boolean | string> = () => (
-      sn: string | number,
-    ) => sn === '';
-    let testType8: (n: string, k: { a: boolean }) => boolean | string | number | { b: symbol };
-    const bindValue8: InterstateParam<(p: string) => boolean | string> = () => (snb: string) =>
-      snb === '';
+    const initValue8: InterstateInitializeParam<(
+      p: string
+    ) => boolean | string> = () => (sn: string | number) => sn === '';
+    let testType8: (
+      n: string,
+      k: { a: boolean }
+    ) => boolean | string | number | { b: symbol };
+    const bindValue8: InterstateParam<(p: string) => boolean | string> = () => (
+      snb: string
+    ) => snb === '';
     const CheckTypesExplicitly8 = () => {
-      const setInterstate = useSetInterstate<(p: string) => boolean | string>(id8, initValue8);
+      const setInterstate = useSetInterstate<(p: string) => boolean | string>(
+        id8,
+        initValue8
+      );
       testType8 = useSubscribeInterstate<(p: string) => boolean | string>(id8);
       useEffect(() => {
         setInterstate(bindValue8);

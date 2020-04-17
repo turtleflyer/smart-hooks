@@ -1,22 +1,24 @@
 import React from 'react';
 import { TestDescription } from '../testsAssets';
 
-const rerenderWithInitValueResetState: TestDescription = (
-  p,
-  createTestComponents,
-) => [
+const rerenderWithInitValueResetState: TestDescription = p => [
   'rerendering with init value resets state to this value',
   () => {
     const {
-      assets: { render },
+      assets: { render, CanListen, CanUpdate },
     } = p;
-    const { CanListen, CanUpdate } = createTestComponents(p);
     const subscribeId1 = '1';
     const subscribeId2 = '2';
     const testId1 = 'updater';
     const testId2 = 'listener';
 
-    const TestComponent = ({ init, id = subscribeId1 }: { init?: string | null; id?: string }) => (
+    const TestComponent = ({
+      init,
+      id = subscribeId1,
+    }: {
+      init?: string | null;
+      id?: string;
+    }) => (
       <>
         <CanUpdate
           {...{
@@ -36,7 +38,9 @@ const rerenderWithInitValueResetState: TestDescription = (
       </>
     );
 
-    const { rerender, fireNode, getTextFromNode, unmount } = render(<TestComponent />);
+    const { rerender, fireNode, getTextFromNode, unmount } = render(
+      <TestComponent />
+    );
     expect(getTextFromNode(testId2)).toBe('');
 
     fireNode(testId1, 'good');

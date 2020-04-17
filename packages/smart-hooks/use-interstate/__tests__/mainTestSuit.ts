@@ -3,7 +3,6 @@ import {
   TestParameter,
   AssetsImport,
   UseInterstateImport,
-  CreateTestComponents,
 } from './testsAssets';
 import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
 import sophisticatedStructure from './tests/sophisticatedStructure';
@@ -15,156 +14,75 @@ import testContext from './tests/testContext';
 import checkTypes from './tests/checkTypes';
 import { flagManager } from './testFlags';
 
-const testCases: Array<[string, CreateTestComponents]> = [
-  [
-    '(using primary API)',
-    p => {
-      const {
-        assets: {
-          CanListenDependsOnAPI,
-          CanUpdateDependsOnAPI,
-          CanListenAndUpdateDependsOnAPI,
-          useInterstate,
-        },
-      } = p;
-
-      return {
-        CanListen: CanListenDependsOnAPI((subscribeId, initialValue) => {
-          const [useSubscribe] = useInterstate(subscribeId, initialValue);
-          return useSubscribe();
-        }),
-        CanUpdate: CanUpdateDependsOnAPI((subscribeId, initialValue) => {
-          const [, setState] = useInterstate(subscribeId, initialValue);
-          return setState;
-        }),
-        CanListenAndUpdate: CanListenAndUpdateDependsOnAPI(
-          (subscribeId, initialValue) => {
-            const [useSubscribe, setState] = useInterstate(
-              subscribeId,
-              initialValue,
-            );
-            return [useSubscribe(), setState];
-          },
-        ),
-      };
-    },
-  ],
-  [
-    '(using secondary API)',
-    p => {
-      const {
-        assets: {
-          CanListenDependsOnAPI,
-          CanUpdateDependsOnAPI,
-          CanListenAndUpdateDependsOnAPI,
-          useSetInterstate,
-          useSubscribeInterstate,
-        },
-      } = p;
-
-      return {
-        CanListen: CanListenDependsOnAPI((subscribeId, initialValue) => {
-          return useSubscribeInterstate(subscribeId, initialValue);
-        }),
-        CanUpdate: CanUpdateDependsOnAPI((subscribeId, initialValue) => {
-          return useSetInterstate(subscribeId, initialValue);
-        }),
-        CanListenAndUpdate: CanListenAndUpdateDependsOnAPI(
-          (subscribeId, initialValue) => {
-            return [
-              useSubscribeInterstate(subscribeId, initialValue),
-              useSetInterstate(subscribeId),
-            ];
-          },
-        ),
-      };
-    },
-  ],
-];
-
 const mainTestSuit = (packagePath: string) =>
-  describe.each(testCases)(
-    'Test useInterstate correctness %s',
-    (name, createTestComponents) => {
-      const testParameter: TestParameter = {} as TestParameter;
+  describe.each([
+    [
+      'using original useMemo',
+      () => flagManager.set('MOCK_USE_MEMO', false),
+      'original',
+    ],
+    [
+      'using mocked useMemo',
+      () => flagManager.set('MOCK_USE_MEMO', true),
+      'mocked',
+    ],
+  ])('Test useInterstate correctness (%s)', (n, setMock, proofOfMock) => {
+    const testParameter: TestParameter = {} as TestParameter;
 
-      describe.each([
-        [
-          'using original useMemo',
-          () => flagManager.set('MOCK_USE_MEMO', false),
-          'original',
-        ],
-        [
-          'using mocked useMemo',
-          () => flagManager.set('MOCK_USE_MEMO', true),
-          'mocked',
-        ],
-      ])('%s', (n, setMock, proofOfMock) => {
-        beforeAll(() => {
-          flagManager.set('PROOF_OF_MOCK', '');
-        });
+    beforeAll(() => {
+      flagManager.set('PROOF_OF_MOCK', '');
+    });
 
-        beforeEach(() => {
-          setMock();
-          jest.isolateModules(() => {
-            const {
-              render,
-              getLastMap,
-              fireEvent,
-              executionCountersFactory,
-              CanListenDependsOnAPI,
-              CanUpdateDependsOnAPI,
-              CanListenAndUpdateDependsOnAPI,
-            } = require('./testsAssets') as AssetsImport;
-            const {
-              useInterstate,
-              useSubscribeInterstate,
-              useSetInterstate,
-              Scope,
-            } = require(packagePath) as UseInterstateImport;
+    beforeEach(() => {
+      setMock();
+      jest.isolateModules(() => {
+        const {
+          render,
+          getLastMap,
+          fireEvent,
+          executionCountersFactory,
+          CanListen,
+          CanUpdate,
+          CanListenAndUpdate,
+        } = require('./testsAssets') as AssetsImport;
+        const {
+          useInterstate,
+          useSubscribeInterstate,
+          useSetInterstate,
+          Scope,
+        } = require(packagePath) as UseInterstateImport;
 
-            testParameter.assets = {
-              render,
-              getLastMap,
-              fireEvent,
-              executionCountersFactory,
-              CanListenDependsOnAPI,
-              CanUpdateDependsOnAPI,
-              CanListenAndUpdateDependsOnAPI,
-              useInterstate,
-              useSubscribeInterstate,
-              useSetInterstate,
-              Scope,
-            };
-          });
-        });
-
-        test(...siblingsCanCommunicate(testParameter, createTestComponents));
-        test(...sophisticatedStructure(testParameter, createTestComponents));
-        test(
-          ...checkInitializationConcurrency(testParameter, createTestComponents),
-        );
-        test(
-          ...valuesRemainAfterTreeUnmount(testParameter, createTestComponents),
-        );
-        test(
-          ...rerenderWithInitValueResetState(
-            testParameter,
-            createTestComponents,
-          ),
-        );
-        test(...dynamicSubscriptionWorks(testParameter, createTestComponents));
-        test(...testContext(testParameter, createTestComponents));
-
-        if (name === '(using primary API)') {
-          test(...checkTypes(testParameter, createTestComponents));
-        }
-
-        test('proof of mock', () => {
-          expect(flagManager.read('PROOF_OF_MOCK')).toBe(proofOfMock);
-        });
+        testParameter.assets = {
+          render,
+          getLastMap,
+          fireEvent,
+          executionCountersFactory,
+          CanListen,
+          CanUpdate,
+          CanListenAndUpdate,
+          useInterstate,
+          useSubscribeInterstate,
+          useSetInterstate,
+          Scope,
+        };
       });
-    },
-  );
+    });
+
+    test(...siblingsCanCommunicate(testParameter));
+    test(...sophisticatedStructure(testParameter));
+    test(...checkInitializationConcurrency(testParameter));
+    test(...valuesRemainAfterTreeUnmount(testParameter));
+    test(...rerenderWithInitValueResetState(testParameter));
+    test(...dynamicSubscriptionWorks(testParameter));
+    test(...testContext(testParameter));
+
+    if (name === '(using primary API)') {
+      test(...checkTypes(testParameter));
+    }
+
+    test('proof of mock', () => {
+      expect(flagManager.read('PROOF_OF_MOCK')).toBe(proofOfMock);
+    });
+  });
 
 export default mainTestSuit;

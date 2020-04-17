@@ -1,13 +1,12 @@
 import React from 'react';
 import { TestDescription } from '../testsAssets';
 
-const checkInitializationConcurrency: TestDescription = (p, createTestComponents) => [
+const checkInitializationConcurrency: TestDescription = p => [
   'check initialization concurrency',
   () => {
     const {
-      assets: { render },
+      assets: { render, CanListen, CanUpdate, CanListenAndUpdate },
     } = p;
-    const { CanListen, CanUpdate, CanListenAndUpdate } = createTestComponents(p);
     const subscribeId = '1';
     const testId = 'first';
 
