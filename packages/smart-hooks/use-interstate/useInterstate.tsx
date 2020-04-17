@@ -35,8 +35,11 @@ const Scope = ({
   );
 };
 
-type InterstateParam<T> = Exclude<T, Function> | ((oldV: T) => T);
-type InitializeParam<T> = Exclude<InterstateParam<T>, undefined>;
+export type InterstateParam<T> = Exclude<T, Function> | ((oldV: T) => T);
+export type InterstateInitializeParam<T> = Exclude<
+  InterstateParam<T>,
+  undefined
+>;
 
 type SetInterstate<T> = (p: InterstateParam<T>) => void;
 
@@ -63,8 +66,8 @@ function isFunction(p: any): p is Function {
 
 function useSetInterstate<T>(
   stateKey: MapKey,
-  initialValue?: InitializeParam<T>,
-) {
+  initialValue?: InterstateInitializeParam<T>
+): SetInterstate<T> {
   const store = useStore();
   const setInterstate = useCallback<SetInterstate<T>>(
     valueToSet => {
@@ -110,7 +113,7 @@ function useSetInterstate<T>(
 
 function useSubscribeInterstate<T>(
   stateKey: MapKey,
-  initialValue?: InitializeParam<T>,
+  initialValue?: InterstateInitializeParam<T>
 ) {
   useSetInterstate<T>(stateKey, initialValue);
   return useSubscribe<T>(stateKey);
@@ -118,20 +121,13 @@ function useSubscribeInterstate<T>(
 
 function useInterstate<T>(
   stateKey: MapKey,
-  initialValue?: InitializeParam<T>,
+  initialValue?: InterstateInitializeParam<T>
 ): [() => T, SetInterstate<T>] {
   const setInterstate = useSetInterstate<T>(stateKey, initialValue);
   const useSubscribeInterstateDynamic = () => useSubscribe<T>(stateKey);
   return [useSubscribeInterstateDynamic, setInterstate];
 }
 
-export {
-  useInterstate,
-  useSubscribeInterstate,
-  useSetInterstate,
-  MapKey as StateKey,
-  Scope,
-  InterstateParam,
-  InitializeParam,
-  SetInterstate,
-};
+export type StateKey = MapKey;
+
+export { useInterstate, useSubscribeInterstate, useSetInterstate, Scope };

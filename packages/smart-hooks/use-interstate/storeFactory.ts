@@ -1,4 +1,4 @@
-type MapKey = string | number | symbol;
+export type MapKey = string | number | symbol;
 type Setters = Array<React.Dispatch<React.SetStateAction<boolean>>>;
 
 interface MapValue {
@@ -8,11 +8,17 @@ interface MapValue {
 
 type StoreMap = Map<MapKey, MapValue>;
 
-interface Store {
+export interface Store {
   getStoreMap(): StoreMap;
   initEntry(key: MapKey): void;
-  addSetter(key: MapKey, setter: React.Dispatch<React.SetStateAction<boolean>>): void;
-  removeSetter(key: MapKey, setter: React.Dispatch<React.SetStateAction<boolean>>): void;
+  addSetter(
+    key: MapKey,
+    setter: React.Dispatch<React.SetStateAction<boolean>>
+  ): void;
+  removeSetter(
+    key: MapKey,
+    setter: React.Dispatch<React.SetStateAction<boolean>>
+  ): void;
   triggerSetters(key: MapKey): void;
   getValue(key: MapKey): any;
   setValue(key: MapKey, value: any): void;
@@ -22,7 +28,7 @@ function getMapValueCheckInitialized(map: StoreMap, key: MapKey) {
   const mapValue = map.get(key);
   if (!mapValue) {
     throw new Error(
-      `useIntestate: The entry has never been initialized for the key "${key.toString()}"`,
+      `useIntestate: The entry has never been initialized for the key "${key.toString()}"`
     );
   }
   return mapValue;
@@ -71,4 +77,4 @@ function storeFactory(): Store {
   };
 }
 
-export { storeFactory, Store, MapKey };
+export { storeFactory };
