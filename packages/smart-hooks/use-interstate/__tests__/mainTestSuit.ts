@@ -4,6 +4,7 @@ import {
   AssetsImport,
   UseInterstateImport,
 } from './testsAssets';
+import { cleanup } from '@testing-library/react';
 import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
 import sophisticatedStructure from './tests/sophisticatedStructure';
 import checkInitializationConcurrency from './tests/checkInitializationConcurrency';
@@ -47,8 +48,6 @@ const mainTestSuit = (packagePath: string) =>
         } = require('./testsAssets') as AssetsImport;
         const {
           useInterstate,
-          useSubscribeInterstate,
-          useSetInterstate,
           Scope,
         } = require(packagePath) as UseInterstateImport;
 
@@ -61,12 +60,12 @@ const mainTestSuit = (packagePath: string) =>
           CanUpdate,
           CanListenAndUpdate,
           useInterstate,
-          useSubscribeInterstate,
-          useSetInterstate,
           Scope,
         };
       });
     });
+
+    afterEach(cleanup);
 
     test(...siblingsCanCommunicate(testParameter));
     test(...sophisticatedStructure(testParameter));
@@ -75,10 +74,7 @@ const mainTestSuit = (packagePath: string) =>
     test(...rerenderWithInitValueResetState(testParameter));
     test(...dynamicSubscriptionWorks(testParameter));
     test(...testContext(testParameter));
-
-    if (name === '(using primary API)') {
-      test(...checkTypes(testParameter));
-    }
+    test(...checkTypes(testParameter));
 
     test('proof of mock', () => {
       expect(flagManager.read('PROOF_OF_MOCK')).toBe(proofOfMock);

@@ -6,8 +6,6 @@ import * as mockedStoryFactory from '../storeFactory';
 import {
   Scope,
   useInterstate,
-  useSubscribeInterstate,
-  useSetInterstate,
   InterstateInitializeParam,
 } from '../useInterstate';
 import React, { useEffect, useMemo } from 'react';
@@ -151,8 +149,6 @@ const CanListenAndUpdate: React.FunctionComponent<TestComponentsProps> = ({
 interface UseInterstateImport {
   Scope: typeof Scope;
   useInterstate: typeof useInterstate;
-  useSetInterstate: typeof useSetInterstate;
-  useSubscribeInterstate: typeof useSubscribeInterstate;
 }
 
 interface AssetsImport {
