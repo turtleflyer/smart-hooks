@@ -277,7 +277,7 @@ const testContext: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(9);
     expect(countRender4.howManyTimesBeenCalled()).toBe(8);
     expect(countRender5.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(8);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(9);
 
     rerender(
       <TestComponent
@@ -324,7 +324,7 @@ const testContext: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(10);
     expect(countRender4.howManyTimesBeenCalled()).toBe(9);
     expect(countRender5.howManyTimesBeenCalled()).toBe(7);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(9);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(10);
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {

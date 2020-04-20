@@ -1,8 +1,8 @@
 export type MapKey = string | number | symbol;
-type Setters = Array<React.Dispatch<React.SetStateAction<boolean>>>;
+type Setter = React.Dispatch<React.SetStateAction<boolean>>;
 
 interface MapValue {
-  setters: Setters;
+  setters: Setter[];
   value?: any;
 }
 
@@ -19,7 +19,7 @@ export interface Store {
     key: MapKey,
     setter: React.Dispatch<React.SetStateAction<boolean>>
   ): void;
-  triggerSetters(key: MapKey): void;
+  triggerSetters(key: MapKey, exceptSetter?: Setter): void;
   getValue(key: MapKey): any;
   setValue(key: MapKey, value: any): void;
 }
@@ -58,10 +58,12 @@ function storeFactory(): Store {
       setters.splice(setters.indexOf(setter), 1);
     },
 
-    triggerSetters(key) {
+    triggerSetters(key, exceptSetter) {
       const { setters } = state.storeMap.get(key) as MapValue;
-      setters.forEach(callback => {
-        callback(v => !v);
+      setters.forEach(setter => {
+        if (setter !== exceptSetter) {
+          setter(v => !v);
+        }
       });
     },
 

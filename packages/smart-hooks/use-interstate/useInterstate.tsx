@@ -1,5 +1,3 @@
-// tslint:disable: ban-types
-
 import React, {
   createContext,
   useContext,
@@ -7,25 +5,24 @@ import React, {
   useMemo,
   useState,
   useCallback,
+  useRef,
 } from 'react';
 import { MapKey, Store, storeFactory } from './storeFactory';
 import { useSmartMemo } from '@smart-hooks/use-smart-memo';
 
+function isFunction(p: any): p is Function {
+  return typeof p === 'function';
+}
+
 const globalStore = storeFactory();
 
-type ScopeContextValue =
-  | {
-      store: Store;
-    }
-  | undefined;
+type ScopeContextValue = { store: Store } | undefined;
 
 const ScopeContext = createContext<ScopeContextValue>(undefined);
 
-const Scope = ({
-  children,
-}: {
+const Scope: React.FunctionComponent<{
   children: React.ReactChild | React.ReactChild[];
-}) => {
+}> = ({ children }) => {
   const [isolatedStore] = useState(() => storeFactory());
 
   return (
@@ -43,48 +40,35 @@ export type InterstateInitializeParam<T> = Exclude<
 
 type SetInterstate<T> = (p: InterstateParam<T>) => void;
 
-function useStore() {
+interface MemState {
+  stateKey: MapKey;
+  mustTrigger: boolean;
+  setter?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function useStore(): Store {
   const context = useContext<ScopeContextValue>(ScopeContext);
 
-  return useMemo(() => (context && context.store) || globalStore, []);
+  return useMemo(() => context?.store || globalStore, []);
 }
 
-function useSubscribe<T>(stateKey: MapKey): T {
-  const [, setter] = useState<boolean>(true);
-  const store = useStore();
-
-  useSmartMemo(() => store.addSetter(stateKey, setter), [stateKey]);
-
-  useEffect(() => () => store.removeSetter(stateKey, setter), [stateKey]);
-
-  return store.getValue(stateKey);
+function getNewValue<T>(valueToSet: InterstateParam<T>, oldValue: T) {
+  return isFunction(valueToSet) ? valueToSet(oldValue) : valueToSet;
 }
 
-function isFunction(p: any): p is Function {
-  return typeof p === 'function';
-}
-
-function useSetInterstate<T>(
+function useInterstate<T>(
   stateKey: MapKey,
   initialValue?: InterstateInitializeParam<T>
-): SetInterstate<T> {
+): [() => T, SetInterstate<T>] {
   const store = useStore();
-  const setInterstate = useCallback<SetInterstate<T>>(
-    valueToSet => {
-      const value = store.getValue(stateKey) as T;
-      const newActualValue = isFunction(valueToSet)
-        ? valueToSet(value)
-        : valueToSet;
-
-      if (value !== newActualValue) {
-        store.setValue(stateKey, newActualValue);
-        store.triggerSetters(stateKey);
-      }
-    },
-    [stateKey],
-  );
+  const memState = useRef<MemState>({
+    mustTrigger: false,
+    stateKey,
+  });
 
   useSmartMemo(() => {
+    const { current: currentMemState } = memState;
+    let mustTrigger: boolean = false;
     store.initEntry(stateKey);
 
     /** Initializing usInterstate without an init value (or
@@ -102,32 +86,80 @@ function useSetInterstate<T>(
      * the new value of the state.)
      *
      */
-
     if (initialValue !== undefined) {
-      setInterstate(initialValue);
+      const prevValue: T = store.getValue(stateKey);
+      const newValue = getNewValue(initialValue, prevValue);
+
+      if (prevValue !== newValue) {
+        store.setValue(stateKey, newValue);
+        mustTrigger = true;
+      }
     }
+
+    memState.current = { ...currentMemState, mustTrigger, stateKey };
   }, [stateKey]);
 
-  return setInterstate;
-}
+  useEffect(() => {
+    const {
+      current: currentMemState,
+      current: { mustTrigger, setter },
+    } = memState;
 
-function useSubscribeInterstate<T>(
-  stateKey: MapKey,
-  initialValue?: InterstateInitializeParam<T>
-) {
-  useSetInterstate<T>(stateKey, initialValue);
-  return useSubscribe<T>(stateKey);
-}
+    if (mustTrigger) {
+      store.triggerSetters(stateKey, setter);
+    }
 
-function useInterstate<T>(
-  stateKey: MapKey,
-  initialValue?: InterstateInitializeParam<T>
-): [() => T, SetInterstate<T>] {
-  const setInterstate = useSetInterstate<T>(stateKey, initialValue);
-  const useSubscribeInterstateDynamic = () => useSubscribe<T>(stateKey);
-  return [useSubscribeInterstateDynamic, setInterstate];
+    memState.current = { ...currentMemState, mustTrigger: false };
+
+    return () => {
+      if (setter) {
+        store.removeSetter(stateKey, setter);
+      }
+    };
+  }, [stateKey]);
+
+  const useSubscribe = () => {
+    /**
+     * Emit a setter that will be used to trigger rendering
+     * the component in the case a value corresponding the
+     * stateKey has changed
+     */
+    const [, setter] = useState<boolean>(true);
+
+    const store = useStore();
+
+    useMemo(() => {
+      const { current: currentMemState } = memState;
+      memState.current = { ...currentMemState, setter };
+    }, []);
+
+    /**
+     * Update or initialize storing the setter in a record
+     * keeping other setters corresponding the stateKey
+     */
+    useSmartMemo(() => {
+      store.addSetter(stateKey, setter);
+    }, [stateKey]);
+
+    return store.getValue(stateKey);
+  };
+
+  const setInterstate = useCallback<SetInterstate<T>>(valueToSet => {
+    const {
+      current: { stateKey: currentStateKey },
+    } = memState;
+    const prevValue: T = store.getValue(currentStateKey);
+    const newValue = getNewValue(valueToSet, prevValue);
+
+    if (prevValue !== newValue) {
+      store.setValue(currentStateKey, newValue);
+      store.triggerSetters(currentStateKey);
+    }
+  }, []);
+
+  return [useSubscribe, setInterstate];
 }
 
 export type StateKey = MapKey;
 
-export { useInterstate, useSubscribeInterstate, useSetInterstate, Scope };
+export { useInterstate, Scope };
