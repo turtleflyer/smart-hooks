@@ -13,8 +13,8 @@ import { executionCountersFactory } from '../../../../test_utilities/executionCo
 
 jest.mock('../storeFactory.ts');
 
-const { getLastMap } = mockedStoryFactory as typeof mockedStoryFactory & {
-  getLastMap: () => Map<any, any>;
+const { getCountSetters } = mockedStoryFactory as typeof mockedStoryFactory & {
+  getCountSetters(): (key: InterstateID) => number | undefined;
 };
 
 type ArgsType<T> = T extends (...args: infer R) => any ? R : any;
@@ -153,7 +153,7 @@ interface UseInterstateImport {
 
 interface AssetsImport {
   render: typeof newRender;
-  getLastMap: typeof getLastMap;
+  getCountSetters: typeof getCountSetters;
   fireEvent: typeof fireEvent;
   executionCountersFactory: typeof executionCountersFactory;
   CanListen: React.FunctionComponent<TestComponentsProps>;
@@ -169,7 +169,7 @@ type TestDescription = (p: TestParameter) => [string, () => void];
 
 export {
   newRender as render,
-  getLastMap,
+  getCountSetters,
   fireEvent,
   executionCountersFactory,
   FieldsValue,

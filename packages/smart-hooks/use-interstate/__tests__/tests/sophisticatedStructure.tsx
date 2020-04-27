@@ -8,7 +8,7 @@ const sophisticatedStructure: TestDescription = p => [
     const {
       assets: {
         render,
-        getLastMap,
+        getCountSetters,
         executionCountersFactory,
         CanListen,
         CanUpdate,
@@ -123,7 +123,7 @@ const sophisticatedStructure: TestDescription = p => [
     );
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
-    const map = getLastMap();
+    const countSetter = getCountSetters();
     expect(getTextFromNode(testId1)).toBe('');
     expect(getTextFromNode(testId2)).toBe('');
 
@@ -187,22 +187,14 @@ const sophisticatedStructure: TestDescription = p => [
     expect(countRender8.howManyTimesBeenCalled()).toBe(3);
     expect(countRender9.howManyTimesBeenCalled()).toBe(3);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        5
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        3
-      );
+      expect(countSetter(subscribeId1)).toBe(5);
+      expect(countSetter(subscribeId2)).toBe(3);
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        0
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(0);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
   },
 ];

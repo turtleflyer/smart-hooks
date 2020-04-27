@@ -8,7 +8,7 @@ const siblingsCanCommunicate: TestDescription = p => [
     const {
       assets: {
         render,
-        getLastMap,
+        getCountSetters,
         executionCountersFactory,
         CanListen,
         CanUpdate,
@@ -39,7 +39,7 @@ const siblingsCanCommunicate: TestDescription = p => [
     );
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
-    const map = getLastMap();
+    const countSetter = getCountSetters();
     expect(getTextFromNode(testId2)).toBe('');
 
     fireNode(testId1, 'cat');
@@ -47,16 +47,12 @@ const siblingsCanCommunicate: TestDescription = p => [
     expect(countRender1.howManyTimesBeenCalled()).toBe(1);
     expect(countRender2.howManyTimesBeenCalled()).toBe(2);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        1
-      );
+      expect(countSetter(subscribeId)).toBe(1);
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId)).toBe(0);
     }
   },
 ];

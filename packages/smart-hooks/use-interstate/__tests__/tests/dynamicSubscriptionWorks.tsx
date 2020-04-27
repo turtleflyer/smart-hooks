@@ -9,7 +9,7 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     const {
       assets: {
         render,
-        getLastMap,
+        getCountSetters,
         fireEvent,
         executionCountersFactory,
         CanListen,
@@ -114,7 +114,7 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     const { fireNode, getTextFromNode, getByTestId, unmount } = render(
       <TestComponent />
     );
-    const map = getLastMap();
+    const countSetter = getCountSetters();
     expect(getTextFromNode(testId1)).toBe('sun');
     expect(getTextFromNode(testId4)).toBe('sun');
     fireNode(testId4, 'venus');
@@ -125,12 +125,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(3);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(2);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
@@ -145,12 +141,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(5);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1
-      );
+      expect(countSetter(subscribeId1)).toBe(1);
+      expect(countSetter(subscribeId2)).toBe(1);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '3' } });
@@ -165,12 +157,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(7);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(2);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '1' } });
@@ -181,12 +169,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(8);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(2);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
@@ -196,12 +180,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(9);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1
-      );
+      expect(countSetter(subscribeId1)).toBe(1);
+      expect(countSetter(subscribeId2)).toBe(1);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '4' } });
@@ -211,12 +191,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(10);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1
-      );
+      expect(countSetter(subscribeId1)).toBe(1);
+      expect(countSetter(subscribeId2)).toBe(1);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '1' } });
@@ -227,12 +203,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(11);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(2);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '3' } });
@@ -243,12 +215,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(12);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(2);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '2' } });
@@ -259,12 +227,8 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(13);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        1
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        1
-      );
+      expect(countSetter(subscribeId1)).toBe(1);
+      expect(countSetter(subscribeId2)).toBe(1);
     }
 
     fireEvent.change(getByTestId(testId5), { target: { value: '5' } });
@@ -275,22 +239,14 @@ const dynamicSubscriptionWorks: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(1);
     expect(countRender4.howManyTimesBeenCalled()).toBe(14);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        2
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(2);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId1) as { setters: any[] }).setters.length).toBe(
-        0
-      );
-      expect((map.get(subscribeId2) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId1)).toBe(0);
+      expect(countSetter(subscribeId2)).toBe(0);
     }
   },
 ];

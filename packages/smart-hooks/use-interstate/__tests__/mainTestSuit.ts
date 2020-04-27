@@ -39,7 +39,7 @@ const mainTestSuit = (packagePath: string) =>
       jest.isolateModules(() => {
         const {
           render,
-          getLastMap,
+          getCountSetters,
           fireEvent,
           executionCountersFactory,
           CanListen,
@@ -53,7 +53,7 @@ const mainTestSuit = (packagePath: string) =>
 
         testParameter.assets = {
           render,
-          getLastMap,
+          getCountSetters,
           fireEvent,
           executionCountersFactory,
           CanListen,

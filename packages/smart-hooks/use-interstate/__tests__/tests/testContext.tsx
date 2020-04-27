@@ -8,7 +8,7 @@ const testContext: TestDescription = p => [
     const {
       assets: {
         render,
-        getLastMap,
+        getCountSetters,
         Scope,
         executionCountersFactory,
         CanListen,
@@ -108,14 +108,10 @@ const testContext: TestDescription = p => [
     const { fireNode, getTextFromNode, rerender, unmount } = render(
       <TestComponent listenerId={subscribeId1} />
     );
-    const map1 = getLastMap();
+    const countSetter1 = getCountSetters();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(
-        (map1.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(4);
-      expect(
-        (map1.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(2);
+      expect(countSetter1(subscribeId1)).toBe(4);
+      expect(countSetter1(subscribeId2)).toBe(2);
     }
     fireNode(testId1, 'bus');
     expect(getTextFromNode(testId1)).toBe('bus');
@@ -146,20 +142,12 @@ const testContext: TestDescription = p => [
     expect(countRender6.howManyTimesBeenCalled()).toBe(3);
 
     rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
-    const map2 = getLastMap();
+    const countSetter2 = getCountSetters();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(
-        (map1.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(2);
-      expect(
-        (map1.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(1);
-      expect(
-        (map2.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(2);
-      expect(
-        (map2.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(1);
+      expect(countSetter1(subscribeId1)).toBe(2);
+      expect(countSetter1(subscribeId2)).toBe(1);
+      expect(countSetter2(subscribeId1)).toBe(2);
+      expect(countSetter2(subscribeId2)).toBe(1);
     }
     fireNode(testId1, 'truck');
     expect(getTextFromNode(testId1)).toBe('truck');
@@ -184,18 +172,10 @@ const testContext: TestDescription = p => [
 
     rerender(<TestComponent listenerId={subscribeId2} />);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(
-        (map1.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(2);
-      expect(
-        (map1.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(4);
-      expect(
-        (map2.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map2.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
+      expect(countSetter1(subscribeId1)).toBe(2);
+      expect(countSetter1(subscribeId2)).toBe(4);
+      expect(countSetter2(subscribeId1)).toBe(0);
+      expect(countSetter2(subscribeId2)).toBe(0);
     }
     expect(getTextFromNode(testId1)).toBe('truck');
     expect(getTextFromNode(testId2)).toBe('boat');
@@ -211,26 +191,14 @@ const testContext: TestDescription = p => [
     expect(countRender6.howManyTimesBeenCalled()).toBe(6);
 
     rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
-    const map3 = getLastMap();
+    const countSetter3 = getCountSetters();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(
-        (map1.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(2);
-      expect(
-        (map1.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(1);
-      expect(
-        (map2.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map2.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map3.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(2);
-      expect(
-        (map3.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(1);
+      expect(countSetter1(subscribeId1)).toBe(2);
+      expect(countSetter1(subscribeId2)).toBe(1);
+      expect(countSetter2(subscribeId1)).toBe(0);
+      expect(countSetter2(subscribeId2)).toBe(0);
+      expect(countSetter3(subscribeId1)).toBe(2);
+      expect(countSetter3(subscribeId2)).toBe(1);
     }
     expect(getTextFromNode(testId1)).toBe('truck');
     expect(getTextFromNode(testId2)).toBe('boat');
@@ -247,24 +215,12 @@ const testContext: TestDescription = p => [
 
     rerender(<TestComponent listenerId={subscribeId1} initialValue="train" />);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(
-        (map1.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(4);
-      expect(
-        (map1.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(2);
-      expect(
-        (map2.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map2.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map3.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map3.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
+      expect(countSetter1(subscribeId1)).toBe(4);
+      expect(countSetter1(subscribeId2)).toBe(2);
+      expect(countSetter2(subscribeId1)).toBe(0);
+      expect(countSetter2(subscribeId2)).toBe(0);
+      expect(countSetter3(subscribeId1)).toBe(0);
+      expect(countSetter3(subscribeId2)).toBe(0);
     }
     expect(getTextFromNode(testId1)).toBe('train');
     expect(getTextFromNode(testId2)).toBe('boat');
@@ -286,32 +242,16 @@ const testContext: TestDescription = p => [
         initialValue="bike"
       />
     );
-    const map4 = getLastMap();
+    const countSetter4 = getCountSetters();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(
-        (map1.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(1);
-      expect(
-        (map1.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(2);
-      expect(
-        (map2.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map2.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map3.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map3.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map4.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(1);
-      expect(
-        (map4.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(2);
+      expect(countSetter1(subscribeId1)).toBe(1);
+      expect(countSetter1(subscribeId2)).toBe(2);
+      expect(countSetter2(subscribeId1)).toBe(0);
+      expect(countSetter2(subscribeId2)).toBe(0);
+      expect(countSetter3(subscribeId1)).toBe(0);
+      expect(countSetter3(subscribeId2)).toBe(0);
+      expect(countSetter4(subscribeId1)).toBe(1);
+      expect(countSetter4(subscribeId2)).toBe(2);
     }
     expect(getTextFromNode(testId1)).toBe('train');
     expect(getTextFromNode(testId2)).toBe('boat');
@@ -328,30 +268,14 @@ const testContext: TestDescription = p => [
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(
-        (map1.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map1.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map2.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map2.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map3.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map3.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map4.get(subscribeId1) as { setters: any[] }).setters.length
-      ).toBe(0);
-      expect(
-        (map4.get(subscribeId2) as { setters: any[] }).setters.length
-      ).toBe(0);
+      expect(countSetter1(subscribeId1)).toBe(0);
+      expect(countSetter1(subscribeId2)).toBe(0);
+      expect(countSetter2(subscribeId1)).toBe(0);
+      expect(countSetter2(subscribeId2)).toBe(0);
+      expect(countSetter3(subscribeId1)).toBe(0);
+      expect(countSetter3(subscribeId2)).toBe(0);
+      expect(countSetter4(subscribeId1)).toBe(0);
+      expect(countSetter4(subscribeId2)).toBe(0);
     }
   },
 ];

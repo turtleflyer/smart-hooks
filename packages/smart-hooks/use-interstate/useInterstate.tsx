@@ -7,7 +7,7 @@ import React, {
   useCallback,
   useRef,
 } from 'react';
-import { MapKey, Store, storeFactory } from './storeFactory';
+import { MapKey, Store, storeFactory, SettersListEntry } from './storeFactory';
 import { useSmartMemo } from '@smart-hooks/use-smart-memo';
 
 function isFunction(p: any): p is Function {
@@ -43,7 +43,7 @@ type SetInterstate<T> = (p: InterstateParam<T>) => void;
 interface MemState {
   stateKey: MapKey;
   mustTrigger: boolean;
-  setter?: React.Dispatch<React.SetStateAction<boolean>>;
+  setterEntry?: SettersListEntry;
 }
 
 function useStore(): Store {
@@ -102,18 +102,18 @@ function useInterstate<T>(
   useEffect(() => {
     const {
       current: currentMemState,
-      current: { mustTrigger, setter },
+      current: { mustTrigger, setterEntry },
     } = memState;
 
     if (mustTrigger) {
-      store.triggerSetters(stateKey, setter);
+      store.triggerSetters(stateKey, setterEntry);
     }
 
     memState.current = { ...currentMemState, mustTrigger: false };
 
     return () => {
-      if (setter) {
-        store.removeSetter(stateKey, setter);
+      if (setterEntry) {
+        store.removeSetter(stateKey, setterEntry);
       }
     };
   }, [stateKey]);
@@ -128,17 +128,14 @@ function useInterstate<T>(
 
     const store = useStore();
 
-    useMemo(() => {
-      const { current: currentMemState } = memState;
-      memState.current = { ...currentMemState, setter };
-    }, []);
-
     /**
      * Update or initialize storing the setter in a record
      * keeping other setters corresponding the stateKey
      */
     useSmartMemo(() => {
-      store.addSetter(stateKey, setter);
+      const setterEntry = store.addSetter(stateKey, setter);
+      const { current: currentMemState } = memState;
+      memState.current = { ...currentMemState, setterEntry };
     }, [stateKey]);
 
     return store.getValue(stateKey);

@@ -6,7 +6,7 @@ const valuesRemainAfterTreeUnmount: TestDescription = p => [
   'values remain after tree unmount',
   () => {
     const {
-      assets: { render, getLastMap, CanListen, CanUpdate },
+      assets: { render, getCountSetters, CanListen, CanUpdate },
     } = p;
     const subscribeId = '1';
     const testId1 = 'updater';
@@ -37,23 +37,19 @@ const valuesRemainAfterTreeUnmount: TestDescription = p => [
     const { unmount, rerender, fireNode, getTextFromNode } = render(
       <TestComponent />
     );
-    const map = getLastMap();
+    const countSetter = getCountSetters();
     expect(getTextFromNode(testId2)).toBe('');
 
     fireNode(testId1, 'g');
     fireNode(testId1, 'e');
     expect(getTextFromNode(testId2)).toBe('ge');
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        1
-      );
+      expect(countSetter(subscribeId)).toBe(1);
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId)).toBe(0);
     }
 
     rerender(<TestComponent />);
@@ -63,16 +59,12 @@ const valuesRemainAfterTreeUnmount: TestDescription = p => [
     fireNode(testId1, 'r');
     expect(getTextFromNode(testId2)).toBe('gefr');
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        1
-      );
+      expect(countSetter(subscribeId)).toBe(1);
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect((map.get(subscribeId) as { setters: any[] }).setters.length).toBe(
-        0
-      );
+      expect(countSetter(subscribeId)).toBe(0);
     }
   },
 ];
