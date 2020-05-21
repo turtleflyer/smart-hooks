@@ -1,10 +1,10 @@
-interface ExecutionCounter {
+export interface ExecutionCounter {
   howManyTimesBeenCalled(): number;
   count(): void;
   reset(): void;
 }
 
-function executionCountersFactory(): ExecutionCounter {
+export function executionCountersFactory(): ExecutionCounter {
   const store = {
     counter: 0,
   };
@@ -22,5 +22,3 @@ function executionCountersFactory(): ExecutionCounter {
     },
   };
 }
-
-export { executionCountersFactory, ExecutionCounter };

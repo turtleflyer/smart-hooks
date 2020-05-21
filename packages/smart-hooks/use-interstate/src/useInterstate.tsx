@@ -30,7 +30,7 @@ const Scope: React.FunctionComponent = ({ children }) => {
   return <ScopeContext.Provider value={{ store: isolatedStore }}>{children}</ScopeContext.Provider>;
 };
 
-export type InterstateParam<T> = Exclude<T, Function> | ((oldV: T) => T);
+export type InterstateParam<T> = Exclude<T, Function> | ((prevValue: T) => T);
 export type InterstateInitializeParam<T> = Exclude<T, Function | undefined> | (() => T);
 
 type SetInterstate<T> = (p: InterstateParam<T>) => void;
@@ -218,10 +218,6 @@ export type StateKey = MapKey;
 
 export { useInterstate, Scope };
 
-export {
-  isUseInterstateError,
-  getUseInterstateErrorMethods,
-  UseInterstateError,
-} from './errorHandle';
+export { isUseInterstateError, getUseInterstateErrorMethods } from './errorHandle';
 
-declare const DSSS: React.FunctionComponent;
+export type { UseInterstateError } from './errorHandle';
