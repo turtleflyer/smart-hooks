@@ -4,12 +4,12 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { uglify } from 'rollup-plugin-uglify';
 import pkg from './package.json';
-import tsbundle from './tsbundle.json';
+import tsconfigBundle from './tsconfig.bundle.json';
 import { determineInput } from '../../../bundle_utilities/determineInput';
 import { bundleTypesDeclaration } from '../../../bundle_utilities/bundleTypesDeclaration';
 
 const name = 'useInterstate';
-const input = determineInput(tsbundle);
+const input = determineInput(tsconfigBundle);
 bundleTypesDeclaration(input, pkg.types);
 
 export default [
@@ -18,7 +18,7 @@ export default [
 
     external: ['react', '@smart-hooks/use-smart-memo'],
 
-    plugins: [babel({ extensions: ['.js'], exclude: 'node_modules/**' })],
+    plugins: [babel({ extensions: ['.js'] })],
 
     output: [
       {

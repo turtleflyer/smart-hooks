@@ -3,5 +3,5 @@
   "compilerOptions": {
     "outDir": "./ts"
   },
-  "files": ["useInterstate.tsx"]
+  "files": ["src/useInterstate.tsx"]
 }

@@ -15,9 +15,10 @@
   "scripts": {
     "test:pre": "jest pre",
     "test:post": "jest post",
-    "bundle": "npm run build:js && npm run build:types && rollup -c",
-    "build:js": "tsc -p ./tsbundle.json",
-    "build:types": "tsc -p ./tsbundle.json --emitDeclarationOnly --declaration --outDir ./dist"
+    "build:js": "tsc -p ./tsconfig.bundle.json --rootDir .",
+    "build:types": "tsc -p ./tsconfig.bundle.json --emitDeclarationOnly --declaration --outDir dist",
+    "cleanup_dist": "node ../../../bundle_utilities/cleanUpDistFolder.js dist",
+    "bundle": "npm run cleanup_dist && npm run build:js && npm run build:types && rollup -c"
   },
   "repository": {
     "type": "git",
