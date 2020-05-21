@@ -1,4 +1,4 @@
-import { MapKey, StoreMap, MapValue } from './StoreMap';
+import { MapKey, StoreMap } from './StoreMap';
 
 export enum UseInterstateErrorCodes {
   CONCURRENTLY_PROVIDED_INIT_VALUE,
