@@ -1,35 +1,34 @@
-// tslint:disable: react-hooks-nesting
-// tslint:disable-next-line: no-implicit-dependencies
 import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render } from '@testing-library/react';
-import * as mockedStoryFactory from '../storeFactory';
+import * as mockedCreateStoreMap from '../src/createStoreMap';
 import {
   Scope,
   useInterstate,
+  InterstateParam,
   InterstateInitializeParam,
-} from '../useInterstate';
+  getUseInterstateErrorMethods,
+  isUseInterstateError,
+  UseInterstateError,
+} from '../src/useInterstate';
 import React, { useEffect, useMemo } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 
-jest.mock('../storeFactory.ts');
+jest.mock('../src/createStoreMap.ts');
 
-const { getCountSetters } = mockedStoryFactory as typeof mockedStoryFactory & {
-  getCountSetters(): (key: InterstateID) => number | undefined;
+const { settersCounterFactory } = mockedCreateStoreMap as typeof mockedCreateStoreMap & {
+  settersCounterFactory(): (key: InterstateID) => number | undefined;
 };
 
-type ArgsType<T> = T extends (...args: infer R) => any ? R : any;
-type FirstArrayMember<T> = T extends [infer R, ...any[]] ? R : any;
+type ExtractFirstArgType<T> = T extends (firstArg: infer R, ...restArg: any) => any ? R : never;
 
-function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
+function newRender(arg: ExtractFirstArgType<typeof render>) {
   const fromRender = render(arg);
   const { getByTestId } = fromRender;
 
   const fireNode = (testId: string, value: string) => {
     const element = getByTestId(testId);
     if (element) {
-      const inputChild = element.querySelector(
-        `[data-testid=${testId}] > input`
-      );
+      const inputChild = element.querySelector(`[data-testid=${testId}] > input`);
       if (inputChild) {
         fireEvent.change(inputChild, {
           target: { value },
@@ -40,9 +39,7 @@ function newRender(arg: FirstArrayMember<ArgsType<typeof render>>) {
 
   const getTextFromNode = (testId: string) => {
     const element = getByTestId(testId);
-    return element &&
-      element.firstChild &&
-      element.firstChild.nodeName === '#text'
+    return element && element.firstChild && element.firstChild.nodeName === '#text'
       ? element.firstChild.textContent
       : '';
   };
@@ -54,33 +51,34 @@ type FieldsValue = string;
 type InitType = InterstateInitializeParam<FieldsValue>;
 type InterstateID = string | number;
 
-type ComposeCallback = (
-  set: (v: InterstateInitializeParam<FieldsValue>) => void
+export type ComposeCallback = (
+  set: (v: InterstateParam<FieldsValue>) => void
 ) => ({ target: { value } }: { target: { value: string } }) => void;
 
 interface TestComponentsProps {
-  subscribeId: InterstateID;
-  initialValue?: InitType;
-  testId?: string;
-  composeCallback?: (...args: any[]) => any;
-  countRender?: () => void;
-  children?: React.ReactChild | React.ReactChild[];
+  readonly subscribeId: InterstateID;
+  readonly initialValue?: InitType;
+  readonly testId?: string;
+  readonly composeCallback?: (...args: any[]) => any;
+  readonly countRender?: () => void;
 }
 
-const defaultComposeCallback: ComposeCallback = set => ({
-  target: { value },
-}) => {
+const defaultComposeCallback: ComposeCallback = (set) => ({ target: { value } }) => {
   set(value);
 };
 
-const CanListen: React.FunctionComponent<TestComponentsProps> = ({
+type ComposeComponent = (
+  importedUseInterstate: typeof useInterstate
+) => React.FunctionComponent<TestComponentsProps>;
+
+const composeCanListen: ComposeComponent = (importedUseInterstate) => ({
   subscribeId,
   initialValue,
   testId = '',
   countRender = () => {},
   children,
 }) => {
-  const [useSubscribe] = useInterstate(subscribeId, initialValue);
+  const [useSubscribe] = importedUseInterstate(subscribeId, initialValue);
   const state = useSubscribe();
   useEffect(() => {
     countRender();
@@ -94,7 +92,7 @@ const CanListen: React.FunctionComponent<TestComponentsProps> = ({
   );
 };
 
-const CanUpdate: React.FunctionComponent<TestComponentsProps> = ({
+const composeCanUpdate: ComposeComponent = (importedUseInterstate) => ({
   subscribeId,
   initialValue,
   testId = '',
@@ -102,11 +100,8 @@ const CanUpdate: React.FunctionComponent<TestComponentsProps> = ({
   countRender = () => {},
   children,
 }) => {
-  const [, setState] = useInterstate(subscribeId, initialValue);
-  const callback = useMemo(() => composeCallback(setState), [
-    composeCallback,
-    setState,
-  ]);
+  const [, setState] = importedUseInterstate(subscribeId, initialValue);
+  const callback = useMemo(() => composeCallback(setState), [composeCallback, setState]);
   useEffect(() => {
     countRender();
   });
@@ -119,7 +114,7 @@ const CanUpdate: React.FunctionComponent<TestComponentsProps> = ({
   );
 };
 
-const CanListenAndUpdate: React.FunctionComponent<TestComponentsProps> = ({
+const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => ({
   subscribeId,
   initialValue,
   testId = '',
@@ -127,12 +122,9 @@ const CanListenAndUpdate: React.FunctionComponent<TestComponentsProps> = ({
   countRender = () => {},
   children,
 }) => {
-  const [useSubscribe, setState] = useInterstate(subscribeId, initialValue);
+  const [useSubscribe, setState] = importedUseInterstate(subscribeId, initialValue);
   const state = useSubscribe();
-  const callback = useMemo(() => composeCallback(setState), [
-    composeCallback,
-    setState,
-  ]);
+  const callback = useMemo(() => composeCallback(setState), [composeCallback, setState]);
   useEffect(() => {
     countRender();
   });
@@ -146,40 +138,69 @@ const CanListenAndUpdate: React.FunctionComponent<TestComponentsProps> = ({
   );
 };
 
-interface UseInterstateImport {
-  Scope: typeof Scope;
-  useInterstate: typeof useInterstate;
+interface ErrorRecord {
+  current: Error | UseInterstateError;
 }
 
-interface AssetsImport {
-  render: typeof newRender;
-  getCountSetters: typeof getCountSetters;
-  fireEvent: typeof fireEvent;
-  executionCountersFactory: typeof executionCountersFactory;
-  CanListen: React.FunctionComponent<TestComponentsProps>;
-  CanUpdate: React.FunctionComponent<TestComponentsProps>;
-  CanListenAndUpdate: React.FunctionComponent<TestComponentsProps>;
+type AssertWrapperCreator = () => [<R>(a: () => R) => R | never, ErrorRecord];
+
+const createAssertWrapper: AssertWrapperCreator = () => {
+  const errorRecord = {} as ErrorRecord;
+  return [
+    function assertWrapper(a) {
+      const originalErrorLogging = console.error;
+      console.error = jest.fn();
+      try {
+        return a();
+      } catch (e) {
+        errorRecord.current = e;
+
+        throw e;
+      } finally {
+        console.error = originalErrorLogging;
+      }
+    },
+    errorRecord,
+  ];
+};
+
+export interface UseInterstateImport {
+  readonly Scope: typeof Scope;
+  readonly useInterstate: typeof useInterstate;
+  readonly getUseInterstateErrorMethods: typeof getUseInterstateErrorMethods;
+  readonly isUseInterstateError: typeof isUseInterstateError;
 }
 
-interface TestParameter {
-  assets: AssetsImport & UseInterstateImport;
+interface AssetsBase {
+  readonly render: typeof newRender;
+  readonly settersCounterFactory: typeof settersCounterFactory;
+  readonly executionCountersFactory: typeof executionCountersFactory;
+  readonly createAssertWrapper: AssertWrapperCreator;
 }
 
-type TestDescription = (p: TestParameter) => [string, () => void];
+export interface AssetsImport extends AssetsBase {
+  readonly composeCanListen: ComposeComponent;
+  readonly composeCanUpdate: ComposeComponent;
+  readonly composeCanListenAndUpdate: ComposeComponent;
+}
+
+export interface TestParameter {
+  assets: AssetsBase &
+    UseInterstateImport & {
+      readonly CanListen: React.FunctionComponent<TestComponentsProps>;
+      readonly CanUpdate: React.FunctionComponent<TestComponentsProps>;
+      readonly CanListenAndUpdate: React.FunctionComponent<TestComponentsProps>;
+    };
+}
+
+export type TestDescription = (p: TestParameter) => [string, () => void];
 
 export {
   newRender as render,
-  getCountSetters,
-  fireEvent,
+  settersCounterFactory,
   executionCountersFactory,
-  FieldsValue,
-  InterstateID,
-  CanListen,
-  CanUpdate,
-  CanListenAndUpdate,
-  TestParameter,
-  TestDescription,
-  ComposeCallback,
-  AssetsImport,
-  UseInterstateImport,
+  composeCanListen,
+  composeCanUpdate,
+  composeCanListenAndUpdate,
+  createAssertWrapper,
 };

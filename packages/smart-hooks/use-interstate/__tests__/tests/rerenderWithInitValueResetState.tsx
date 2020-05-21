@@ -1,7 +1,7 @@
 import React from 'react';
 import { TestDescription } from '../testsAssets';
 
-const rerenderWithInitValueResetState: TestDescription = p => [
+const rerenderWithInitValueResetState: TestDescription = (p) => [
   'rerendering with init value resets state to this value',
   () => {
     const {
@@ -12,13 +12,10 @@ const rerenderWithInitValueResetState: TestDescription = p => [
     const testId1 = 'updater';
     const testId2 = 'listener';
 
-    const TestComponent = ({
-      init,
-      id = subscribeId1,
-    }: {
+    const TestComponent: React.FunctionComponent<{
       init?: string | null;
       id?: string;
-    }) => (
+    }> = ({ init, id = subscribeId1 }) => (
       <>
         <CanUpdate
           {...{
@@ -38,10 +35,8 @@ const rerenderWithInitValueResetState: TestDescription = p => [
       </>
     );
 
-    const { rerender, fireNode, getTextFromNode, unmount } = render(
-      <TestComponent />
-    );
-    expect(getTextFromNode(testId2)).toBe('');
+    const { rerender, fireNode, getTextFromNode, unmount } = render(<TestComponent init="start" />);
+    expect(getTextFromNode(testId2)).toBe('start');
 
     fireNode(testId1, 'good');
     expect(getTextFromNode(testId2)).toBe('good');

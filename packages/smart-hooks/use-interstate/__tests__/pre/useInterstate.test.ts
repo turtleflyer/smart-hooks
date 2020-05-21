@@ -3,4 +3,4 @@ import { flagManager } from '../testFlags';
 
 flagManager.set('SHOULD_TEST_PERFORMANCE', true);
 
-mainTestSuit('../useInterstate.tsx');
+mainTestSuit('../src/useInterstate.tsx');

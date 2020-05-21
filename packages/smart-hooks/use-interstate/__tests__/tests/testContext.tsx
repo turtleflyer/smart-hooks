@@ -2,13 +2,13 @@ import React from 'react';
 import { TestDescription } from '../testsAssets';
 import { flagManager } from '../testFlags';
 
-const testContext: TestDescription = p => [
+const testContext: TestDescription = (p) => [
   'Scope component works',
   () => {
     const {
       assets: {
         render,
-        getCountSetters,
+        settersCounterFactory,
         Scope,
         executionCountersFactory,
         CanListen,
@@ -31,20 +31,18 @@ const testContext: TestDescription = p => [
     const countRender5 = executionCountersFactory();
     const countRender6 = executionCountersFactory();
 
-    const IsolatedBlock = ({
-      initialValue,
-      listenerId,
-    }: {
-      initialValue?: string;
+    const IsolatedBlock: React.FunctionComponent<{
+      initVS1?: string;
+      initVS2?: string;
       listenerId: number;
-    }) => (
+    }> = ({ initVS1, initVS2, listenerId }) => (
       <>
         <CanListenAndUpdate
           {...{
             subscribeId: subscribeId1,
             testId: testId4,
             countRender: countRender4.count,
-            initialValue,
+            initialValue: initVS1,
           }}
         />
         <CanListenAndUpdate
@@ -52,6 +50,7 @@ const testContext: TestDescription = p => [
             subscribeId: subscribeId2,
             testId: testId5,
             countRender: countRender5.count,
+            initialValue: initVS2,
           }}
         />
         <CanListen
@@ -64,21 +63,21 @@ const testContext: TestDescription = p => [
       </>
     );
 
-    const TestComponent = ({
-      isolate = false,
-      initialValue,
-      listenerId,
-    }: {
+    const TestComponent: React.FunctionComponent<{
       isolate?: boolean;
-      initialValue?: string;
       listenerId: number;
-    }) => (
+      initV1?: string;
+      initV2?: string;
+      initV3?: string;
+      initV4?: string;
+    }> = ({ isolate = false, listenerId, initV1, initV2, initV3, initV4 }) => (
       <>
         <CanListenAndUpdate
           {...{
             subscribeId: subscribeId1,
             testId: testId1,
             countRender: countRender1.count,
+            initialValue: initV1,
           }}
         />
         <CanListenAndUpdate
@@ -86,6 +85,7 @@ const testContext: TestDescription = p => [
             subscribeId: subscribeId2,
             testId: testId2,
             countRender: countRender2.count,
+            initialValue: initV2,
           }}
         />
         <CanListen
@@ -97,18 +97,18 @@ const testContext: TestDescription = p => [
         />
         {isolate ? (
           <Scope>
-            <IsolatedBlock {...{ initialValue, listenerId }} />
+            <IsolatedBlock {...{ initVS1: initV3, initVS2: initV4, listenerId }} />
           </Scope>
         ) : (
-          <IsolatedBlock {...{ initialValue, listenerId }} />
+          <IsolatedBlock {...{ initVS1: initV3, initVS2: initV4, listenerId }} />
         )}
       </>
     );
 
     const { fireNode, getTextFromNode, rerender, unmount } = render(
-      <TestComponent listenerId={subscribeId1} />
+      <TestComponent listenerId={subscribeId1} initV1="" initV2="" />
     );
-    const countSetter1 = getCountSetters();
+    const countSetter1 = settersCounterFactory();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(countSetter1(subscribeId1)).toBe(4);
       expect(countSetter1(subscribeId2)).toBe(2);
@@ -141,8 +141,8 @@ const testContext: TestDescription = p => [
     expect(countRender5.howManyTimesBeenCalled()).toBe(2);
     expect(countRender6.howManyTimesBeenCalled()).toBe(3);
 
-    rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
-    const countSetter2 = getCountSetters();
+    rerender(<TestComponent isolate={true} listenerId={subscribeId1} initV3="" initV4="" />);
+    const countSetter2 = settersCounterFactory();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(countSetter1(subscribeId1)).toBe(2);
       expect(countSetter1(subscribeId2)).toBe(1);
@@ -190,8 +190,8 @@ const testContext: TestDescription = p => [
     expect(countRender5.howManyTimesBeenCalled()).toBe(4);
     expect(countRender6.howManyTimesBeenCalled()).toBe(6);
 
-    rerender(<TestComponent isolate={true} listenerId={subscribeId1} />);
-    const countSetter3 = getCountSetters();
+    rerender(<TestComponent isolate={true} listenerId={subscribeId1} initV3="" initV4="" />);
+    const countSetter3 = settersCounterFactory();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(countSetter1(subscribeId1)).toBe(2);
       expect(countSetter1(subscribeId2)).toBe(1);
@@ -213,7 +213,7 @@ const testContext: TestDescription = p => [
     expect(countRender5.howManyTimesBeenCalled()).toBe(5);
     expect(countRender6.howManyTimesBeenCalled()).toBe(7);
 
-    rerender(<TestComponent listenerId={subscribeId1} initialValue="train" />);
+    rerender(<TestComponent listenerId={subscribeId1} initV3="train" />);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(countSetter1(subscribeId1)).toBe(4);
       expect(countSetter1(subscribeId2)).toBe(2);
@@ -233,16 +233,10 @@ const testContext: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(9);
     expect(countRender4.howManyTimesBeenCalled()).toBe(8);
     expect(countRender5.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(9);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(8);
 
-    rerender(
-      <TestComponent
-        isolate={true}
-        listenerId={subscribeId2}
-        initialValue="bike"
-      />
-    );
-    const countSetter4 = getCountSetters();
+    rerender(<TestComponent isolate={true} listenerId={subscribeId2} initV3="bike" initV4="" />);
+    const countSetter4 = settersCounterFactory();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(countSetter1(subscribeId1)).toBe(1);
       expect(countSetter1(subscribeId2)).toBe(2);
@@ -264,7 +258,7 @@ const testContext: TestDescription = p => [
     expect(countRender3.howManyTimesBeenCalled()).toBe(10);
     expect(countRender4.howManyTimesBeenCalled()).toBe(9);
     expect(countRender5.howManyTimesBeenCalled()).toBe(7);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(10);
+    expect(countRender6.howManyTimesBeenCalled()).toBe(9);
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {

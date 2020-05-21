@@ -2,13 +2,13 @@ import React from 'react';
 import { TestDescription, ComposeCallback } from '../testsAssets';
 import { flagManager } from '../testFlags';
 
-const sophisticatedStructure: TestDescription = p => [
+const sophisticatedStructure: TestDescription = (p) => [
   'sophisticated structure can communicate',
   () => {
     const {
       assets: {
         render,
-        getCountSetters,
+        settersCounterFactory,
         executionCountersFactory,
         CanListen,
         CanUpdate,
@@ -26,9 +26,7 @@ const sophisticatedStructure: TestDescription = p => [
     const testId7 = 'seventh';
     const testId8 = 'eighth';
     const testId9 = 'ninth';
-    const altComposeCallback: ComposeCallback = set => ({
-      target: { value },
-    }) => {
+    const altComposeCallback: ComposeCallback = (set) => ({ target: { value } }) => {
       set((old: string) => (old || '') + value);
     };
     const countRender1 = executionCountersFactory();
@@ -40,13 +38,18 @@ const sophisticatedStructure: TestDescription = p => [
     const countRender7 = executionCountersFactory();
     const countRender8 = executionCountersFactory();
     const countRender9 = executionCountersFactory();
-    const TestComponent = () => (
+
+    const TestComponent: React.FunctionComponent<{ initV1: string; initV2: string }> = ({
+      initV1,
+      initV2,
+    }) => (
       <>
         <CanListen
           {...{
             subscribeId: subscribeId1,
             testId: testId1,
             countRender: countRender1.count,
+            initialValue: initV1,
           }}
         >
           <CanListenAndUpdate
@@ -54,6 +57,7 @@ const sophisticatedStructure: TestDescription = p => [
               subscribeId: subscribeId2,
               testId: testId2,
               countRender: countRender2.count,
+              initialValue: initV2,
             }}
           />
         </CanListen>
@@ -122,17 +126,17 @@ const sophisticatedStructure: TestDescription = p => [
       </>
     );
 
-    const { unmount, fireNode, getTextFromNode } = render(<TestComponent />);
-    const countSetter = getCountSetters();
-    expect(getTextFromNode(testId1)).toBe('');
-    expect(getTextFromNode(testId2)).toBe('');
+    const { unmount, fireNode, getTextFromNode } = render(<TestComponent initV1="h" initV2="m" />);
+    const settersCounter = settersCounterFactory();
+    expect(getTextFromNode(testId1)).toBe('h');
+    expect(getTextFromNode(testId2)).toBe('m');
 
     fireNode(testId4, 'i');
-    expect(getTextFromNode(testId1)).toBe('i');
-    expect(getTextFromNode(testId3)).toBe('i');
-    expect(getTextFromNode(testId4)).toBe('i');
-    expect(getTextFromNode(testId8)).toBe('i');
-    expect(getTextFromNode(testId9)).toBe('i');
+    expect(getTextFromNode(testId1)).toBe('hi');
+    expect(getTextFromNode(testId3)).toBe('hi');
+    expect(getTextFromNode(testId4)).toBe('hi');
+    expect(getTextFromNode(testId8)).toBe('hi');
+    expect(getTextFromNode(testId9)).toBe('hi');
     expect(countRender1.howManyTimesBeenCalled()).toBe(2);
     expect(countRender2.howManyTimesBeenCalled()).toBe(1);
     expect(countRender3.howManyTimesBeenCalled()).toBe(2);
@@ -187,14 +191,14 @@ const sophisticatedStructure: TestDescription = p => [
     expect(countRender8.howManyTimesBeenCalled()).toBe(3);
     expect(countRender9.howManyTimesBeenCalled()).toBe(3);
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(countSetter(subscribeId1)).toBe(5);
-      expect(countSetter(subscribeId2)).toBe(3);
+      expect(settersCounter(subscribeId1)).toBe(5);
+      expect(settersCounter(subscribeId2)).toBe(3);
     }
 
     unmount();
     if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(countSetter(subscribeId1)).toBe(0);
-      expect(countSetter(subscribeId2)).toBe(0);
+      expect(settersCounter(subscribeId1)).toBe(0);
+      expect(settersCounter(subscribeId2)).toBe(0);
     }
   },
 ];

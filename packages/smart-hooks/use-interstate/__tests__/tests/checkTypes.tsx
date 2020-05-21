@@ -4,7 +4,7 @@ import {
   StateKey,
   InterstateInitializeParam,
   InterstateParam,
-} from '../../useInterstate';
+} from '../../src/useInterstate';
 
 const checkTypes: TestDescription = p => [
   'types are consistent',
