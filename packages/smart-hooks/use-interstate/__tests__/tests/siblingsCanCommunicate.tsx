@@ -1,6 +1,6 @@
 import React from 'react';
-import { TestDescription } from '../testsAssets';
 import { flagManager } from '../testFlags';
+import type { TestDescription } from '../testsAssets';
 
 const siblingsCanCommunicate: TestDescription = (p) => [
   'siblings can communicate',
@@ -36,17 +36,19 @@ const siblingsCanCommunicate: TestDescription = (p) => [
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent initV="" />);
     const settersCounter = settersCounterFactory();
     expect(getTextFromNode(testId2)).toBe('');
+    expect(countRender1.howManyTimesBeenCalled()).toBe(1);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(1);
 
     fireNode(testId1, 'cat');
     expect(getTextFromNode(testId2)).toBe('cat');
     expect(countRender1.howManyTimesBeenCalled()).toBe(1);
     expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId)).toBe(1);
     }
 
     unmount();
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId)).toBe(0);
     }
   },

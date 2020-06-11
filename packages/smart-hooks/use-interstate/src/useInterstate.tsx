@@ -1,122 +1,72 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-} from 'react';
-import { MapKey, Store, InitStateServiceMethods, SetterServiceMethods } from './StoreMap';
-import { storeFactory } from './storeFactory';
-import { UseInterstateErrorCodes } from './errorHandle';
 import { useSmartMemo } from '@smart-hooks/use-smart-memo';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createStore } from './createStore';
+import type { InterstateInitializeParam, InterstateParam, StateKey } from './InterstateParam';
+import type { SetterServices, Store, StoreServices } from './StoreState';
 
-declare const fixControlFlowAnalysis: () => never;
-
-function isFunction(p: any): p is Function {
-  return typeof p === 'function';
-}
-
-const globalStore = storeFactory();
+let globalStore: Store;
 
 type ScopeContextValue = { readonly store: Store } | undefined;
 
 const ScopeContext = createContext<ScopeContextValue>(undefined);
 
-const Scope: React.FunctionComponent = ({ children }) => {
-  const [isolatedStore] = useState(() => storeFactory());
+export const Scope: React.FunctionComponent = ({ children }) => {
+  const [isolatedStore] = useState(() => createStore());
 
   return <ScopeContext.Provider value={{ store: isolatedStore }}>{children}</ScopeContext.Provider>;
 };
-
-export type InterstateParam<T> = Exclude<T, Function> | ((prevValue: T) => T);
-export type InterstateInitializeParam<T> = Exclude<T, Function | undefined> | (() => T);
 
 type SetInterstate<T> = (p: InterstateParam<T>) => void;
 
 function useStore(): Store {
   const context = useContext<ScopeContextValue>(ScopeContext);
 
-  return useMemo(() => context?.store || globalStore, []);
+  if (context) {
+    return context.store;
+  }
+
+  globalStore = globalStore ?? createStore();
+
+  return globalStore;
 }
 
-type AllUndefined<T> = { [P in keyof Required<T>]: undefined };
-
-const cleanUpMergeInitStateServMeth: AllUndefined<InitStateServiceMethods<unknown>> = {
-  getValue: undefined,
-  setValue: undefined,
-  triggerSetters: undefined,
-  checkInitStatus: undefined,
-  resetInitStatus: undefined,
-  addSetter: undefined,
-};
-
-const cleanUpMergeSetterServMeth: AllUndefined<SetterServiceMethods> = {
-  markSetterToSkip: undefined,
-  removeSetter: undefined,
-};
-
-function useInterstate<T>(
-  stateKey: MapKey,
+export function useInterstate<T>(
+  key: StateKey,
   initValue?: InterstateInitializeParam<T>
 ): [() => T, SetInterstate<T>] {
-  const { initState, throwError } = useStore();
-  const memState = useRef<Partial<InitStateServiceMethods<T>>>({});
+  const { initializeState, runRenderTask, runEffectTask } = useStore();
+  const memState = useRef({} as StoreServices<T>);
+  const [signature] = useState(Symbol());
+  runRenderTask(key);
 
   useSmartMemo(() => {
-    const { current: currentMemState } = memState;
+    memState.current = initializeState(
+      key,
 
-    /**
-     * Initializing usInterstate without an init value (or undefined value) preserves  the last
-     * recorded value. If it is needed to set the value to undefined on the stage of initializing
-     * then pass the function parameter () => undefined;
-     */
-    const initMethods = initState(
-      stateKey,
-      initValue !== undefined
-        ? { initValue: isFunction(initValue) ? initValue() : initValue }
-        : undefined
+      /**
+       * Initializing usInterstate without an init value (or undefined value) preserves the last
+       * recorded value. If it is needed to set the value to undefined on the stage of  initializing
+       * then pass the function parameter () => undefined;
+       */
+      initValue === undefined ? undefined : { initValue, signature }
     );
+  }, [key]);
 
-    memState.current = { ...currentMemState, ...cleanUpMergeInitStateServMeth, ...initMethods };
-  }, [stateKey]);
+  useEffect(() => runEffectTask());
 
   useEffect(() => {
     const {
-      current: currentMemState,
-      current: { checkInitStatus, resetInitStatus, triggerSetters },
+      current: { resetInitState },
     } = memState;
 
-    if (!checkInitStatus || !triggerSetters) {
-      throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key: stateKey });
-      fixControlFlowAnalysis();
-    }
-
-    const initStatus = checkInitStatus();
-
-    /**
-     * Having method 'resetInitStatus' shows it is the component where an initialization process
-     * started and this component is responsible to trigger setters
-     */
-    if (resetInitStatus) {
-      if (!initStatus) {
-        throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key: stateKey });
-        fixControlFlowAnalysis();
-      }
-
-      if (initStatus.mustTrigger) {
-        triggerSetters();
-      }
-
-      resetInitStatus();
-
-      memState.current = { ...currentMemState, resetInitStatus: undefined };
-    }
-  }, [stateKey]);
+    resetInitState?.();
+  }, [key]);
 
   const useSubscribe = () => {
-    const subscribeMemState = useRef<Partial<SetterServiceMethods>>({});
+    const subscribeMemState = useRef<Partial<SetterServices>>({});
+    const {
+      current: { getValue },
+    } = memState;
 
     /**
      * Emit a setter that will be used to trigger rendering the component in the case a value
@@ -134,56 +84,29 @@ function useInterstate<T>(
       } = memState;
 
       const {
-        current: { removeSetter },
+        current: { removeSetterFromKeyList },
       } = subscribeMemState;
 
-      removeSetter?.();
+      removeSetterFromKeyList?.();
 
-      if (!addSetter) {
-        throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key: stateKey });
-        fixControlFlowAnalysis();
-      }
+      subscribeMemState.current = { ...addSetter(setter) };
+    }, [key]);
 
-      const setterMethods = addSetter(setter);
+    useEffect(() => {
+      const {
+        current: { removeSetterFromWatchList },
+      } = subscribeMemState;
 
-      subscribeMemState.current = {
-        ...subscribeMemState,
-        ...cleanUpMergeSetterServMeth,
-        ...setterMethods,
-      };
-    }, [stateKey]);
-
-    const {
-      current: { getValue, checkInitStatus },
-    } = memState;
-
-    const {
-      current: { markSetterToSkip },
-    } = subscribeMemState;
-
-    if (!checkInitStatus || !markSetterToSkip || !getValue) {
-      throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key: stateKey });
-      fixControlFlowAnalysis();
-    }
-
-    const initStatus = checkInitStatus();
-
-    if (initStatus && initStatus.mustTrigger) {
-      markSetterToSkip();
-    }
+      removeSetterFromWatchList?.();
+    }, [key]);
 
     useEffect(
       () => () => {
         const {
-          current: { removeSetter },
+          current: { removeSetterFromKeyList },
         } = subscribeMemState;
 
-        if (!removeSetter) {
-          throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key: stateKey });
-          fixControlFlowAnalysis();
-        }
-
-        removeSetter();
+        removeSetterFromKeyList?.();
       },
       []
     );
@@ -191,33 +114,17 @@ function useInterstate<T>(
     return getValue();
   };
 
-  const setInterstate = useCallback<SetInterstate<T>>((valueToSet) => {
+  const setInterstate = useCallback<SetInterstate<T>>((val) => {
     const {
-      current: { getValue, setValue, triggerSetters },
+      current: { setValue },
     } = memState;
 
-    if (!getValue || !setValue || !triggerSetters) {
-      throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key: stateKey });
-      fixControlFlowAnalysis();
-    }
-
-    const curValue = getValue();
-    const evalValue = isFunction(valueToSet) ? valueToSet(curValue) : valueToSet;
-
-    if (curValue !== evalValue) {
-      setValue(evalValue);
-
-      triggerSetters();
-    }
+    setValue(val);
   }, []);
 
   return [useSubscribe, setInterstate];
 }
 
-export type StateKey = MapKey;
-
-export { useInterstate, Scope };
-
-export { isUseInterstateError, getUseInterstateErrorMethods } from './errorHandle';
-
+export { getUseInterstateErrorServices, isUseInterstateError } from './errorHandle';
 export type { UseInterstateError } from './errorHandle';
+export type { StateKey, InterstateParam, InterstateInitializeParam };

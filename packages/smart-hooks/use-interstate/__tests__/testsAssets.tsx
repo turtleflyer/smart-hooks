@@ -1,21 +1,23 @@
 import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render } from '@testing-library/react';
-import * as mockedCreateStoreMap from '../src/createStoreMap';
-import {
-  Scope,
-  useInterstate,
-  InterstateParam,
-  InterstateInitializeParam,
-  getUseInterstateErrorMethods,
-  isUseInterstateError,
-  UseInterstateError,
-} from '../src/useInterstate';
 import React, { useEffect, useMemo } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import * as mockedCreateStoreState from '../src/createStoreState';
+import {
+  getUseInterstateErrorServices,
+  isUseInterstateError,
+  Scope,
+  useInterstate,
+} from '../src/useInterstate';
+import type {
+  InterstateInitializeParam,
+  InterstateParam,
+  UseInterstateError,
+} from '../src/useInterstate';
 
-jest.mock('../src/createStoreMap.ts');
+jest.mock('../src/createStoreState.ts');
 
-const { settersCounterFactory } = mockedCreateStoreMap as typeof mockedCreateStoreMap & {
+const { settersCounterFactory } = mockedCreateStoreState as typeof mockedCreateStoreState & {
   settersCounterFactory(): (key: InterstateID) => number | undefined;
 };
 
@@ -49,7 +51,7 @@ function newRender(arg: ExtractFirstArgType<typeof render>) {
 
 type FieldsValue = string;
 type InitType = InterstateInitializeParam<FieldsValue>;
-type InterstateID = string | number;
+type InterstateID = string | number | symbol;
 
 export type ComposeCallback = (
   set: (v: InterstateParam<FieldsValue>) => void
@@ -71,71 +73,109 @@ type ComposeComponent = (
   importedUseInterstate: typeof useInterstate
 ) => React.FunctionComponent<TestComponentsProps>;
 
-const composeCanListen: ComposeComponent = (importedUseInterstate) => ({
-  subscribeId,
-  initialValue,
-  testId = '',
-  countRender = () => {},
-  children,
-}) => {
-  const [useSubscribe] = importedUseInterstate(subscribeId, initialValue);
-  const state = useSubscribe();
-  useEffect(() => {
-    countRender();
-  });
-
-  return (
-    <div data-testid={testId}>
-      {state}
-      {children}
-    </div>
+function wrapInner(
+  Inner: React.FunctionComponent<TestComponentsProps>
+): React.FunctionComponent<TestComponentsProps> {
+  return ({
+    subscribeId,
+    initialValue,
+    testId = '',
+    composeCallback = defaultComposeCallback,
+    countRender = () => {},
+    children,
+  }) => (
+    <React.StrictMode>
+      <Inner
+        {...{
+          subscribeId,
+          initialValue,
+          testId,
+          composeCallback,
+          countRender,
+          children,
+        }}
+      />
+    </React.StrictMode>
   );
+}
+
+const composeCanListen: ComposeComponent = (importedUseInterstate) => {
+  const Inner: React.FunctionComponent<TestComponentsProps> = ({
+    subscribeId,
+    initialValue,
+    testId = '',
+    countRender = () => {},
+    children,
+  }) => {
+    const [useSubscribe] = importedUseInterstate(subscribeId, initialValue);
+    const state = useSubscribe();
+    useEffect(() => {
+      countRender();
+    });
+
+    return (
+      <div data-testid={testId}>
+        {state}
+        {children}
+      </div>
+    );
+  };
+
+  return wrapInner(Inner);
 };
 
-const composeCanUpdate: ComposeComponent = (importedUseInterstate) => ({
-  subscribeId,
-  initialValue,
-  testId = '',
-  composeCallback = defaultComposeCallback,
-  countRender = () => {},
-  children,
-}) => {
-  const [, setState] = importedUseInterstate(subscribeId, initialValue);
-  const callback = useMemo(() => composeCallback(setState), [composeCallback, setState]);
-  useEffect(() => {
-    countRender();
-  });
+const composeCanUpdate: ComposeComponent = (importedUseInterstate) => {
+  const Inner: React.FunctionComponent<TestComponentsProps> = ({
+    subscribeId,
+    initialValue,
+    testId = '',
+    composeCallback = defaultComposeCallback,
+    countRender = () => {},
+    children,
+  }) => {
+    const [, setState] = importedUseInterstate(subscribeId, initialValue);
+    const callback = useMemo(() => composeCallback(setState), [composeCallback, setState]);
+    useEffect(() => {
+      countRender();
+    });
 
-  return (
-    <div data-testid={testId}>
-      <input value="" onChange={callback} />
-      {children ? <div>{children}</div> : null}
-    </div>
-  );
+    return (
+      <div data-testid={testId}>
+        <input value="" onChange={callback} />
+        {children ? <div>{children}</div> : null}
+      </div>
+    );
+  };
+
+  return wrapInner(Inner);
 };
 
-const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => ({
-  subscribeId,
-  initialValue,
-  testId = '',
-  composeCallback = defaultComposeCallback,
-  countRender = () => {},
-  children,
-}) => {
-  const [useSubscribe, setState] = importedUseInterstate(subscribeId, initialValue);
-  const state = useSubscribe();
-  const callback = useMemo(() => composeCallback(setState), [composeCallback, setState]);
-  useEffect(() => {
-    countRender();
-  });
+const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => {
+  const Inner: React.FunctionComponent<TestComponentsProps> = ({
+    subscribeId,
+    initialValue,
+    testId = '',
+    composeCallback = defaultComposeCallback,
+    countRender = () => {},
+    children,
+  }) => {
+    const [useSubscribe, setState] = importedUseInterstate(subscribeId, initialValue);
+    const state = useSubscribe();
+    const callback = useMemo(() => composeCallback(setState), [composeCallback, setState]);
+    useEffect(() => {
+      countRender();
+    });
 
-  return (
-    <div data-testid={testId}>
-      {state}
-      <input value="" onChange={callback} />
-      <div>{children}</div>
-    </div>
-  );
+    return (
+      <div data-testid={testId}>
+        {state}
+        <input value="" onChange={callback} />
+        <div>{children}</div>
+      </div>
+    );
+  };
+
+  return wrapInner(Inner);
 };
 
 interface ErrorRecord {
@@ -167,7 +207,7 @@ const createAssertWrapper: AssertWrapperCreator = () => {
 export interface UseInterstateImport {
   readonly Scope: typeof Scope;
   readonly useInterstate: typeof useInterstate;
-  readonly getUseInterstateErrorMethods: typeof getUseInterstateErrorMethods;
+  readonly getUseInterstateErrorServices: typeof getUseInterstateErrorServices;
   readonly isUseInterstateError: typeof isUseInterstateError;
 }
 

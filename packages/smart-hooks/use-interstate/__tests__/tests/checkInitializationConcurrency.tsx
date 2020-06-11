@@ -1,6 +1,6 @@
+import { cleanup } from '@testing-library/react';
 import React from 'react';
-import { TestDescription } from '../testsAssets';
-import { cleanup, act } from '@testing-library/react';
+import type { TestDescription } from '../testsAssets';
 
 const checkInitializationConcurrency: TestDescription = (p) => [
   'check initialization concurrency',
@@ -12,7 +12,7 @@ const checkInitializationConcurrency: TestDescription = (p) => [
         CanUpdate,
         CanListenAndUpdate,
         createAssertWrapper,
-        getUseInterstateErrorMethods,
+        getUseInterstateErrorServices,
       },
     } = p;
     const subscribeId = '1';
@@ -63,28 +63,28 @@ const checkInitializationConcurrency: TestDescription = (p) => [
       assertWrapper(() => render(<TestComponent initV1="a" initV2="b" initV3="c" />))
     ).toThrow(/\(useInterstate Error\) .* concurrently/);
 
-    getUseInterstateErrorMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorServices(errorRecord.current)!.flushValueOfKey!();
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV1="d" initV2="e" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorServices(errorRecord.current)!.flushValueOfKey!();
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV1="f" initV3="g" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorServices(errorRecord.current)!.flushValueOfKey!();
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV2="h" initV3="i" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorServices(errorRecord.current)!.flushValueOfKey!();
     cleanup();
 
     const { unmount, getTextFromNode } = render(<TestComponent initV1="j" />);

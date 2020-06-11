@@ -1,6 +1,6 @@
 import React from 'react';
-import { TestDescription, ComposeCallback } from '../testsAssets';
 import { flagManager } from '../testFlags';
+import type { ComposeCallback, TestDescription } from '../testsAssets';
 
 const valuesRemainAfterTreeUnmount: TestDescription = (p) => [
   'values remain after tree unmount',
@@ -40,12 +40,12 @@ const valuesRemainAfterTreeUnmount: TestDescription = (p) => [
     fireNode(testId1, 'g');
     fireNode(testId1, 'e');
     expect(getTextFromNode(testId2)).toBe('age');
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId)).toBe(1);
     }
 
     unmount();
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId)).toBe(0);
     }
 
@@ -55,12 +55,12 @@ const valuesRemainAfterTreeUnmount: TestDescription = (p) => [
     fireNode(testId1, 'f');
     fireNode(testId1, 'r');
     expect(getTextFromNode(testId2)).toBe('agefr');
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId)).toBe(1);
     }
 
     unmount();
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId)).toBe(0);
     }
   },

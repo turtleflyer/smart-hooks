@@ -1,7 +1,7 @@
 import React from 'react';
-import { TestDescription } from '../testsAssets';
+import type { UseInterstateError } from '../../src/errorHandle';
 import { flagManager } from '../testFlags';
-import { UseInterstateError } from '../../src/errorHandle';
+import type { TestDescription } from '../testsAssets';
 
 const testErrorHandling: TestDescription = (p) => [
   'error handling works',
@@ -13,7 +13,7 @@ const testErrorHandling: TestDescription = (p) => [
         executionCountersFactory,
         CanListen,
         createAssertWrapper,
-        getUseInterstateErrorMethods,
+        getUseInterstateErrorServices,
       },
     } = p;
 
@@ -58,10 +58,10 @@ const testErrorHandling: TestDescription = (p) => [
       }
 
       componentDidCatch(error: Error | UseInterstateError) {
-        const errorMethods = getUseInterstateErrorMethods(error);
-        if (errorMethods) {
-          const { flushValueOfKey, flushEntireMap } = errorMethods;
-          flushValueOfKey?.() ?? flushEntireMap();
+        const errorServices = getUseInterstateErrorServices(error);
+        if (errorServices) {
+          const { flushValueOfKey } = errorServices;
+          flushValueOfKey!();
         } else {
           throw error as Error;
         }
@@ -114,13 +114,10 @@ const testErrorHandling: TestDescription = (p) => [
       </ErrorBoundary>
     );
 
-    const settersCounter = settersCounterFactory();
     const { getTextFromNode, rerender, unmount, getByTestId } = render(
       <TestComponent initV1="Java" />
     );
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
-      expect(settersCounter(subscribeId1)).toBe(3);
-    }
+    const settersCounter = settersCounterFactory();
     expect(getTextFromNode(testId1)).toBe('Java');
     expect(getTextFromNode(testId2)).toBe('Java');
     expect(getTextFromNode(testId3)).toBe('Java');
@@ -138,11 +135,10 @@ const testErrorHandling: TestDescription = (p) => [
     expect(getTextFromNode(testId2)).toBe('Python');
     expect(getTextFromNode(testId3)).toBe('Python');
     expect(countRender1.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(2);
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    expect(countRender2.howManyTimesBeenCalled()).toBe(3);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(3);
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(0);
-      expect(settersCounter(subscribeId2)).toBe(3);
     }
 
     assertWrapper(() => rerender(<TestComponent subscribeId={subscribeId3} />));
@@ -156,18 +152,16 @@ const testErrorHandling: TestDescription = (p) => [
     expect(getTextFromNode(testId2)).toBe('TypeScript');
     expect(getTextFromNode(testId3)).toBe('TypeScript');
     expect(countRender1.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(3);
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    expect(countRender2.howManyTimesBeenCalled()).toBe(4);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(4);
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(0);
       expect(settersCounter(subscribeId2)).toBe(0);
-      expect(settersCounter(subscribeId3)).toBe(3);
     }
 
     unmount();
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(0);
-      expect(settersCounter(subscribeId2)).toBe(0);
       expect(settersCounter(subscribeId2)).toBe(0);
     }
   },

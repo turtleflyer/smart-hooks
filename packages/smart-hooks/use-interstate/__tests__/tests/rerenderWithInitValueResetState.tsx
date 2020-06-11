@@ -1,5 +1,5 @@
 import React from 'react';
-import { TestDescription } from '../testsAssets';
+import type { TestDescription } from '../testsAssets';
 
 const rerenderWithInitValueResetState: TestDescription = (p) => [
   'rerendering with init value resets state to this value',
@@ -43,7 +43,7 @@ const rerenderWithInitValueResetState: TestDescription = (p) => [
 
     rerender(<TestComponent init={null} />);
     rerender(<TestComponent init="bad" />);
-    expect(getTextFromNode(testId2)).toBe('bad');
+    expect(getTextFromNode(testId2)).toBe('good');
 
     fireNode(testId1, 'fair');
     expect(getTextFromNode(testId2)).toBe('fair');

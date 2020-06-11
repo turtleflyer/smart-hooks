@@ -1,4 +1,5 @@
-import { MapKey, StoreMap } from './StoreMap';
+import type { StateKey } from './InterstateParam';
+import type { MemValueMap, StoreState } from './StoreState';
 
 export enum UseInterstateErrorCodes {
   CONCURRENTLY_PROVIDED_INIT_VALUE,
@@ -6,6 +7,10 @@ export enum UseInterstateErrorCodes {
   ACCESS_VALUE_NOT_BEEN_SET,
 
   NOT_BEEN_RECOVERED_AFTER_ERROR,
+
+  MULTIPLE_ATTEMPT_SET_STATE,
+
+  ATTEMPT_SET_STATE_ON_RENDER,
 
   UNEXPECTED_ERROR,
 }
@@ -26,6 +31,15 @@ const UseInterstateErrorOptions: { [P in UseInterstateErrorCodes]: { message: st
       'It appeared that the useInterstate inner state for the key %%key%% has not been recovered after the recent error has occurred',
   },
 
+  [UseInterstateErrorCodes.MULTIPLE_ATTEMPT_SET_STATE]: {
+    message:
+      'Multiple attempt of setting value for the key %%key%% is registered during the same cycle',
+  },
+
+  [UseInterstateErrorCodes.ATTEMPT_SET_STATE_ON_RENDER]: {
+    message: 'Attempt of setting value on the rendering stage for the key %%key%% is registered',
+  },
+
   [UseInterstateErrorCodes.UNEXPECTED_ERROR]: {
     message: 'Unexpected error occurs',
   },
@@ -34,14 +48,13 @@ const UseInterstateErrorOptions: { [P in UseInterstateErrorCodes]: { message: st
 const MAINTENANCE_TIMEOUT = 10000;
 const MAX_ERRORS_TO_STORE = 100;
 
-export interface UseInterstateErrorMethods {
-  readonly flushValueOfKey?: () => void;
-  readonly flushEntireMap: () => void;
+export interface UseInterstateErrorServices {
+  readonly flushValueOfKey?: (isToRevertData?: boolean) => boolean;
 }
 
 let errorsPool: {
   readonly error: Error;
-  readonly methods: UseInterstateErrorMethods;
+  readonly services: UseInterstateErrorServices;
   readonly lifeSignature: symbol;
 }[] = [];
 
@@ -68,27 +81,41 @@ type Impossible<T> = T & { [P: string]: never };
 
 export type UseInterstateError = Impossible<Error>;
 
-let extractedMethods: UseInterstateErrorMethods;
+let extractedServices: UseInterstateErrorServices;
 
 export function isUseInterstateError(e: Error): e is UseInterstateError {
   return errorsPool.some((errorFromPool) => {
-    extractedMethods = errorFromPool.methods;
+    extractedServices = errorFromPool.services;
     return e === errorFromPool.error;
   });
 }
 
-export function getUseInterstateErrorMethods<E extends Error>(
+export function getUseInterstateErrorServices<E extends Error>(
   e: E
-): E extends UseInterstateError ? UseInterstateErrorMethods : undefined;
+): E extends UseInterstateError ? UseInterstateErrorServices : undefined;
 
-export function getUseInterstateErrorMethods(e: Error): UseInterstateErrorMethods | undefined {
+export function getUseInterstateErrorServices(e: Error): UseInterstateErrorServices | undefined {
   if (isUseInterstateError(e)) {
-    return extractedMethods;
+    return extractedServices;
   }
 }
 
 interface ErrorOptions {
-  readonly key?: MapKey;
+  readonly key?: StateKey;
+}
+
+interface ComposeServiceParam {
+  memValuesMap: MemValueMap;
+}
+
+interface ErrorServiceTemplate {
+  readonly nameOfService: keyof UseInterstateErrorServices;
+  readonly composeService: (
+    prop: ComposeServiceParam,
+    key?: StateKey
+  ) => ((isToRevertData: boolean) => void) | undefined;
+  readonly getCountSignature: (key?: StateKey) => number | undefined;
+  readonly incrementCountSignature: (key?: StateKey) => void;
 }
 
 export type UseInterstateThrowError = (
@@ -96,71 +123,66 @@ export type UseInterstateThrowError = (
   { key }: ErrorOptions
 ) => never;
 
-export function composeThrowError(storeMap: StoreMap): UseInterstateThrowError {
-  function flushMapValue(key: MapKey) {
+export function createThrowError(storeState: StoreState): UseInterstateThrowError {
+  const { storeMap } = storeState;
+
+  function flushMapValue(key: StateKey, memValuesMap: MemValueMap, isToRevertData: boolean) {
     const mapValue = storeMap.get(key)!;
     for (const s of mapValue) {
+      s.removeFromWatchList();
       s.errorChunk = true;
     }
 
-    storeMap.set(key, {
-      ...mapValue,
-      startOfSettersList: undefined,
-      endOfSettersList: undefined,
-      initStatus: false,
-    });
-  }
+    mapValue.start = undefined;
+    mapValue.end = undefined;
+    mapValue.initStatus = undefined;
+    mapValue.caughtError = undefined;
+    mapValue.triggerRegistered = false;
 
-  interface ErrorMethodTemplate {
-    readonly nameOfMethod: keyof UseInterstateErrorMethods;
-    readonly composeMethod: (key?: MapKey) => (() => void) | undefined;
-    readonly getCountSignature: (key?: MapKey) => number | undefined;
-    readonly incrementCountSignature: (key?: MapKey) => void;
-  }
-
-  let flushEntireMapCountSign = 0;
-  const flushValueOfKeyCountSignMap = new Map<MapKey, number>();
-
-  const errorMethodsTemplates: ErrorMethodTemplate[] = [
-    {
-      nameOfMethod: 'flushEntireMap',
-      composeMethod: () => () => {
-        for (const k of storeMap.keys()) {
-          flushMapValue(k);
+    if (isToRevertData) {
+      if (memValuesMap.has(key)) {
+        const prevData = memValuesMap.get(key);
+        if (prevData) {
+          mapValue.value = prevData.value;
+        } else {
+          mapValue.isValueSetUp = false;
         }
-      },
-      getCountSignature: () => flushEntireMapCountSign,
-      incrementCountSignature: () => {
-        flushEntireMapCountSign++;
-      },
-    },
+      }
+    }
+  }
+
+  const flushValueOfKeyCountSignMap = new Map<StateKey, number>();
+
+  const errorServicesTemplates: ErrorServiceTemplate[] = [
     {
-      nameOfMethod: 'flushValueOfKey',
-      composeMethod: (key) => (key === undefined ? undefined : () => flushMapValue(key)),
-      getCountSignature: (key) => (key ? flushValueOfKeyCountSignMap.get(key) ?? 0 : undefined),
+      nameOfService: 'flushValueOfKey',
+      composeService: ({ memValuesMap }: ComposeServiceParam, key) =>
+        key === undefined || !storeMap.has(key)
+          ? undefined
+          : (isToRevertData) => {
+              flushMapValue(key, memValuesMap, isToRevertData);
+            },
+      getCountSignature: (key) => flushValueOfKeyCountSignMap.get(key!) ?? 0,
       incrementCountSignature: (key) => {
-        if (key) {
-          const countSignature = flushValueOfKeyCountSignMap.get(key);
-          flushValueOfKeyCountSignMap.set(key, countSignature ?? 0 + 1);
-        }
+        const countSignature = flushValueOfKeyCountSignMap.get(key!);
+        flushValueOfKeyCountSignMap.set(key!, countSignature ?? 0 + 1);
       },
     },
   ];
 
-  function composeMethodRegardingCountSignature<T extends ErrorMethodTemplate>(
-    t: T,
-    key?: MapKey
-  ): (() => boolean) | ReturnType<T['composeMethod']> extends undefined ? undefined : never;
-
-  function composeMethodRegardingCountSignature(t: ErrorMethodTemplate, key?: MapKey) {
-    const { composeMethod, getCountSignature, incrementCountSignature } = t;
-    const method = composeMethod(key);
+  function createServiceRegardingCountSignature(
+    param: ComposeServiceParam,
+    template: ErrorServiceTemplate,
+    key?: StateKey
+  ): ((isToRevertData?: boolean) => boolean) | undefined {
+    const { composeService, getCountSignature, incrementCountSignature } = template;
+    const service = composeService(param, key);
     const memCountSignature = getCountSignature(key);
 
-    return method
-      ? () => {
+    return service
+      ? (isToRevertData = false) => {
           if (memCountSignature === getCountSignature(key)) {
-            method();
+            service(isToRevertData);
             incrementCountSignature(key);
             return true;
           }
@@ -169,12 +191,19 @@ export function composeThrowError(storeMap: StoreMap): UseInterstateThrowError {
       : undefined;
   }
 
-  return function throwError(errorCode, { key }) {
+  function throwError(errorCode: UseInterstateErrorCodes, { key }: ErrorOptions): never {
     const keyString = `"${key?.toString() ?? '<key index is not provided>'}"`;
     const message = `(useInterstate Error) ${UseInterstateErrorOptions[errorCode].message.replace(
       /%%key%%/i,
       keyString
     )}`;
+
+    if (key !== undefined) {
+      const mapValue = storeMap.get(key)!;
+      mapValue.caughtError = errorCode;
+    }
+
+    const param: ComposeServiceParam = { memValuesMap: storeState.memValuesMap };
 
     const error = <UseInterstateError>Error(message);
 
@@ -190,14 +219,21 @@ export function composeThrowError(storeMap: StoreMap): UseInterstateThrowError {
       errorsPool.push({
         error,
 
-        methods: errorMethodsTemplates.reduce((ev, t) => {
-          return { ...ev, [t.nameOfMethod]: composeMethodRegardingCountSignature(t, key) };
-        }, <UseInterstateErrorMethods>{}),
+        services: errorServicesTemplates.reduce((ev, t) => {
+          return { ...ev, [t.nameOfService]: createServiceRegardingCountSignature(param, t, key) };
+        }, <UseInterstateErrorServices>{}),
 
         lifeSignature: futureLifeSignature,
       });
     }
 
     throw error;
-  };
+  }
+
+  return throwError;
+}
+
+export interface ErrorHandleOptions {
+  throwError: UseInterstateThrowError;
+  key?: StateKey;
 }

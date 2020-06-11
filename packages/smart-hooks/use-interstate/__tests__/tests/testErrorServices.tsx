@@ -1,17 +1,17 @@
-import React from 'react';
-import { TestDescription } from '../testsAssets';
 import { cleanup } from '@testing-library/react';
-import { UseInterstateError } from '../../src/useInterstate';
+import React from 'react';
+import type { UseInterstateError } from '../../src/useInterstate';
+import type { TestDescription } from '../testsAssets';
 
-const testErrorMethods: TestDescription = (p) => [
-  'error methods work properly',
+const testErrorServices: TestDescription = (p) => [
+  'error services work properly',
   async () => {
     const {
       assets: {
         render,
         CanListen,
         createAssertWrapper,
-        getUseInterstateErrorMethods,
+        getUseInterstateErrorServices,
         isUseInterstateError,
       },
     } = p;
@@ -80,17 +80,17 @@ const testErrorMethods: TestDescription = (p) => [
 
     await awaitTimeout(4000);
 
-    const [errorMethods1, errorMethods2, errorMethods3] = ([
+    const [errorServices1, errorServices2, errorServices3] = ([
       error1,
       error2,
       error3,
-    ] as UseInterstateError[]).map((e) => getUseInterstateErrorMethods(e));
+    ] as UseInterstateError[]).map((e) => getUseInterstateErrorServices(e));
 
     await awaitTimeout(1000);
 
     expect(
       ([error1, error2, error3] as (Error | UseInterstateError)[]).map(
-        (e) => getUseInterstateErrorMethods(e) !== undefined
+        (e) => getUseInterstateErrorServices(e) !== undefined
       )
     ).toEqual([true, true, true]);
 
@@ -98,7 +98,7 @@ const testErrorMethods: TestDescription = (p) => [
 
     expect(
       ([error1, error2, error3] as (Error | UseInterstateError)[]).map(
-        (e) => getUseInterstateErrorMethods(e) !== undefined
+        (e) => getUseInterstateErrorServices(e) !== undefined
       )
     ).toEqual([false, true, true]);
 
@@ -106,16 +106,13 @@ const testErrorMethods: TestDescription = (p) => [
 
     expect(
       ([error1, error2, error3] as (Error | UseInterstateError)[]).map(
-        (e) => getUseInterstateErrorMethods(e) !== undefined
+        (e) => getUseInterstateErrorServices(e) !== undefined
       )
     ).toEqual([false, false, false]);
 
-    expect(errorMethods1.flushValueOfKey!()).toBeTruthy();
-    expect(errorMethods2.flushValueOfKey!()).toBeFalsy();
-    expect(errorMethods3.flushValueOfKey!()).toBeTruthy();
-    expect(errorMethods2.flushEntireMap()).toBeTruthy();
-    expect(errorMethods1.flushEntireMap()).toBeFalsy();
-    expect(errorMethods3.flushEntireMap()).toBeFalsy();
+    expect(errorServices1.flushValueOfKey!()).toBeTruthy();
+    expect(errorServices2.flushValueOfKey!()).toBeFalsy();
+    expect(errorServices3.flushValueOfKey!()).toBeTruthy();
 
     let curError: Error;
     function throwExpectedError() {
@@ -126,16 +123,16 @@ const testErrorMethods: TestDescription = (p) => [
       cleanup();
     }
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 50; i++) {
       throwExpectedError();
     }
     expect(isUseInterstateError(curError!)).toBeTruthy();
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 51; i++) {
       throwExpectedError();
     }
     expect(isUseInterstateError(curError!)).toBeFalsy();
   },
 ];
 
-export default testErrorMethods;
+export default testErrorServices;

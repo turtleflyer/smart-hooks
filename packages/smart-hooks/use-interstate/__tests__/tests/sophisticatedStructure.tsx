@@ -1,6 +1,6 @@
 import React from 'react';
-import { TestDescription, ComposeCallback } from '../testsAssets';
 import { flagManager } from '../testFlags';
+import type { ComposeCallback, TestDescription } from '../testsAssets';
 
 const sophisticatedStructure: TestDescription = (p) => [
   'sophisticated structure can communicate',
@@ -190,13 +190,13 @@ const sophisticatedStructure: TestDescription = (p) => [
     expect(countRender7.howManyTimesBeenCalled()).toBe(3);
     expect(countRender8.howManyTimesBeenCalled()).toBe(3);
     expect(countRender9.howManyTimesBeenCalled()).toBe(3);
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(5);
       expect(settersCounter(subscribeId2)).toBe(3);
     }
 
     unmount();
-    if (flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(0);
       expect(settersCounter(subscribeId2)).toBe(0);
     }

@@ -1,17 +1,16 @@
-import { TestParameter, AssetsImport, UseInterstateImport } from './testsAssets';
 import { cleanup } from '@testing-library/react';
+import { flagManager } from './testFlags';
+import checkInitializationConcurrency from './tests/checkInitializationConcurrency';
+import checkTypes from './tests/checkTypes';
+import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
+import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetState';
 import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
 import sophisticatedStructure from './tests/sophisticatedStructure';
-import checkInitializationConcurrency from './tests/checkInitializationConcurrency';
-import valuesRemainAfterTreeUnmount from './tests/valuesRemainAfterTreeUnmount';
-import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetState';
-import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
 import testContext from './tests/testContext';
-import checkRerenderOptimization from './tests/checkRerenderOptimization';
 import testErrorHandling from './tests/testErrorHandling';
-import testErrorMethods from './tests/testErrorMethods';
-import checkTypes from './tests/checkTypes';
-import { flagManager } from './testFlags';
+import testErrorServices from './tests/testErrorServices';
+import valuesRemainAfterTreeUnmount from './tests/valuesRemainAfterTreeUnmount';
+import { AssetsImport, TestParameter, UseInterstateImport } from './testsAssets';
 
 const mainTestSuit = (packagePath: string) =>
   describe.each([
@@ -35,14 +34,11 @@ const mainTestSuit = (packagePath: string) =>
           composeCanUpdate,
           composeCanListenAndUpdate,
           createAssertWrapper,
-        } = require('./testsAssets') as AssetsImport;
+        } = <AssetsImport>require('./testsAssets');
 
-        const {
-          useInterstate,
-          Scope,
-          getUseInterstateErrorMethods,
-          isUseInterstateError,
-        } = require(packagePath) as UseInterstateImport;
+        const { useInterstate, Scope, getUseInterstateErrorServices, isUseInterstateError } = <
+          UseInterstateImport
+        >require(packagePath);
 
         const [CanListen, CanUpdate, CanListenAndUpdate] = [
           composeCanListen,
@@ -60,7 +56,7 @@ const mainTestSuit = (packagePath: string) =>
           createAssertWrapper,
           useInterstate,
           Scope,
-          getUseInterstateErrorMethods,
+          getUseInterstateErrorServices,
           isUseInterstateError,
         };
       });
@@ -75,9 +71,8 @@ const mainTestSuit = (packagePath: string) =>
     test(...rerenderWithInitValueResetState(testParameter));
     test(...dynamicSubscriptionWorks(testParameter));
     test(...testContext(testParameter));
-    test(...checkRerenderOptimization(testParameter));
     test(...testErrorHandling(testParameter));
-    test(...testErrorMethods(testParameter));
+    test(...testErrorServices(testParameter));
     test(...checkTypes(testParameter));
 
     test('proof of mock', () => {
