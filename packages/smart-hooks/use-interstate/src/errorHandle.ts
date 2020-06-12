@@ -10,8 +10,6 @@ export enum UseInterstateErrorCodes {
 
   MULTIPLE_ATTEMPT_SET_STATE,
 
-  ATTEMPT_SET_STATE_ON_RENDER,
-
   UNEXPECTED_ERROR,
 }
 
@@ -34,10 +32,6 @@ const UseInterstateErrorOptions: { [P in UseInterstateErrorCodes]: { message: st
   [UseInterstateErrorCodes.MULTIPLE_ATTEMPT_SET_STATE]: {
     message:
       'Multiple attempt of setting value for the key %%key%% is registered during the same cycle',
-  },
-
-  [UseInterstateErrorCodes.ATTEMPT_SET_STATE_ON_RENDER]: {
-    message: 'Attempt of setting value on the rendering stage for the key %%key%% is registered',
   },
 
   [UseInterstateErrorCodes.UNEXPECTED_ERROR]: {

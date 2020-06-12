@@ -78,7 +78,6 @@ export function createStore(): Store {
 
       mapEntryValue.isValueSetUp = true;
       mapEntryValue.initStatus = undefined;
-      mapEntryValue.triggerRegistered = false;
 
       triggerActionsPostponed?.();
       triggerActionsPostponed = undefined;
@@ -123,10 +122,11 @@ export function createStore(): Store {
 
         if (initStatus) {
           triggerActionsPostponed = setValueAction;
-          mapEntryValue.triggerRegistered = true;
         } else {
           setValueAction();
         }
+
+        mapEntryValue.triggerRegistered = true;
       },
 
       addSetter(setter: Setter) {
@@ -200,11 +200,7 @@ export function createStore(): Store {
 
     const mapValue = storeMap.get(key)!;
 
-    const { value, isValueSetUp, triggerRegistered, caughtError } = mapValue;
-
-    if (triggerRegistered && !caughtError) {
-      throwError(UseInterstateErrorCodes.ATTEMPT_SET_STATE_ON_RENDER, { key });
-    }
+    const { value, isValueSetUp } = mapValue;
 
     const { memValuesMap } = storeState;
 
