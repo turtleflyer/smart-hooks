@@ -6,8 +6,6 @@ export enum UseInterstateErrorCodes {
 
   ACCESS_VALUE_NOT_BEEN_SET,
 
-  NOT_BEEN_RECOVERED_AFTER_ERROR,
-
   MULTIPLE_ATTEMPT_SET_STATE,
 
   UNEXPECTED_ERROR,
@@ -22,11 +20,6 @@ const UseInterstateErrorOptions: { [P in UseInterstateErrorCodes]: { message: st
   [UseInterstateErrorCodes.ACCESS_VALUE_NOT_BEEN_SET]: {
     message:
       'The record for the key %%key%% requested while reading or writing but the value never been set',
-  },
-
-  [UseInterstateErrorCodes.NOT_BEEN_RECOVERED_AFTER_ERROR]: {
-    message:
-      'It appeared that the useInterstate inner state for the key %%key%% has not been recovered after the recent error has occurred',
   },
 
   [UseInterstateErrorCodes.MULTIPLE_ATTEMPT_SET_STATE]: {

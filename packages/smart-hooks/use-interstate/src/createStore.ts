@@ -58,7 +58,7 @@ export function createStore(): Store {
 
       for (const setterEntry of mapEntryValue) {
         if (isSetterListEntryErrorChunk(setterEntry)) {
-          throwError(UseInterstateErrorCodes.NOT_BEEN_RECOVERED_AFTER_ERROR, { key });
+          throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
         }
 
         setterEntry.setter((v) => !v);
@@ -137,7 +137,7 @@ export function createStore(): Store {
         }
 
         if (isSetterListEntryErrorChunk(end)) {
-          throwError(UseInterstateErrorCodes.NOT_BEEN_RECOVERED_AFTER_ERROR, { key });
+          throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
         }
 
         function removeSetterFromKeyList() {
