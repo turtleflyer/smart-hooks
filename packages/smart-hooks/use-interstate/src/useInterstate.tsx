@@ -16,7 +16,7 @@ export const Scope: React.FunctionComponent = ({ children }) => {
   return <ScopeContext.Provider value={{ store: isolatedStore }}>{children}</ScopeContext.Provider>;
 };
 
-type SetInterstate<T> = (p: InterstateParam<T>) => void;
+export type SetInterstate<T = any> = (p: InterstateParam<T>) => void;
 
 function useStore(): Store {
   const context = useContext<ScopeContextValue>(ScopeContext);
@@ -128,3 +128,4 @@ export function useInterstate<T>(
 export { getUseInterstateErrorServices, isUseInterstateError } from './errorHandle';
 export type { UseInterstateError } from './errorHandle';
 export type { StateKey, InterstateParam, InterstateInitializeParam };
+
