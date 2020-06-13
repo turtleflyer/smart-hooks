@@ -126,6 +126,5 @@ export function useInterstate<T>(
 }
 
 export { getUseInterstateErrorServices, isUseInterstateError } from './errorHandle';
-export type { UseInterstateError } from './errorHandle';
+export type { UseInterstateError, UseInterstateErrorServices } from './errorHandle';
 export type { StateKey, InterstateParam, InterstateInitializeParam };
-
