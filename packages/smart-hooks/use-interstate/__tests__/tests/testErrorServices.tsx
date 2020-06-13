@@ -1,5 +1,5 @@
 import { cleanup } from '@testing-library/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { UseInterstateError } from '../../src/useInterstate';
 import type { TestDescription } from '../testsAssets';
 
@@ -13,12 +13,14 @@ const testErrorServices: TestDescription = (p) => [
         createAssertWrapper,
         getUseInterstateErrorServices,
         isUseInterstateError,
+        useInterstate,
       },
     } = p;
 
     const [assertWrapper, errorRecord] = createAssertWrapper();
     const subscribeId1 = 1;
     const subscribeId2 = 2;
+    const subscribeId3 = 3;
 
     function awaitTimeout(t: number) {
       const wait = new Promise((r) => setTimeout(r, t));
@@ -26,17 +28,11 @@ const testErrorServices: TestDescription = (p) => [
       return wait;
     }
 
-    interface ErrorEmitterProps {
+    const ErrorEmitterRegardingInit: React.FunctionComponent<{
       subscribeId?: number;
       initV1?: string;
       initV2?: string;
-    }
-
-    const ErrorEmitter: React.FunctionComponent<ErrorEmitterProps> = ({
-      subscribeId = subscribeId1,
-      initV1,
-      initV2,
-    }) => (
+    }> = ({ subscribeId = subscribeId1, initV1, initV2 }) => (
       <>
         <CanListen
           {...{
@@ -53,18 +49,45 @@ const testErrorServices: TestDescription = (p) => [
       </>
     );
 
+    const InnerSet: React.FunctionComponent<{ toSet: string }> = ({ toSet }) => {
+      const [, setInterstate] = useInterstate<string>(subscribeId3);
+
+      useEffect(() => setInterstate(toSet));
+
+      return <div>should be last</div>;
+    };
+
+    const InnerInit: React.FunctionComponent = () => {
+      const [useSubscribe] = useInterstate(subscribeId3, 'cold');
+      const val = useSubscribe();
+
+      return <div>{val}</div>;
+    };
+
+    const ErrorEmitterRegardingSetValue: React.FunctionComponent = () => {
+      return (
+        <>
+          <InnerSet toSet="warm" />
+          <InnerInit />
+          <InnerSet toSet="hot" />
+        </>
+      );
+    };
+
     jest.useFakeTimers();
     jest.advanceTimersByTime(20000);
 
-    expect(() => assertWrapper(() => render(<ErrorEmitter />))).toThrow('(useInterstate Error)');
+    expect(() => assertWrapper(() => render(<ErrorEmitterRegardingInit />))).toThrow(
+      /(useInterstate Error).*value never been set/
+    );
     const { current: error1 } = errorRecord;
     cleanup();
 
     await awaitTimeout(10000);
 
     expect(() =>
-      assertWrapper(() => render(<ErrorEmitter initV1="father" initV2="son" />))
-    ).toThrow('(useInterstate Error)');
+      assertWrapper(() => render(<ErrorEmitterRegardingInit initV1="father" initV2="son" />))
+    ).toThrow(/(useInterstate Error).*concurrently during the same rendering cycle/);
     const { current: error2 } = errorRecord;
     cleanup();
 
@@ -72,52 +95,66 @@ const testErrorServices: TestDescription = (p) => [
 
     expect(() =>
       assertWrapper(() =>
-        render(<ErrorEmitter subscribeId={subscribeId2} initV1="mother" initV2="daughter" />)
+        render(
+          <ErrorEmitterRegardingInit subscribeId={subscribeId2} initV1="mother" initV2="daughter" />
+        )
       )
-    ).toThrow('(useInterstate Error)');
+    ).toThrow(/(useInterstate Error).*concurrently during the same rendering cycle/);
     const { current: error3 } = errorRecord;
     cleanup();
 
-    await awaitTimeout(4000);
+    await awaitTimeout(2000);
 
-    const [errorServices1, errorServices2, errorServices3] = ([
+    expect(() => assertWrapper(() => render(<ErrorEmitterRegardingSetValue />))).toThrow(
+      /(useInterstate Error).*Multiple attempt of setting value/
+    );
+    const { current: error4 } = errorRecord;
+    cleanup();
+
+    await awaitTimeout(2000);
+
+    const [errorServices1, errorServices2, errorServices3, errorServices4] = ([
       error1,
       error2,
       error3,
+      error4,
     ] as UseInterstateError[]).map((e) => getUseInterstateErrorServices(e));
 
     await awaitTimeout(1000);
 
     expect(
-      ([error1, error2, error3] as (Error | UseInterstateError)[]).map(
+      ([error1, error2, error3, error4] as (Error | UseInterstateError)[]).map(
         (e) => getUseInterstateErrorServices(e) !== undefined
       )
-    ).toEqual([true, true, true]);
+    ).toEqual([true, true, true, true]);
 
     await awaitTimeout(2000);
 
     expect(
-      ([error1, error2, error3] as (Error | UseInterstateError)[]).map(
+      ([error1, error2, error3, error4] as (Error | UseInterstateError)[]).map(
         (e) => getUseInterstateErrorServices(e) !== undefined
       )
-    ).toEqual([false, true, true]);
+    ).toEqual([false, true, true, true]);
 
     await awaitTimeout(10000);
 
     expect(
-      ([error1, error2, error3] as (Error | UseInterstateError)[]).map(
+      ([error1, error2, error3, error4] as (Error | UseInterstateError)[]).map(
         (e) => getUseInterstateErrorServices(e) !== undefined
       )
-    ).toEqual([false, false, false]);
+    ).toEqual([false, false, false, false]);
 
     expect(errorServices1.flushValueOfKey!()).toBeTruthy();
     expect(errorServices2.flushValueOfKey!()).toBeFalsy();
     expect(errorServices3.flushValueOfKey!()).toBeTruthy();
+    expect(errorServices4.flushValueOfKey!()).toBeTruthy();
 
     let curError: Error;
     function throwExpectedError() {
-      expect(() => assertWrapper(() => render(<ErrorEmitter initV1="no" initV2="yes" />))).toThrow(
-        '(useInterstate Error)'
+      expect(() =>
+        assertWrapper(() => render(<ErrorEmitterRegardingInit initV1="no" initV2="yes" />))
+      ).toThrow(
+        /(useInterstate Error).*(concurrently during the same rendering cycle|Too many errors have been occurring)/
       );
       ({ current: curError } = errorRecord);
       cleanup();

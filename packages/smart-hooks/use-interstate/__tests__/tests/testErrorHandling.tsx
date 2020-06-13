@@ -1,7 +1,7 @@
-import React from 'react';
-import type { UseInterstateError } from '../../src/errorHandle';
+import React, { useEffect } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
+import type { UseInterstateError, UseInterstateErrorServices } from '../../src/useInterstate';
 
 const testErrorHandling: TestDescription = (p) => [
   'error handling works',
@@ -14,6 +14,8 @@ const testErrorHandling: TestDescription = (p) => [
         CanListen,
         createAssertWrapper,
         getUseInterstateErrorServices,
+        isUseInterstateError,
+        useInterstate,
       },
     } = p;
 
@@ -36,10 +38,11 @@ const testErrorHandling: TestDescription = (p) => [
       initV1?: string;
       initV2?: string;
       initV3?: string;
+      throwError?: boolean;
     }
 
     interface TestComponentProps extends TestComponentChildrenArg {
-      resetErrorState?: boolean;
+      resetErrorState?: { restoreValue: boolean };
     }
 
     interface ErrorBoundaryProps extends TestComponentProps {
@@ -53,37 +56,61 @@ const testErrorHandling: TestDescription = (p) => [
 
       state = { hasError: false };
 
+      private errorServices?: UseInterstateErrorServices;
+
       static getDerivedStateFromError() {
         return { hasError: true };
       }
 
       componentDidCatch(error: Error | UseInterstateError) {
-        const errorServices = getUseInterstateErrorServices(error);
-        if (errorServices) {
-          const { flushValueOfKey } = errorServices;
-          flushValueOfKey!();
+        if (isUseInterstateError(error)) {
+          this.errorServices = getUseInterstateErrorServices(error);
         } else {
           throw error as Error;
         }
       }
 
       componentDidUpdate() {
-        if (this.props.resetErrorState && this.state.hasError) {
+        const { resetErrorState } = this.props;
+        if (resetErrorState && this.state.hasError) {
+          const { flushValueOfKey } = this.errorServices!;
+          flushValueOfKey!(resetErrorState.restoreValue);
           this.setState({ hasError: false });
         }
       }
 
       render() {
-        const { children, ...restProps } = this.props;
+        const { children, resetErrorState, ...restProps } = this.props;
         const { hasError } = this.state;
 
         return <>{hasError ? <ErrorFallBack /> : children(restProps)}</>;
       }
     }
 
+    const ThrowMultipleAttempt: React.FunctionComponent<{
+      throwError: boolean;
+      subscribeId: number;
+    }> = ({ throwError, subscribeId }) => {
+      const [, setInterstate] = useInterstate(subscribeId);
+
+      useEffect(() => {
+        if (throwError) {
+          setInterstate('wrong');
+        }
+      }, [throwError]);
+
+      return <></>;
+    };
+
     const TestComponent: React.FunctionComponent<TestComponentProps> = (props) => (
       <ErrorBoundary {...props}>
-        {({ subscribeId = subscribeId1, initV1, initV2, initV3 }: TestComponentChildrenArg) => (
+        {({
+          subscribeId = subscribeId1,
+          initV1,
+          initV2,
+          initV3,
+          throwError = false,
+        }: TestComponentChildrenArg) => (
           <>
             <CanListen
               {...{
@@ -109,6 +136,9 @@ const testErrorHandling: TestDescription = (p) => [
                 initialValue: initV3,
               }}
             />
+
+            <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
+            <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
           </>
         )}
       </ErrorBoundary>
@@ -130,7 +160,13 @@ const testErrorHandling: TestDescription = (p) => [
     );
     expect(getByTestId(testId4).textContent).toBe('Error');
 
-    rerender(<TestComponent resetErrorState={true} subscribeId={subscribeId2} initV1="Python" />);
+    rerender(
+      <TestComponent
+        resetErrorState={{ restoreValue: false }}
+        subscribeId={subscribeId2}
+        initV1="Python"
+      />
+    );
     expect(getTextFromNode(testId1)).toBe('Python');
     expect(getTextFromNode(testId2)).toBe('Python');
     expect(getTextFromNode(testId3)).toBe('Python');
@@ -145,7 +181,11 @@ const testErrorHandling: TestDescription = (p) => [
     expect(getByTestId(testId4).textContent).toBe('Error');
 
     rerender(
-      <TestComponent resetErrorState={true} subscribeId={subscribeId3} initV1="TypeScript" />
+      <TestComponent
+        resetErrorState={{ restoreValue: true }}
+        subscribeId={subscribeId3}
+        initV1="TypeScript"
+      />
     );
 
     expect(getTextFromNode(testId1)).toBe('TypeScript');
@@ -159,9 +199,38 @@ const testErrorHandling: TestDescription = (p) => [
       expect(settersCounter(subscribeId2)).toBe(0);
     }
 
+    assertWrapper(() => rerender(<TestComponent throwError />));
+    expect(getByTestId(testId4).textContent).toBe('Error');
+
+    rerender(<TestComponent resetErrorState={{ restoreValue: true }} />);
+
+    expect(getTextFromNode(testId1)).toBe('Java');
+    expect(getTextFromNode(testId2)).toBe('Java');
+    expect(getTextFromNode(testId3)).toBe('Java');
+    expect(countRender1.howManyTimesBeenCalled()).toBe(5);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(6);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(6);
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
+      expect(settersCounter(subscribeId2)).toBe(0);
+    }
+
+    assertWrapper(() => rerender(<TestComponent throwError />));
+    expect(getByTestId(testId4).textContent).toBe('Error');
+
+    rerender(<TestComponent resetErrorState={{ restoreValue: false }} />);
+
+    expect(getTextFromNode(testId1)).toBe('wrong');
+    expect(getTextFromNode(testId2)).toBe('wrong');
+    expect(getTextFromNode(testId3)).toBe('wrong');
+    expect(countRender1.howManyTimesBeenCalled()).toBe(7);
+    expect(countRender3.howManyTimesBeenCalled()).toBe(8);
+    expect(countRender2.howManyTimesBeenCalled()).toBe(8);
+    if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
+      expect(settersCounter(subscribeId2)).toBe(0);
+    }
+
     unmount();
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
-      expect(settersCounter(subscribeId1)).toBe(0);
       expect(settersCounter(subscribeId2)).toBe(0);
     }
   },
