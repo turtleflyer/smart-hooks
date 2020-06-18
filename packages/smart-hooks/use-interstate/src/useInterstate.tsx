@@ -2,7 +2,7 @@ import { useSmartMemo } from '@smart-hooks/use-smart-memo';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createStore } from './createStore';
 import type { InterstateInitializeParam, InterstateParam, StateKey } from './InterstateParam';
-import type { SetterServices, Store, StoreServices } from './StoreState';
+import type { SetterMethods, Store, StoreMethods } from './StoreState';
 
 let globalStore: Store;
 
@@ -35,7 +35,7 @@ export function useInterstate<T>(
   initValue?: InterstateInitializeParam<T>
 ): [() => T, SetInterstate<T>] {
   const { initializeState, runRenderTask, runEffectTask } = useStore();
-  const memState = useRef({} as StoreServices<T>);
+  const memState = useRef({} as StoreMethods<T>);
   const [signature] = useState(Symbol());
   runRenderTask(key);
 
@@ -63,7 +63,7 @@ export function useInterstate<T>(
   }, [key]);
 
   const useSubscribe = () => {
-    const subscribeMemState = useRef<Partial<SetterServices>>({});
+    const subscribeMemState = useRef<Partial<SetterMethods>>({});
     const {
       current: { getValue },
     } = memState;
@@ -125,6 +125,6 @@ export function useInterstate<T>(
   return [useSubscribe, setInterstate];
 }
 
-export { getUseInterstateErrorServices, isUseInterstateError } from './errorHandle';
-export type { UseInterstateError, UseInterstateErrorServices } from './errorHandle';
+export { getUseInterstateErrorsHandleMethods, isUseInterstateError } from './errorHandle';
+export type { UseInterstateError, UseInterstateErrorMethods } from './errorHandle';
 export type { StateKey, InterstateParam, InterstateInitializeParam };

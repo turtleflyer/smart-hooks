@@ -8,7 +8,7 @@ import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
 import sophisticatedStructure from './tests/sophisticatedStructure';
 import testContext from './tests/testContext';
 import testErrorHandling from './tests/testErrorHandling';
-import testErrorServices from './tests/testErrorServices';
+import testErrorMethods from './tests/testErrorMethods';
 import valuesRemainAfterTreeUnmount from './tests/valuesRemainAfterTreeUnmount';
 import { AssetsImport, TestParameter, UseInterstateImport } from './testsAssets';
 
@@ -36,9 +36,12 @@ const mainTestSuit = (packagePath: string) =>
           createAssertWrapper,
         } = <AssetsImport>require('./testsAssets');
 
-        const { useInterstate, Scope, getUseInterstateErrorServices, isUseInterstateError } = <
-          UseInterstateImport
-        >require(packagePath);
+        const {
+          useInterstate,
+          Scope,
+          getUseInterstateErrorsHandleMethods,
+          isUseInterstateError,
+        } = <UseInterstateImport>require(packagePath);
 
         const [CanListen, CanUpdate, CanListenAndUpdate] = [
           composeCanListen,
@@ -56,7 +59,7 @@ const mainTestSuit = (packagePath: string) =>
           createAssertWrapper,
           useInterstate,
           Scope,
-          getUseInterstateErrorServices,
+          getUseInterstateErrorsHandleMethods,
           isUseInterstateError,
         };
       });
@@ -72,7 +75,7 @@ const mainTestSuit = (packagePath: string) =>
     test(...dynamicSubscriptionWorks(testParameter));
     test(...testContext(testParameter));
     test(...testErrorHandling(testParameter));
-    test(...testErrorServices(testParameter));
+    test(...testErrorMethods(testParameter));
     test(...checkTypes(testParameter));
 
     test('proof of mock', () => {

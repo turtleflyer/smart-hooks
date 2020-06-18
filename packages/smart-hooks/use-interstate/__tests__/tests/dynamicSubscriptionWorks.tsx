@@ -63,7 +63,7 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
       );
     };
 
-    const { rerender, fireNode, getTextFromNode, getByTestId, unmount } = render(
+    const { rerender, fireNode, getTextFromNode, unmount } = render(
       <TestComponent dynamicSubscribe={subscribeId1} />
     );
     const settersCounter = settersCounterFactory();

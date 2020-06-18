@@ -18,16 +18,16 @@ export interface StoreState {
   readonly effectTask: StoreMapEffectTask;
 }
 
-export interface SetterServices {
+export interface SetterMethods {
   readonly removeSetterFromKeyList: () => void;
   readonly removeSetterFromWatchList: () => void;
 }
 
-export interface StoreServices<T> {
+export interface StoreMethods<T> {
   readonly getValue: () => T;
   readonly setValue: (value: InterstateParam<T>) => void;
   readonly resetInitState?: () => void;
-  readonly addSetter: (setter: Setter) => SetterServices | void;
+  readonly addSetter: (setter: Setter) => SetterMethods | void;
 }
 
 export interface ConductInitValue<T> {
@@ -38,7 +38,7 @@ export interface ConductInitValue<T> {
 export type InitializeState = <T>(
   key: StateKey,
   conductInitValue?: ConductInitValue<T>
-) => StoreServices<T>;
+) => StoreMethods<T>;
 
 export interface Store {
   readonly initializeState: InitializeState;

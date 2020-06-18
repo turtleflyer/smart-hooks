@@ -3,15 +3,15 @@ import React, { useEffect } from 'react';
 import type { UseInterstateError } from '../../src/useInterstate';
 import type { TestDescription } from '../testsAssets';
 
-const testErrorServices: TestDescription = (p) => [
-  'error services work properly',
+const testErrorMethods: TestDescription = (p) => [
+  'error methods work properly',
   async () => {
     const {
       assets: {
         render,
         CanListen,
         createAssertWrapper,
-        getUseInterstateErrorServices,
+        getUseInterstateErrorsHandleMethods,
         isUseInterstateError,
         useInterstate,
       },
@@ -113,18 +113,18 @@ const testErrorServices: TestDescription = (p) => [
 
     await awaitTimeout(2000);
 
-    const [errorServices1, errorServices2, errorServices3, errorServices4] = ([
+    const [errorMethods1, errorMethods2, errorMethods3, errorMethods4] = ([
       error1,
       error2,
       error3,
       error4,
-    ] as UseInterstateError[]).map((e) => getUseInterstateErrorServices(e));
+    ] as UseInterstateError[]).map((e) => getUseInterstateErrorsHandleMethods(e));
 
     await awaitTimeout(1000);
 
     expect(
       ([error1, error2, error3, error4] as (Error | UseInterstateError)[]).map(
-        (e) => getUseInterstateErrorServices(e) !== undefined
+        (e) => getUseInterstateErrorsHandleMethods(e) !== undefined
       )
     ).toEqual([true, true, true, true]);
 
@@ -132,7 +132,7 @@ const testErrorServices: TestDescription = (p) => [
 
     expect(
       ([error1, error2, error3, error4] as (Error | UseInterstateError)[]).map(
-        (e) => getUseInterstateErrorServices(e) !== undefined
+        (e) => getUseInterstateErrorsHandleMethods(e) !== undefined
       )
     ).toEqual([false, true, true, true]);
 
@@ -140,14 +140,14 @@ const testErrorServices: TestDescription = (p) => [
 
     expect(
       ([error1, error2, error3, error4] as (Error | UseInterstateError)[]).map(
-        (e) => getUseInterstateErrorServices(e) !== undefined
+        (e) => getUseInterstateErrorsHandleMethods(e) !== undefined
       )
     ).toEqual([false, false, false, false]);
 
-    expect(errorServices1.flushValueOfKey!()).toBeTruthy();
-    expect(errorServices2.flushValueOfKey!()).toBeFalsy();
-    expect(errorServices3.flushValueOfKey!()).toBeTruthy();
-    expect(errorServices4.flushValueOfKey!()).toBeTruthy();
+    expect(errorMethods1.flushValueOfKey!()).toBeTruthy();
+    expect(errorMethods2.flushValueOfKey!()).toBeFalsy();
+    expect(errorMethods3.flushValueOfKey!()).toBeTruthy();
+    expect(errorMethods4.flushValueOfKey!()).toBeTruthy();
 
     let curError: Error;
     function throwExpectedError() {
@@ -172,4 +172,4 @@ const testErrorServices: TestDescription = (p) => [
   },
 ];
 
-export default testErrorServices;
+export default testErrorMethods;

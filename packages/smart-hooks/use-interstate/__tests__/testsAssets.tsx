@@ -4,7 +4,7 @@ import React, { useEffect, useMemo } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 import * as mockedCreateStoreState from '../src/createStoreState';
 import {
-  getUseInterstateErrorServices,
+  getUseInterstateErrorsHandleMethods,
   isUseInterstateError,
   Scope,
   useInterstate,
@@ -207,7 +207,7 @@ const createAssertWrapper: AssertWrapperCreator = () => {
 export interface UseInterstateImport {
   readonly Scope: typeof Scope;
   readonly useInterstate: typeof useInterstate;
-  readonly getUseInterstateErrorServices: typeof getUseInterstateErrorServices;
+  readonly getUseInterstateErrorsHandleMethods: typeof getUseInterstateErrorsHandleMethods;
   readonly isUseInterstateError: typeof isUseInterstateError;
 }
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
-import type { UseInterstateError, UseInterstateErrorServices } from '../../src/useInterstate';
+import type { UseInterstateError, UseInterstateErrorMethods } from '../../src/useInterstate';
 
 const testErrorHandling: TestDescription = (p) => [
   'error handling works',
@@ -13,7 +13,7 @@ const testErrorHandling: TestDescription = (p) => [
         executionCountersFactory,
         CanListen,
         createAssertWrapper,
-        getUseInterstateErrorServices,
+        getUseInterstateErrorsHandleMethods,
         isUseInterstateError,
         useInterstate,
       },
@@ -56,7 +56,7 @@ const testErrorHandling: TestDescription = (p) => [
 
       state = { hasError: false };
 
-      private errorServices?: UseInterstateErrorServices;
+      private errorMethods?: UseInterstateErrorMethods;
 
       static getDerivedStateFromError() {
         return { hasError: true };
@@ -64,7 +64,7 @@ const testErrorHandling: TestDescription = (p) => [
 
       componentDidCatch(error: Error | UseInterstateError) {
         if (isUseInterstateError(error)) {
-          this.errorServices = getUseInterstateErrorServices(error);
+          this.errorMethods = getUseInterstateErrorsHandleMethods(error);
         } else {
           throw error as Error;
         }
@@ -73,7 +73,7 @@ const testErrorHandling: TestDescription = (p) => [
       componentDidUpdate() {
         const { resetErrorState } = this.props;
         if (resetErrorState && this.state.hasError) {
-          const { flushValueOfKey } = this.errorServices!;
+          const { flushValueOfKey } = this.errorMethods!;
           flushValueOfKey!(resetErrorState.restoreValue);
           this.setState({ hasError: false });
         }
