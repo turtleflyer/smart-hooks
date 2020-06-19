@@ -19,7 +19,7 @@ export function isSetterListEntryErrorChunk(
   return !!e?.errorChunk;
 }
 
-type InitStatus = { readonly signature: symbol };
+type InitStatus<T> = { readonly value: T };
 
 export interface MapValue<T = any> extends SettersListBase {
   start?: MapValueSettersListEntry & { prev: undefined };
@@ -30,7 +30,7 @@ export interface MapValue<T = any> extends SettersListBase {
 
   caughtError?: UseInterstateErrorCodes;
 
-  initStatus?: InitStatus;
+  initStatus?: InitStatus<T>;
 
   triggerRegistered?: boolean;
 

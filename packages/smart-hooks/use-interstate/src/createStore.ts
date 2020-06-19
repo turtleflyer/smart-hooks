@@ -22,65 +22,35 @@ export function createStore(): Store {
 
   const { storeMap, settersWatchList, renderTask, effectTask } = storeState;
 
-  let triggerActionsPostponed: (() => void) | undefined;
-
   const initializeState: InitializeState = <T>(
     key: StateKey,
     conductInitValue?: ConductInitValue<T>
   ) => {
-    let memSignature: symbol | undefined;
-
     const _mapEntryValue = storeMap.get(key);
     if (!_mapEntryValue) {
       throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
       fixControlFlowAnalysis();
     }
 
-    const mapEntryValue = _mapEntryValue;
+    const mapEntryValue: MapValue<T> = _mapEntryValue;
 
-    if (conductInitValue && !mapEntryValue.isValueSetUp) {
-      const { signature, initValue } = conductInitValue;
-      memSignature = signature;
-      mapEntryValue.value = isFunction(initValue) ? initValue() : initValue;
-      mapEntryValue.initStatus = { signature };
-    }
+    const { isValueSetUp, initStatus } = mapEntryValue;
 
-    function triggerSetters() {
-      const { isValueSetUp, caughtError } = mapEntryValue;
+    let evalValue: T | undefined;
 
-      if (caughtError !== undefined) {
-        return;
-      }
+    if (conductInitValue && (initStatus || !isValueSetUp)) {
+      const { value } = conductInitValue;
+      evalValue = isFunction(value) ? value() : value;
 
-      if (!isValueSetUp) {
-        throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
-      }
-
-      for (const setterEntry of mapEntryValue) {
-        if (isSetterListEntryErrorChunk(setterEntry)) {
-          throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
+      if (initStatus) {
+        if (initStatus.value !== evalValue) {
+          throwError(UseInterstateErrorCodes.CONCURRENTLY_PROVIDED_INIT_VALUE, { key });
         }
-
-        setterEntry.setter((v) => !v);
+      } else {
+        mapEntryValue.value = evalValue;
+        mapEntryValue.initStatus = { value: evalValue };
+        mapEntryValue.isValueSetUp = true;
       }
-    }
-
-    function resetInitState() {
-      const { initStatus, caughtError } = mapEntryValue;
-
-      if (caughtError !== undefined) {
-        return;
-      }
-
-      if (!initStatus || initStatus.signature !== memSignature) {
-        throwError(UseInterstateErrorCodes.CONCURRENTLY_PROVIDED_INIT_VALUE, { key });
-      }
-
-      mapEntryValue.isValueSetUp = true;
-      mapEntryValue.initStatus = undefined;
-
-      triggerActionsPostponed?.();
-      triggerActionsPostponed = undefined;
     }
 
     return {
@@ -95,22 +65,7 @@ export function createStore(): Store {
       },
 
       setValue(value: InterstateParam<T>) {
-        function setValueAction() {
-          const { isValueSetUp, value: curVal } = mapEntryValue;
-
-          if (!isValueSetUp) {
-            throwError(UseInterstateErrorCodes.ACCESS_VALUE_NOT_BEEN_SET, { key });
-          }
-
-          const evalVal = isFunction(value) ? value(<T>curVal) : value;
-
-          if (!Object.is(curVal, evalVal)) {
-            mapEntryValue.value = evalVal;
-            triggerSetters();
-          }
-        }
-
-        const { initStatus, caughtError, triggerRegistered } = mapEntryValue;
+        const { caughtError, triggerRegistered, isValueSetUp, value: curVal } = mapEntryValue;
 
         if (caughtError !== undefined) {
           throwError(caughtError, { key });
@@ -120,10 +75,22 @@ export function createStore(): Store {
           throwError(UseInterstateErrorCodes.MULTIPLE_ATTEMPT_SET_STATE, { key });
         }
 
-        if (initStatus) {
-          triggerActionsPostponed = setValueAction;
-        } else {
-          setValueAction();
+        if (!isValueSetUp) {
+          throwError(UseInterstateErrorCodes.ACCESS_VALUE_NOT_BEEN_SET, { key });
+        }
+
+        const evalVal = isFunction(value) ? value(<T>curVal) : value;
+
+        if (!Object.is(curVal, evalVal)) {
+          mapEntryValue.value = evalVal;
+
+          for (const setterEntry of mapEntryValue) {
+            if (isSetterListEntryErrorChunk(setterEntry)) {
+              throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
+            }
+
+            setterEntry.setter((v) => !v);
+          }
         }
 
         mapEntryValue.triggerRegistered = true;
@@ -178,8 +145,6 @@ export function createStore(): Store {
           removeSetterFromWatchList,
         };
       },
-
-      ...(memSignature ? { resetInitState } : null),
     };
   };
 
@@ -206,10 +171,11 @@ export function createStore(): Store {
 
     if (!memValuesMap.has(key)) {
       memValuesMap.set(key, isValueSetUp ? { value } : undefined);
+      
+      mapValue.caughtError = undefined;
+      mapValue.triggerRegistered = false;
+      mapValue.initStatus = undefined;
     }
-
-    mapValue.caughtError = undefined;
-    mapValue.triggerRegistered = false;
   }
 
   function runEffectTask() {

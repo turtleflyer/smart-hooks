@@ -36,7 +36,6 @@ export function useInterstate<T>(
 ): [() => T, SetInterstate<T>] {
   const { initializeState, runRenderTask, runEffectTask } = useStore();
   const memState = useRef({} as StoreMethods<T>);
-  const [signature] = useState(Symbol());
   runRenderTask(key);
 
   useSmartMemo(() => {
@@ -48,19 +47,11 @@ export function useInterstate<T>(
        * recorded value. If it is needed to set the value to undefined on the stage of  initializing
        * then pass the function parameter () => undefined;
        */
-      initValue === undefined ? undefined : { initValue, signature }
+      initValue === undefined ? undefined : { value: initValue }
     );
   }, [key]);
 
   useEffect(() => runEffectTask());
-
-  useEffect(() => {
-    const {
-      current: { resetInitState },
-    } = memState;
-
-    resetInitState?.();
-  }, [key]);
 
   const useSubscribe = () => {
     const subscribeMemState = useRef<Partial<SetterMethods>>({});

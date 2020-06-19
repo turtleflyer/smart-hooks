@@ -63,28 +63,28 @@ const checkInitializationConcurrency: TestDescription = (p) => [
       assertWrapper(() => render(<TestComponent initV1="a" initV2="b" initV3="c" />))
     ).toThrow(/\(useInterstate Error\) .* concurrently/);
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV1="d" initV2="e" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV1="f" initV3="g" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV2="h" initV3="i" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!();
+    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
     cleanup();
 
     const { unmount, getTextFromNode } = render(<TestComponent initV1="j" />);

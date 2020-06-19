@@ -26,13 +26,11 @@ export interface SetterMethods {
 export interface StoreMethods<T> {
   readonly getValue: () => T;
   readonly setValue: (value: InterstateParam<T>) => void;
-  readonly resetInitState?: () => void;
   readonly addSetter: (setter: Setter) => SetterMethods | void;
 }
 
 export interface ConductInitValue<T> {
-  readonly initValue: InterstateInitializeParam<T>;
-  readonly signature: symbol;
+  readonly value: InterstateInitializeParam<T>;
 }
 
 export type InitializeState = <T>(

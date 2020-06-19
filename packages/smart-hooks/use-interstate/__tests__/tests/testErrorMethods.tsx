@@ -21,6 +21,7 @@ const testErrorMethods: TestDescription = (p) => [
     const subscribeId1 = 1;
     const subscribeId2 = 2;
     const subscribeId3 = 3;
+    const subscribeId4 = 4;
 
     function awaitTimeout(t: number) {
       const wait = new Promise((r) => setTimeout(r, t));
@@ -149,14 +150,18 @@ const testErrorMethods: TestDescription = (p) => [
     expect(errorMethods3.flushValueOfKey!()).toBeTruthy();
     expect(errorMethods4.flushValueOfKey!()).toBeTruthy();
 
-    let curError: Error;
+    let curError: Error | UseInterstateError;
     function throwExpectedError() {
       expect(() =>
-        assertWrapper(() => render(<ErrorEmitterRegardingInit initV1="no" initV2="yes" />))
+        assertWrapper(() =>
+          render(<ErrorEmitterRegardingInit subscribeId={subscribeId4} initV1="no" initV2="yes" />)
+        )
       ).toThrow(
         /(useInterstate Error).*(concurrently during the same rendering cycle|Too many errors have been occurring)/
       );
       ({ current: curError } = errorRecord);
+      const errorMethods = getUseInterstateErrorsHandleMethods(curError);
+      errorMethods?.flushValueOfKey!(true);
       cleanup();
     }
 
