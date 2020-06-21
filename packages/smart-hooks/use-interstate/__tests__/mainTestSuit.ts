@@ -26,11 +26,14 @@ const mainTestSuit = (packagePath: string) =>
     beforeEach(() => {
       setMock();
       jest.isolateModules(() => {
-        const { composeCanListen, composeCanUpdate, composeCanListenAndUpdate, ...restAssets } = <
-          AssetsImport
-        >require('./testsAssets');
+        const {
+          composeCanListen,
+          composeCanUpdate,
+          composeCanListenAndUpdate,
+          ...restAssets
+        } = require('./testsAssets') as AssetsImport;
 
-        const useInterstateImport = <UseInterstateImport>require(packagePath);
+        const useInterstateImport = require(packagePath) as UseInterstateImport;
 
         const [CanListen, CanUpdate, CanListenAndUpdate] = [
           composeCanListen,

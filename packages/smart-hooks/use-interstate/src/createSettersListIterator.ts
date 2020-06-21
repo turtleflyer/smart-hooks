@@ -12,13 +12,13 @@ export function createSettersListIterator(
   v: SettersListBase
 ): SettersListIterator<SettersListEntryBase> {
   return function mapValueIterator() {
-    let entry = <SettersListEntryBase | undefined>v.start;
+    let entry = v.start as SettersListEntryBase | undefined;
 
     return {
       next() {
         if (entry) {
           const curEntry = entry;
-          entry = <SettersListEntryBase | undefined>entry.next;
+          entry = entry.next as SettersListEntryBase | undefined;
           return { value: curEntry, done: false };
         }
 

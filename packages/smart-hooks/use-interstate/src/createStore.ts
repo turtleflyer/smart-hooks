@@ -61,7 +61,7 @@ export function createStore(): Store {
           throwError(UseInterstateErrorCodes.ACCESS_VALUE_NOT_BEEN_SET, { key });
         }
 
-        return <T>value;
+        return value as T;
       },
 
       setValue(value: InterstateParam<T>) {
@@ -171,7 +171,7 @@ export function createStore(): Store {
 
     if (!memValuesMap.has(key)) {
       memValuesMap.set(key, isValueSetUp ? { value } : undefined);
-      
+
       mapValue.caughtError = undefined;
       mapValue.triggerRegistered = false;
       mapValue.initStatus = undefined;

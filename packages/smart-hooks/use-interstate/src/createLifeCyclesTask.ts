@@ -24,21 +24,21 @@ export function createCyclesTask<T extends LifeCyclesTaskBase>(
     };
   }
 
-  const memTask = <T>{
+  const memTask = {
     ...initTask(),
     ...(<['run' | 'reset', (...args: any[]) => void][]>[
       ['run', runProto],
       ['reset', resetProto],
     ]).reduce(
       (ev, [key, proto]) =>
-        <Pick<T, 'run' | 'reset'>>{
+        ({
           ...ev,
           [key]: runOrReset(key, proto),
-        },
-      <Pick<T, 'run' | 'reset'>>{}
+        } as Pick<T, 'run' | 'reset'>),
+      {} as Pick<T, 'run' | 'reset'>
     ),
     done: false,
-  };
+  } as T;
 
-  return <T & { done: false }>memTask;
+  return memTask as T & { done: false };
 }

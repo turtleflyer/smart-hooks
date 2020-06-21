@@ -29,15 +29,15 @@ export function createSettersListEntry(
 
   const entry: SettersListEntryBase & { next: undefined } = {
     ...entryProps,
-    prev: <(SettersListEntryBase & { next: {} }) | undefined>end,
+    prev: end as (SettersListEntryBase & { next: {} }) | undefined,
     next: undefined,
   };
 
   list.end = entry;
   if (end) {
-    (<SettersListEntryBase>end).next = <SettersListEntryBase & { prev: {} }>entry;
+    (<SettersListEntryBase>end).next = entry as SettersListEntryBase & { prev: {} };
   } else {
-    list.start = <SettersListEntryBase & { prev: undefined }>entry;
+    list.start = entry as SettersListEntryBase & { prev: undefined };
   }
 
   return entry;

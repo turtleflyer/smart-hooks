@@ -81,7 +81,9 @@ export function getUseInterstateErrorsHandleMethods<E extends Error>(
   e: E
 ): E extends UseInterstateError ? UseInterstateErrorMethods : undefined;
 
-export function getUseInterstateErrorsHandleMethods(e: Error): UseInterstateErrorMethods | undefined {
+export function getUseInterstateErrorsHandleMethods(
+  e: Error
+): UseInterstateErrorMethods | undefined {
   if (isUseInterstateError(e)) {
     return extractedMethods;
   }
@@ -192,7 +194,7 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
 
     const param: ComposeMethodParam = { memValuesMap: storeState.memValuesMap };
 
-    const error = <UseInterstateError>Error(message);
+    const error = Error(message) as UseInterstateError;
 
     if (errorsPool.length === MAX_ERRORS_TO_STORE) {
       throw Error(
@@ -208,7 +210,7 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
 
         methods: errorMethodsTemplates.reduce((ev, t) => {
           return { ...ev, [t.nameOfMethod]: createMethodRegardingCountSignature(param, t, key) };
-        }, <UseInterstateErrorMethods>{}),
+        }, {} as UseInterstateErrorMethods),
 
         lifeSignature: futureLifeSignature,
       });

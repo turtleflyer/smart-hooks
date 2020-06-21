@@ -63,7 +63,7 @@ export function removeSetterEntry<E extends SettersListEntryBase, L extends Sett
     sideKey: 'prev' | 'next'
   ): (SettersListEntryBase & ({ prev: undefined } | { next: undefined })) | undefined {
     if (entry === endpoint) {
-      return <SettersListEntryBase & ({ prev: undefined } | { next: undefined })>entry[sideKey];
+      return entry[sideKey] as SettersListEntryBase & ({ prev: undefined } | { next: undefined });
     } else {
       const neighbor = entry[sideKey === 'prev' ? 'next' : 'prev'];
       if (!neighbor) {
@@ -85,7 +85,7 @@ export function removeSetterEntry<E extends SettersListEntryBase, L extends Sett
     throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
   }
 
-  const { start, end } = <SettersListBase & { start: {}; end: {} }>list;
+  const { start, end } = list as SettersListBase & { start: {}; end: {} };
 
   list.start = closeSettersListEndpoint(start, 'next');
   list.end = closeSettersListEndpoint(end, 'prev');
