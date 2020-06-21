@@ -16,7 +16,7 @@ const mainTestSuit = (packagePath: string) =>
   describe.each([
     ['using original useMemo', () => flagManager.set('MOCK_USE_MEMO', false), 'original'],
     ['using mocked useMemo', () => flagManager.set('MOCK_USE_MEMO', true), 'mocked'],
-  ])('Test useInterstate correctness (%s)', (n, setMock, proofOfMock) => {
+  ])('Test useInterstate correctness (%s)', (_name, setMock, proofOfMock) => {
     const testParameter: TestParameter = {} as TestParameter;
 
     beforeAll(() => {
