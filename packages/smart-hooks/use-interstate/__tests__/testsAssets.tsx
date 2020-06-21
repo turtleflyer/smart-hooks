@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render } from '@testing-library/react';
 import React, { useEffect, useMemo } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
 import * as mockedCreateStoreState from '../src/createStoreState';
 import {
   getUseInterstateErrorsHandleMethods,
@@ -73,32 +74,6 @@ type ComposeComponent = (
   importedUseInterstate: typeof useInterstate
 ) => React.FunctionComponent<TestComponentsProps>;
 
-function wrapInner(
-  Inner: React.FunctionComponent<TestComponentsProps>
-): React.FunctionComponent<TestComponentsProps> {
-  return ({
-    subscribeId,
-    initialValue,
-    testId = '',
-    composeCallback = defaultComposeCallback,
-    countRender = () => {},
-    children,
-  }) => (
-    <React.StrictMode>
-      <Inner
-        {...{
-          subscribeId,
-          initialValue,
-          testId,
-          composeCallback,
-          countRender,
-          children,
-        }}
-      />
-    </React.StrictMode>
-  );
-}
-
 const composeCanListen: ComposeComponent = (importedUseInterstate) => {
   const Inner: React.FunctionComponent<TestComponentsProps> = ({
     subscribeId,
@@ -121,7 +96,7 @@ const composeCanListen: ComposeComponent = (importedUseInterstate) => {
     );
   };
 
-  return wrapInner(Inner);
+  return wrapWithStrictModeComponent(Inner);
 };
 
 const composeCanUpdate: ComposeComponent = (importedUseInterstate) => {
@@ -147,7 +122,7 @@ const composeCanUpdate: ComposeComponent = (importedUseInterstate) => {
     );
   };
 
-  return wrapInner(Inner);
+  return wrapWithStrictModeComponent(Inner);
 };
 
 const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => {
@@ -175,7 +150,7 @@ const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => {
     );
   };
 
-  return wrapInner(Inner);
+  return wrapWithStrictModeComponent(Inner);
 };
 
 interface ErrorRecord {
