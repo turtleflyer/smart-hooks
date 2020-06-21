@@ -2,28 +2,27 @@ import { render } from '@testing-library/react';
 import React, { useRef } from 'react';
 import { TestDescription } from '../testsAssets';
 
-const typeParameter: TestDescription = p => [
+const typeParameter: TestDescription = (p) => [
   'type parameter for useSmartRef works correctly',
   () => {
     const {
-      assets: { useSmartRef },
+      assets: { wrapWithStrictModeComponent, useSmartRef },
     } = p;
-    const TestComponent = () => {
+
+    const TestComponent: React.FunctionComponent = wrapWithStrictModeComponent(() => {
       const commonElementRef = useRef();
-      const spanElementRef = useRef<HTMLSpanElement>();
-      const divRefCallback = useSmartRef((el: HTMLDivElement) => {},
-      commonElementRef);
-      const spanRefCallback = useSmartRef<HTMLSpanElement>(() => {},
-      spanElementRef);
-      const commonRefCallback = useSmartRef(() => {}, spanElementRef);
+      const anchorElementRef = useRef<HTMLAnchorElement>();
+      const divRefCallback = useSmartRef((el: HTMLDivElement) => {}, commonElementRef);
+      const anchorRefCallback = useSmartRef(() => {}, anchorElementRef);
+      const commonRefCallback = useSmartRef(() => {}, commonElementRef);
       return (
         <>
           <div ref={divRefCallback} />
-          <span ref={spanRefCallback} />
-          <a ref={commonRefCallback} />
+          <a ref={anchorRefCallback} />
+          <span ref={commonRefCallback} />
         </>
       );
-    };
+    });
 
     const { unmount } = render(<TestComponent />);
 

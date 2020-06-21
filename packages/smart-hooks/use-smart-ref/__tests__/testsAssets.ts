@@ -1,24 +1,20 @@
-import { useSmartRef } from '../useSmartRef';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
+import { useSmartRef } from '../src/useSmartRef';
 
-interface AssetsImport {
+export interface AssetsImport {
   executionCountersFactory: typeof executionCountersFactory;
+  wrapWithStrictModeComponent: typeof wrapWithStrictModeComponent;
 }
 
-interface UseSmartRefImport {
+export interface UseSmartRefImport {
   useSmartRef: typeof useSmartRef;
 }
 
-interface TestParameter {
+export interface TestParameter {
   assets: AssetsImport & UseSmartRefImport;
 }
 
-type TestDescription = (p: TestParameter) => [string, () => void];
+export type TestDescription = (p: TestParameter) => [string, () => void];
 
-export {
-  executionCountersFactory,
-  AssetsImport,
-  UseSmartRefImport,
-  TestParameter,
-  TestDescription,
-};
+export { executionCountersFactory, wrapWithStrictModeComponent };

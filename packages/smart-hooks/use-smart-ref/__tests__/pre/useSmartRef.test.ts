@@ -1,3 +1,3 @@
 import mainTestSuit from '../mainTestSuit';
 
-mainTestSuit('../useSmartRef.ts');
+mainTestSuit('../src/useSmartRef.ts');

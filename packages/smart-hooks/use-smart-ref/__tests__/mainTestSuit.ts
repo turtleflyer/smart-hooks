@@ -1,9 +1,9 @@
-import refBindingUpdate from './tests/refBindingUpdate';
-import { AssetsImport, UseSmartRefImport, TestParameter } from './testsAssets';
 import cleaningAfterUnmount from './tests/cleaningAfterUnmount';
-import testOmittingOptionalAPI from './tests/testOmittingOptionalAPI';
+import refBindingUpdate from './tests/refBindingUpdate';
 import shouldFireOnlyWhenNodeChanges from './tests/shouldFireOnlyWhenNodeChanges';
+import testOmittingOptionalAPI from './tests/testOmittingOptionalAPI';
 import typeParameter from './tests/typeParameter';
+import { AssetsImport, TestParameter, UseSmartRefImport } from './testsAssets';
 
 const mainTestSuit = (packagePath: string) =>
   describe('Test useSmartRef correctness', () => {
@@ -11,13 +11,12 @@ const mainTestSuit = (packagePath: string) =>
 
     beforeEach(() => {
       jest.isolateModules(() => {
-        const {
-          executionCountersFactory,
-        } = require('./testsAssets') as AssetsImport;
-        const { useSmartRef } = require(packagePath) as UseSmartRefImport;
-        testParameter.assets = { executionCountersFactory, useSmartRef };
+        const assets = require('./testsAssets') as AssetsImport;
+        const useSmartRefImport = require(packagePath) as UseSmartRefImport;
+        testParameter.assets = { ...assets, ...useSmartRefImport };
       });
     });
+
     test(...refBindingUpdate(testParameter));
     test(...cleaningAfterUnmount(testParameter));
     test(...testOmittingOptionalAPI(testParameter));
