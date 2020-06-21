@@ -56,7 +56,7 @@ export function useSmartRef<T extends HTMLElement = HTMLElement>(
 
     if (element) {
       cleanIfDefined();
-      cleanUp = <(() => void) | undefined>effect(element);
+      cleanUp = effect(element) as (() => void) | undefined;
     }
 
     memStore.current = { ...curStore, element, cleanUp };

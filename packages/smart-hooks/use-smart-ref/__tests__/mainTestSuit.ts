@@ -7,12 +7,12 @@ import { AssetsImport, TestParameter, UseSmartRefImport } from './testsAssets';
 
 const mainTestSuit = (packagePath: string) =>
   describe('Test useSmartRef correctness', () => {
-    const testParameter: TestParameter = <TestParameter>{};
+    const testParameter: TestParameter = {} as TestParameter;
 
     beforeEach(() => {
       jest.isolateModules(() => {
-        const assets = <AssetsImport>require('./testsAssets');
-        const useSmartRefImport = <UseSmartRefImport>require(packagePath);
+        const assets = require('./testsAssets') as AssetsImport;
+        const useSmartRefImport = require(packagePath) as UseSmartRefImport;
         testParameter.assets = { ...assets, ...useSmartRefImport };
       });
     });
