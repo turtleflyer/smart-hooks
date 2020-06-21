@@ -26,41 +26,24 @@ const mainTestSuit = (packagePath: string) =>
     beforeEach(() => {
       setMock();
       jest.isolateModules(() => {
-        const {
-          render,
-          settersCounterFactory,
-          executionCountersFactory,
-          composeCanListen,
-          composeCanUpdate,
-          composeCanListenAndUpdate,
-          createAssertWrapper,
-        } = <AssetsImport>require('./testsAssets');
+        const { composeCanListen, composeCanUpdate, composeCanListenAndUpdate, ...restAssets } = <
+          AssetsImport
+        >require('./testsAssets');
 
-        const {
-          useInterstate,
-          Scope,
-          getUseInterstateErrorsHandleMethods,
-          isUseInterstateError,
-        } = <UseInterstateImport>require(packagePath);
+        const useInterstateImport = <UseInterstateImport>require(packagePath);
 
         const [CanListen, CanUpdate, CanListenAndUpdate] = [
           composeCanListen,
           composeCanUpdate,
           composeCanListenAndUpdate,
-        ].map((c) => c(useInterstate));
+        ].map((c) => c(useInterstateImport.useInterstate));
 
         testParameter.assets = {
-          render,
-          settersCounterFactory,
-          executionCountersFactory,
           CanListen,
           CanUpdate,
           CanListenAndUpdate,
-          createAssertWrapper,
-          useInterstate,
-          Scope,
-          getUseInterstateErrorsHandleMethods,
-          isUseInterstateError,
+          ...restAssets,
+          ...useInterstateImport,
         };
       });
     });
