@@ -4,10 +4,14 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: {
-          browsers: ['last 2 versions', 'safari >= 7'],
+          chrome: '49',
+          firefox: '54.0',
+          ie: '11',
         },
         modules: false,
       },
     ],
   ],
+
+  comments: false,
 };

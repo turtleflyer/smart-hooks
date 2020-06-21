@@ -1,15 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import babel from 'rollup-plugin-babel';
-import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import babel from 'rollup-plugin-babel';
 import { uglify } from 'rollup-plugin-uglify';
-import pkg from './package.json';
-import tsbundle from './tsbundle.json';
-import { determineInput } from '../../../bundle_utilities/determineInput';
 import { bundleTypesDeclaration } from '../../../bundle_utilities/bundleTypesDeclaration';
+import { determineInput } from '../../../bundle_utilities/determineInput';
+import pkg from './package.json';
+import tsconfigBundle from './tsconfig.bundle.json';
 
 const name = 'useSmartMemo';
-const input = determineInput(tsbundle);
+const input = determineInput(tsconfigBundle);
 bundleTypesDeclaration(input, pkg.types);
 
 export default [
@@ -18,7 +18,7 @@ export default [
 
     external: ['react'],
 
-    plugins: [babel({ extensions: ['.js'], exclude: 'node_modules/**' })],
+    plugins: [babel({ extensions: ['.js'] })],
 
     output: [
       {

@@ -1,22 +1,14 @@
-import { AssetsImport, UseSmartMemoImport, TestParameter } from './testsAssets';
-import checkRecalculation from './tests/checkRecalculation';
-import generalFunctionality from './tests/generalFunctionality';
-import edgeCases from './tests/edgeCases';
 import { flagManager } from './testFlags';
+import checkRecalculation from './tests/checkRecalculation';
+import edgeCases from './tests/edgeCases';
+import generalFunctionality from './tests/generalFunctionality';
+import { AssetsImport, TestParameter, UseSmartMemoImport } from './testsAssets';
 
 const mainTestSuit = (packagePath: string) =>
   describe.each([
-    [
-      'using original useMemo',
-      () => flagManager.set('MOCK_USE_MEMO', false),
-      'original',
-    ],
-    [
-      'using mocked useMemo',
-      () => flagManager.set('MOCK_USE_MEMO', true),
-      'mocked',
-    ],
-  ])('Test useSmartMemo correctness (%s)', (name, setMock, proofOfMock) => {
+    ['using original useMemo', () => flagManager.set('MOCK_USE_MEMO', false), 'original'],
+    ['using mocked useMemo', () => flagManager.set('MOCK_USE_MEMO', true), 'mocked'],
+  ])('Test useSmartMemo correctness (%s)', (_name, setMock, proofOfMock) => {
     const testParameter: TestParameter = {} as TestParameter;
 
     beforeAll(() => {
@@ -26,11 +18,9 @@ const mainTestSuit = (packagePath: string) =>
     beforeEach(() => {
       setMock();
       jest.isolateModules(() => {
-        const {
-          executionCountersFactory,
-        } = require('./testsAssets') as AssetsImport;
-        const { useSmartMemo } = require(packagePath) as UseSmartMemoImport;
-        testParameter.assets = { executionCountersFactory, useSmartMemo };
+        const assets = require('./testsAssets') as AssetsImport;
+        const useSmartMemoImport = require(packagePath) as UseSmartMemoImport;
+        testParameter.assets = { ...assets, ...useSmartMemoImport };
       });
     });
 

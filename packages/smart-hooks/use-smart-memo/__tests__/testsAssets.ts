@@ -1,24 +1,20 @@
-import { useSmartMemo } from '../useSmartMemo';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
+import { useSmartMemo } from '../src/useSmartMemo';
 
-interface AssetsImport {
+export interface AssetsImport {
   executionCountersFactory: typeof executionCountersFactory;
+  wrapWithStrictModeComponent: typeof wrapWithStrictModeComponent;
 }
 
-interface UseSmartMemoImport {
+export interface UseSmartMemoImport {
   useSmartMemo: typeof useSmartMemo;
 }
 
-interface TestParameter {
+export interface TestParameter {
   assets: AssetsImport & UseSmartMemoImport;
 }
 
-type TestDescription = (p: TestParameter) => [string, () => void];
+export type TestDescription = (p: TestParameter) => [string, () => void];
 
-export {
-  executionCountersFactory,
-  AssetsImport,
-  UseSmartMemoImport,
-  TestParameter,
-  TestDescription,
-};
+export { executionCountersFactory, wrapWithStrictModeComponent };
