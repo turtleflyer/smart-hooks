@@ -16,13 +16,16 @@ export function useSmartRef<T extends HTMLElement = HTMLElement>(
   const memStore = useRef<Store<T>>({ effect });
   memStore.current = { ...memStore.current, effect };
 
-  function cleanIfDefined() {
+  function cleanUpIfDefined() {
     const {
       current: curStore,
       current: { cleanUp },
     } = memStore;
-    cleanUp?.();
-    memStore.current = { ...curStore, cleanUp: undefined };
+
+    if (cleanUp) {
+      cleanUp();
+      memStore.current = { ...curStore, cleanUp: undefined };
+    }
   }
 
   /**
@@ -31,13 +34,13 @@ export function useSmartRef<T extends HTMLElement = HTMLElement>(
    */
   useEffect(() => {
     if (!memStore.current.element) {
-      cleanIfDefined();
+      cleanUpIfDefined();
     }
   });
 
   useEffect(
     () => () => {
-      cleanIfDefined();
+      cleanUpIfDefined();
     },
     []
   );
@@ -55,7 +58,7 @@ export function useSmartRef<T extends HTMLElement = HTMLElement>(
     let cleanUp = curCleanUp;
 
     if (element) {
-      cleanIfDefined();
+      cleanUpIfDefined();
       cleanUp = effect(element) as (() => void) | undefined;
     }
 
