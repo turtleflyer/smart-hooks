@@ -4,10 +4,11 @@
 
 `useInterstate` is a simple, lightweight, and powerful global state management solution for React
 projects designed to stick as close as possible to a natural usage pattern found in the standard
-hook [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate). It is minimalistic and does not require too much to start using. No special
-boilerplates. No big learning curve. The hook `useInterstate` is just working familiarly out-of-box.
-Also, it should work in the upcoming [concurrent mode](https://reactjs.org/docs/concurrent-mode-intro.html) as we can judge assuming from information that
-is available now and based on our tries with the experimental build of React.
+hook [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate). It is minimalistic and
+does not require too much to start using. No special boilerplates. No big learning curve. The hook
+`useInterstate` is just working familiarly out-of-box. Also, it should work in the upcoming
+[concurrent mode](https://reactjs.org/docs/concurrent-mode-intro.html) as we can judge assuming from
+information that is available now and based on our tries with the experimental build of React.
 
 The library was written in TypeScript and nicely typed. The test coverage is solid and embraces
 various real-life use cases. More than that, its name sounds cool.
@@ -165,6 +166,9 @@ useInterstate('pitch', 'A');
 // It's Ok
 ```
 
+If a state for a key has already been initialized, a default value passed to `useInterstate` is
+being ignored in any following statements.
+
 If you try to change the value of the same key in different parts of the application at the same
 moment it will lead to an error.
 
@@ -173,6 +177,12 @@ setState(1);
 setState(2);
 // If they are called both it will throw an error
 ```
+
+A setter returned by `useInterstate` itself is not changing in the course of the component life as
+it is for the standard hook [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate).
+The hook that allows us to subscribe to the key's state and that we received as a result of
+`useInterstate` execution must be handled following [the common hooks
+rules](https://reactjs.org/docs/hooks-rules.html).
 
 ## Scope
 
