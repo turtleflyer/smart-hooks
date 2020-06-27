@@ -10,8 +10,8 @@ does not require too much to start using. No special boilerplates. No big learni
 [concurrent mode](https://reactjs.org/docs/concurrent-mode-intro.html) as we can judge assuming from
 information that is available now and based on our tries with the experimental build of React.
 
-The library was written in TypeScript and nicely typed. The test coverage is solid and embraces
-various real-life use cases. More than that, its name sounds cool.
+The library is written in TypeScript and nicely typed. The test coverage is solid and embraces
+various complex use cases. More than that, its name sounds cool.
 
 ## Install
 
@@ -242,6 +242,7 @@ if (methods) {
 ## Security remarks
 
 The state management provided by `useInterstate` could be isolated only from ancestors in the
-component tree structure (by `Scope`). That means if you use third-party components there is a risk
-that they may have unrestricted access to the state of the entire application being able to use the
-same keys names. The recommended way to avoid it is by using `symbols` as keys.
+component tree structure (by [`Scope`](README.md#Scope)). That means if you use third-party
+components there is a risk that they may have unrestricted access to the state of the entire
+application being able to use the same keys names. The recommended way to avoid it is by using
+`symbols` as keys.

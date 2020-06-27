@@ -1,29 +1,35 @@
 # smart-hooks
-Collections of React hooks that fill some gaps in the
-originally provided set of hooks extending or improving
-their logic.
 
-### Why?
-The Hooks presented in React is a big step forward in the
-evolution of the library. The standard set of hooks allows
-you to design components of any degree of complexity.
-Moreover, combining the logic of standard hooks, it became
-possible to create custom hooks that complement the basic
-features of React. And this logic is now reusable, as before
-the React components have been reusable. Some React hooks
-partially overlap the same functions. For example, `useRef`,
-`useMemo`, and `useCallback` basically imply the duty of
-preserving the data that you want them to survive the
-components lifecycles. At the same time, there is a lack of
-tools that solve the problem of taming mutable variables
-such as refs in elements of components. Such non-obvious
-situations as, for example, described in the
-[article](https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780).
-The solutions of many of them require fitting to specific
-conditions, boilerplates are very often needed. The library
-of hooks ***smart-hooks*** is conceived and is designed to
-fill such gaps.
+Collection of React hooks that supplements a set of standard hooks of React library extending their
+logic.
 
-### Hooks
+- ### [useInterstate](https://github.com/turtleflyer/smart-hooks/blob/master/packages/smart-hooks/use-interstate#readme)
 
-* [useSmartRef](https://github.com/turtleflyer/smart-hooks/blob/master/packages/smart-hooks/use-smart-ref#readme)
+  <img src='./packages/smart-hooks/use-interstate/use-interstate.png' height='100px'
+  alt='useInterstate' />
+
+`useInterstate` is a simple, lightweight, and powerful global state management solution for React
+projects designed to stick as close as possible to a natural usage pattern found in the standard
+hook [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate). It is minimalistic and
+does not require too much to start using. No special boilerplates. No big learning curve. The hook
+`useInterstate` is just working familiarly out-of-box. Also, it should work in the upcoming
+[concurrent mode](https://reactjs.org/docs/concurrent-mode-intro.html) as we can judge assuming from
+information that is available now and based on our tries with the experimental build of React.
+
+The library is written in TypeScript and nicely typed. The test coverage is solid and embraces
+various complex use cases. More than that, its name sounds cool.
+
+- ### [useSmartRef](https://github.com/turtleflyer/smart-hooks/blob/master/packages/smart-hooks/use-smart-ref#readme)
+
+`useSmartRef` attaches a callback to the event when the element is creating inside the component.
+This callback returns a clean-up function having a chance to fire up when the component gets rid of
+the element, or the entire component loses its existence.
+
+- ### [useSmartMemo](https://github.com/turtleflyer/smart-hooks/blob/master/packages/smart-hooks/use-smart-memo#readme)
+
+There is a temptation to use the standard React hook `useMemo` not only for the sake of performance
+optimization. But in the official documentation, it says clearly: [**You may rely on `useMemo` as a
+performance optimization, not as a semantic
+guarantee**](https://reactjs.org/docs/hooks-reference.html#usememo). `useSmartMemo` is for the
+control over the execution of some part of code skipping it if values passed to a dependencies list
+do not change.
