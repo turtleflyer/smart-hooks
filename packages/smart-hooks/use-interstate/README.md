@@ -242,7 +242,7 @@ if (methods) {
 ## Security remarks
 
 The state management provided by `useInterstate` could be isolated only from ancestors in the
-component tree structure (by [`Scope`](README.md#Scope)). That means if you use third-party
+component tree structure (by [`Scope`](#scope)). That means if you use third-party
 components there is a risk that they may have unrestricted access to the state of the entire
 application being able to use the same keys names. The recommended way to avoid it is by using
 `symbols` as keys.
