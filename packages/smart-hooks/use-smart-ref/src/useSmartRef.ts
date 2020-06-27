@@ -1,6 +1,9 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-export type SmartRefEffect<T extends HTMLElement> = (el: T) => (() => void) | undefined | void;
+export type SmartRefEffect<T extends HTMLElement = HTMLElement> = (
+  el: T
+) => (() => void) | undefined | void;
+
 type CallbackRef<T extends HTMLElement = HTMLElement> = (el: T | null) => void;
 
 interface Store<T extends HTMLElement> {
