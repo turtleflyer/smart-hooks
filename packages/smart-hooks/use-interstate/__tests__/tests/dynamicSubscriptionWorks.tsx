@@ -67,30 +67,48 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
       <TestComponent dynamicSubscribe={subscribeId1} />
     );
     const settersCounter = settersCounterFactory();
-    expect(getTextFromNode(testId3)).toBe('sun');
-    expect(getTextFromNode(testId4)).toBe('sun');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('sun');
+      expect(getTextFromNode(testId4)).toBe('sun');
+    }
+
     fireNode(testId1, 'venus');
-    expect(getTextFromNode(testId3)).toBe('venus');
-    expect(getTextFromNode(testId4)).toBe('venus');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(2);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('venus');
+      expect(getTextFromNode(testId4)).toBe('venus');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(2);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(2);
     }
 
     rerender(<TestComponent dynamicSubscribe={subscribeId2} initV2="moon" />);
-    expect(getTextFromNode(testId3)).toBe('venus');
-    expect(getTextFromNode(testId4)).toBe('moon');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('venus');
+      expect(getTextFromNode(testId4)).toBe('moon');
+    }
+
     fireNode(testId1, 'saturn');
     fireNode(testId2, 'jupiter');
-    expect(getTextFromNode(testId3)).toBe('saturn');
-    expect(getTextFromNode(testId4)).toBe('jupiter');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(4);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(4);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('saturn');
+      expect(getTextFromNode(testId4)).toBe('jupiter');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(4);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(4);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(1);
       expect(settersCounter(subscribeId2)).toBe(1);
@@ -98,16 +116,23 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
 
     rerender(<TestComponent dynamicSubscribe={subscribeId3} initV2={() => 'mars'} />);
 
-    expect(getTextFromNode(testId3)).toBe('saturn');
-    expect(getTextFromNode(testId4)).toBe('mars');
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('saturn');
+      expect(getTextFromNode(testId4)).toBe('mars');
+    }
     fireNode(testId1, 'uranus');
     fireNode(testId2, 'mercury');
-    expect(getTextFromNode(testId3)).toBe('uranus');
-    expect(getTextFromNode(testId4)).toBe('mercury');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(6);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('uranus');
+      expect(getTextFromNode(testId4)).toBe('mercury');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(6);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(6);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(1);
       expect(settersCounter(subscribeId2)).toBe(0);
@@ -116,16 +141,24 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
 
     rerender(<TestComponent dynamicSubscribe={subscribeId1} initV2="earth" />);
 
-    expect(getTextFromNode(testId3)).toBe('uranus');
-    expect(getTextFromNode(testId4)).toBe('uranus');
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('uranus');
+      expect(getTextFromNode(testId4)).toBe('uranus');
+    }
+
     fireNode(testId1, 'vega');
     fireNode(testId2, 'pluto');
-    expect(getTextFromNode(testId3)).toBe('pluto');
-    expect(getTextFromNode(testId4)).toBe('pluto');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(4);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(4);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(9);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(9);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('pluto');
+      expect(getTextFromNode(testId4)).toBe('pluto');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(4);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(4);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(9);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(9);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(2);
       expect(settersCounter(subscribeId2)).toBe(0);
@@ -134,16 +167,24 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
 
     rerender(<TestComponent dynamicSubscribe={subscribeId2} initV2="aldebaran" />);
 
-    expect(getTextFromNode(testId3)).toBe('pluto');
-    expect(getTextFromNode(testId4)).toBe('jupiter');
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('pluto');
+      expect(getTextFromNode(testId4)).toBe('jupiter');
+    }
+
     fireNode(testId1, 'black hole');
     fireNode(testId2, 'comet');
-    expect(getTextFromNode(testId3)).toBe('black hole');
-    expect(getTextFromNode(testId4)).toBe('comet');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(5);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(5);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(11);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(11);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId3)).toBe('black hole');
+      expect(getTextFromNode(testId4)).toBe('comet');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(5);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(5);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(11);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(11);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(1);
       expect(settersCounter(subscribeId2)).toBe(1);

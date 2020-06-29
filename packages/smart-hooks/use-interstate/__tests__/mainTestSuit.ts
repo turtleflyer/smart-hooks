@@ -14,17 +14,17 @@ import { AssetsImport, TestParameter, UseInterstateImport } from './testsAssets'
 
 const mainTestSuit = (packagePath: string) =>
   describe.each([
-    ['using original useMemo', () => flagManager.set({ MOCK_USE_MEMO: false }), 'original'],
-    ['using mocked useMemo', () => flagManager.set({ MOCK_USE_MEMO: true }), 'mocked'],
-  ])('Test useInterstate correctness (%s)', (_name, setMock, proofOfMock) => {
+    ['test logic', { MOCK_USE_MEMO: false, SHOULD_TEST_PERFORMANCE: false }, 'original'],
+    ['test performance', { MOCK_USE_MEMO: false, SHOULD_TEST_PERFORMANCE: true }, 'original'],
+    ['use mocked useMemo', { MOCK_USE_MEMO: true, SHOULD_TEST_PERFORMANCE: false }, 'mocked'],
+  ])('Test useInterstate correctness (%s)', (_name, flags, proofOfMock) => {
     const testParameter: TestParameter = {} as TestParameter;
 
     beforeAll(() => {
-      flagManager.set({ PROOF_OF_MOCK: '' });
+      flagManager.set({ ...flags, PROOF_OF_MOCK: '' });
     });
 
     beforeEach(() => {
-      setMock();
       jest.isolateModules(() => {
         const {
           composeCanListen,
@@ -55,14 +55,17 @@ const mainTestSuit = (packagePath: string) =>
 
     test(...siblingsCanCommunicate(testParameter));
     test(...sophisticatedStructure(testParameter));
-    test(...checkInitializationConcurrency(testParameter));
-    test(...valuesRemainAfterTreeUnmount(testParameter));
-    test(...rerenderWithInitValueResetState(testParameter));
     test(...dynamicSubscriptionWorks(testParameter));
     test(...testContext(testParameter));
     test(...testErrorHandling(testParameter));
-    test(...testErrorMethods(testParameter));
-    test(...checkTypes(testParameter));
+
+    if (!flags.SHOULD_TEST_PERFORMANCE) {
+      test(...checkInitializationConcurrency(testParameter));
+      test(...valuesRemainAfterTreeUnmount(testParameter));
+      test(...rerenderWithInitValueResetState(testParameter));
+      test(...testErrorMethods(testParameter));
+      test(...checkTypes(testParameter));
+    }
 
     test('proof of mock', () => {
       expect(flagManager.read('PROOF_OF_MOCK')).toBe(proofOfMock);

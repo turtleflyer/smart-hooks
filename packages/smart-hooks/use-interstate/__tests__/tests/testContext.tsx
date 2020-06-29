@@ -110,32 +110,45 @@ const testContext: TestDescription = (p) => [
     );
     const countSetter1 = settersCounterFactory();
     fireNode(testId1, 'bus');
-    expect(getTextFromNode(testId1)).toBe('bus');
-    expect(getTextFromNode(testId2)).toBe('');
-    expect(getTextFromNode(testId3)).toBe('bus');
-    expect(getTextFromNode(testId4)).toBe('bus');
-    expect(getTextFromNode(testId5)).toBe('');
-    expect(getTextFromNode(testId6)).toBe('bus');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('bus');
+      expect(getTextFromNode(testId2)).toBe('');
+      expect(getTextFromNode(testId3)).toBe('bus');
+      expect(getTextFromNode(testId4)).toBe('bus');
+      expect(getTextFromNode(testId5)).toBe('');
+      expect(getTextFromNode(testId6)).toBe('bus');
+    }
+
     fireNode(testId4, 'car');
-    expect(getTextFromNode(testId1)).toBe('car');
-    expect(getTextFromNode(testId2)).toBe('');
-    expect(getTextFromNode(testId3)).toBe('car');
-    expect(getTextFromNode(testId4)).toBe('car');
-    expect(getTextFromNode(testId5)).toBe('');
-    expect(getTextFromNode(testId6)).toBe('car');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('car');
+      expect(getTextFromNode(testId2)).toBe('');
+      expect(getTextFromNode(testId3)).toBe('car');
+      expect(getTextFromNode(testId4)).toBe('car');
+      expect(getTextFromNode(testId5)).toBe('');
+      expect(getTextFromNode(testId6)).toBe('car');
+    }
+
     fireNode(testId2, 'boat');
-    expect(getTextFromNode(testId1)).toBe('car');
-    expect(getTextFromNode(testId2)).toBe('boat');
-    expect(getTextFromNode(testId3)).toBe('car');
-    expect(getTextFromNode(testId4)).toBe('car');
-    expect(getTextFromNode(testId5)).toBe('boat');
-    expect(getTextFromNode(testId6)).toBe('car');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(3);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('car');
+      expect(getTextFromNode(testId2)).toBe('boat');
+      expect(getTextFromNode(testId3)).toBe('car');
+      expect(getTextFromNode(testId4)).toBe('car');
+      expect(getTextFromNode(testId5)).toBe('boat');
+      expect(getTextFromNode(testId6)).toBe('car');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(3);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(countSetter1(subscribeId1)).toBe(4);
       expect(countSetter1(subscribeId2)).toBe(2);
@@ -144,25 +157,34 @@ const testContext: TestDescription = (p) => [
     rerender(<TestComponent isolate={true} listenerId={subscribeId1} initV3="" initV4="" />);
     const countSetter2 = settersCounterFactory();
     fireNode(testId1, 'truck');
-    expect(getTextFromNode(testId1)).toBe('truck');
-    expect(getTextFromNode(testId2)).toBe('boat');
-    expect(getTextFromNode(testId3)).toBe('truck');
-    expect(getTextFromNode(testId4)).toBe('');
-    expect(getTextFromNode(testId5)).toBe('');
-    expect(getTextFromNode(testId6)).toBe('');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('truck');
+      expect(getTextFromNode(testId2)).toBe('boat');
+      expect(getTextFromNode(testId3)).toBe('truck');
+      expect(getTextFromNode(testId4)).toBe('');
+      expect(getTextFromNode(testId5)).toBe('');
+      expect(getTextFromNode(testId6)).toBe('');
+    }
+
     fireNode(testId4, 'plane');
-    expect(getTextFromNode(testId1)).toBe('truck');
-    expect(getTextFromNode(testId2)).toBe('boat');
-    expect(getTextFromNode(testId3)).toBe('truck');
-    expect(getTextFromNode(testId4)).toBe('plane');
-    expect(getTextFromNode(testId5)).toBe('');
-    expect(getTextFromNode(testId6)).toBe('plane');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(5);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(5);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(5);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(5);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('truck');
+      expect(getTextFromNode(testId2)).toBe('boat');
+      expect(getTextFromNode(testId3)).toBe('truck');
+      expect(getTextFromNode(testId4)).toBe('plane');
+      expect(getTextFromNode(testId5)).toBe('');
+      expect(getTextFromNode(testId6)).toBe('plane');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(5);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(5);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(5);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(5);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(countSetter1(subscribeId1)).toBe(2);
       expect(countSetter1(subscribeId2)).toBe(1);
@@ -171,18 +193,23 @@ const testContext: TestDescription = (p) => [
     }
 
     rerender(<TestComponent listenerId={subscribeId2} />);
-    expect(getTextFromNode(testId1)).toBe('truck');
-    expect(getTextFromNode(testId2)).toBe('boat');
-    expect(getTextFromNode(testId3)).toBe('boat');
-    expect(getTextFromNode(testId4)).toBe('truck');
-    expect(getTextFromNode(testId5)).toBe('boat');
-    expect(getTextFromNode(testId6)).toBe('boat');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(4);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(4);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(6);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('truck');
+      expect(getTextFromNode(testId2)).toBe('boat');
+      expect(getTextFromNode(testId3)).toBe('boat');
+      expect(getTextFromNode(testId4)).toBe('truck');
+      expect(getTextFromNode(testId5)).toBe('boat');
+      expect(getTextFromNode(testId6)).toBe('boat');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(6);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(4);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(6);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(6);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(4);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(6);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(countSetter2(subscribeId1)).toBe(0);
       expect(countSetter2(subscribeId2)).toBe(0);
@@ -191,18 +218,23 @@ const testContext: TestDescription = (p) => [
     rerender(
       <TestComponent isolate={true} listenerId={subscribeId1} initV3="rocket" initV4="helicopter" />
     );
-    expect(getTextFromNode(testId1)).toBe('truck');
-    expect(getTextFromNode(testId2)).toBe('boat');
-    expect(getTextFromNode(testId3)).toBe('truck');
-    expect(getTextFromNode(testId4)).toBe('rocket');
-    expect(getTextFromNode(testId5)).toBe('helicopter');
-    expect(getTextFromNode(testId6)).toBe('rocket');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(7);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(5);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(7);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(7);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(5);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(7);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('truck');
+      expect(getTextFromNode(testId2)).toBe('boat');
+      expect(getTextFromNode(testId3)).toBe('truck');
+      expect(getTextFromNode(testId4)).toBe('rocket');
+      expect(getTextFromNode(testId5)).toBe('helicopter');
+      expect(getTextFromNode(testId6)).toBe('rocket');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(7);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(5);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(7);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(7);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(5);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(7);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(countSetter1(subscribeId1)).toBe(2);
       expect(countSetter1(subscribeId2)).toBe(1);

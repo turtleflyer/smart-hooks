@@ -128,68 +128,88 @@ const sophisticatedStructure: TestDescription = (p) => [
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent initV1="h" initV2="m" />);
     const settersCounter = settersCounterFactory();
-    expect(getTextFromNode(testId1)).toBe('h');
-    expect(getTextFromNode(testId2)).toBe('m');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('h');
+      expect(getTextFromNode(testId2)).toBe('m');
+    }
 
     fireNode(testId4, 'i');
-    expect(getTextFromNode(testId1)).toBe('hi');
-    expect(getTextFromNode(testId3)).toBe('hi');
-    expect(getTextFromNode(testId4)).toBe('hi');
-    expect(getTextFromNode(testId8)).toBe('hi');
-    expect(getTextFromNode(testId9)).toBe('hi');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender7.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender8.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender9.howManyTimesBeenCalled()).toBe(2);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('hi');
+      expect(getTextFromNode(testId3)).toBe('hi');
+      expect(getTextFromNode(testId4)).toBe('hi');
+      expect(getTextFromNode(testId8)).toBe('hi');
+      expect(getTextFromNode(testId9)).toBe('hi');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender7.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender8.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender9.howManyTimesBeenCalled()).toBe(2);
+    }
 
     fireNode(testId2, 'j');
-    expect(getTextFromNode(testId2)).toBe('j');
-    expect(getTextFromNode(testId5)).toBe('j');
-    expect(getTextFromNode(testId7)).toBe('j');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender7.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender8.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender9.howManyTimesBeenCalled()).toBe(2);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId2)).toBe('j');
+      expect(getTextFromNode(testId5)).toBe('j');
+      expect(getTextFromNode(testId7)).toBe('j');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender7.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender8.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender9.howManyTimesBeenCalled()).toBe(2);
+    }
 
     fireNode(testId9, 'o');
-    expect(getTextFromNode(testId1)).toBe('o');
-    expect(getTextFromNode(testId3)).toBe('o');
-    expect(getTextFromNode(testId4)).toBe('o');
-    expect(getTextFromNode(testId8)).toBe('o');
-    expect(getTextFromNode(testId9)).toBe('o');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender7.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender8.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender9.howManyTimesBeenCalled()).toBe(3);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('o');
+      expect(getTextFromNode(testId3)).toBe('o');
+      expect(getTextFromNode(testId4)).toBe('o');
+      expect(getTextFromNode(testId8)).toBe('o');
+      expect(getTextFromNode(testId9)).toBe('o');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender7.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender8.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender9.howManyTimesBeenCalled()).toBe(3);
+    }
 
     fireNode(testId7, 'z');
-    expect(getTextFromNode(testId2)).toBe('jz');
-    expect(getTextFromNode(testId5)).toBe('jz');
-    expect(getTextFromNode(testId7)).toBe('jz');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender4.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender5.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender6.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender7.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender8.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender9.howManyTimesBeenCalled()).toBe(3);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId2)).toBe('jz');
+      expect(getTextFromNode(testId5)).toBe('jz');
+      expect(getTextFromNode(testId7)).toBe('jz');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender4.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender5.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender6.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender7.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender8.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender9.howManyTimesBeenCalled()).toBe(3);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(5);
       expect(settersCounter(subscribeId2)).toBe(3);

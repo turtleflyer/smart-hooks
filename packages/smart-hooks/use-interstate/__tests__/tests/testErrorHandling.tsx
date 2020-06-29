@@ -149,17 +149,24 @@ const testErrorHandling: TestDescription = (p) => [
       <TestComponent initV1="Java" />
     );
     const settersCounter = settersCounterFactory();
-    expect(getTextFromNode(testId1)).toBe('Java');
-    expect(getTextFromNode(testId2)).toBe('Java');
-    expect(getTextFromNode(testId3)).toBe('Java');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(1);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(1);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('Java');
+      expect(getTextFromNode(testId2)).toBe('Java');
+      expect(getTextFromNode(testId3)).toBe('Java');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(1);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(1);
+    }
 
     assertWrapper(() =>
       rerender(<TestComponent subscribeId={subscribeId2} initV1="Python" initV2="JavaScript" />)
     );
-    expect(getByTestId(testId4).textContent).toBe('Error');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getByTestId(testId4).textContent).toBe('Error');
+    }
 
     rerender(
       <TestComponent
@@ -168,18 +175,26 @@ const testErrorHandling: TestDescription = (p) => [
         initV1="Python"
       />
     );
-    expect(getTextFromNode(testId1)).toBe('Python');
-    expect(getTextFromNode(testId2)).toBe('Python');
-    expect(getTextFromNode(testId3)).toBe('Python');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(2);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(2);
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('Python');
+      expect(getTextFromNode(testId2)).toBe('Python');
+      expect(getTextFromNode(testId3)).toBe('Python');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(2);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(2);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(0);
     }
 
     assertWrapper(() => rerender(<TestComponent subscribeId={subscribeId3} />));
-    expect(getByTestId(testId4).textContent).toBe('Error');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getByTestId(testId4).textContent).toBe('Error');
+    }
 
     rerender(
       <TestComponent
@@ -189,12 +204,16 @@ const testErrorHandling: TestDescription = (p) => [
       />
     );
 
-    expect(getTextFromNode(testId1)).toBe('TypeScript');
-    expect(getTextFromNode(testId2)).toBe('TypeScript');
-    expect(getTextFromNode(testId3)).toBe('TypeScript');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(3);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(3);
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('TypeScript');
+      expect(getTextFromNode(testId2)).toBe('TypeScript');
+      expect(getTextFromNode(testId3)).toBe('TypeScript');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(3);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(3);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(0);
       expect(settersCounter(subscribeId2)).toBe(0);
@@ -210,12 +229,16 @@ const testErrorHandling: TestDescription = (p) => [
       />
     );
 
-    expect(getTextFromNode(testId1)).toBe('Algol');
-    expect(getTextFromNode(testId2)).toBe('Algol');
-    expect(getTextFromNode(testId3)).toBe('Algol');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(4);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(4);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(4);
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('Algol');
+      expect(getTextFromNode(testId2)).toBe('Algol');
+      expect(getTextFromNode(testId3)).toBe('Algol');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(4);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(4);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(4);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId1)).toBe(0);
       expect(settersCounter(subscribeId2)).toBe(0);
@@ -224,16 +247,23 @@ const testErrorHandling: TestDescription = (p) => [
     }
 
     assertWrapper(() => rerender(<TestComponent throwError />));
-    expect(getByTestId(testId4).textContent).toBe('Error');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getByTestId(testId4).textContent).toBe('Error');
+    }
 
     rerender(<TestComponent resetErrorState={{ restoreValue: true }} />);
 
-    expect(getTextFromNode(testId1)).toBe('Java');
-    expect(getTextFromNode(testId2)).toBe('Java');
-    expect(getTextFromNode(testId3)).toBe('Java');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(6);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(6);
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('Java');
+      expect(getTextFromNode(testId2)).toBe('Java');
+      expect(getTextFromNode(testId3)).toBe('Java');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(6);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(6);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(6);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId2)).toBe(0);
       expect(settersCounter(subscribeId3)).toBe(0);
@@ -241,16 +271,23 @@ const testErrorHandling: TestDescription = (p) => [
     }
 
     assertWrapper(() => rerender(<TestComponent throwError />));
-    expect(getByTestId(testId4).textContent).toBe('Error');
+
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getByTestId(testId4).textContent).toBe('Error');
+    }
 
     rerender(<TestComponent resetErrorState={{ restoreValue: false }} />);
 
-    expect(getTextFromNode(testId1)).toBe('wrong');
-    expect(getTextFromNode(testId2)).toBe('wrong');
-    expect(getTextFromNode(testId3)).toBe('wrong');
-    expect(countRender1.howManyTimesBeenCalled()).toBe(8);
-    expect(countRender2.howManyTimesBeenCalled()).toBe(8);
-    expect(countRender3.howManyTimesBeenCalled()).toBe(8);
+    if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
+      expect(getTextFromNode(testId1)).toBe('wrong');
+      expect(getTextFromNode(testId2)).toBe('wrong');
+      expect(getTextFromNode(testId3)).toBe('wrong');
+    } else {
+      expect(countRender1.howManyTimesBeenCalled()).toBe(8);
+      expect(countRender2.howManyTimesBeenCalled()).toBe(8);
+      expect(countRender3.howManyTimesBeenCalled()).toBe(8);
+    }
+
     if (flagManager.read('SHOULD_TEST_IMPLEMENTATION')) {
       expect(settersCounter(subscribeId2)).toBe(0);
       expect(settersCounter(subscribeId3)).toBe(0);
