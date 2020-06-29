@@ -14,13 +14,13 @@ import { AssetsImport, TestParameter, UseInterstateImport } from './testsAssets'
 
 const mainTestSuit = (packagePath: string) =>
   describe.each([
-    ['using original useMemo', () => flagManager.set('MOCK_USE_MEMO', false), 'original'],
-    ['using mocked useMemo', () => flagManager.set('MOCK_USE_MEMO', true), 'mocked'],
+    ['using original useMemo', () => flagManager.set({ MOCK_USE_MEMO: false }), 'original'],
+    ['using mocked useMemo', () => flagManager.set({ MOCK_USE_MEMO: true }), 'mocked'],
   ])('Test useInterstate correctness (%s)', (_name, setMock, proofOfMock) => {
     const testParameter: TestParameter = {} as TestParameter;
 
     beforeAll(() => {
-      flagManager.set('PROOF_OF_MOCK', '');
+      flagManager.set({ PROOF_OF_MOCK: '' });
     });
 
     beforeEach(() => {
