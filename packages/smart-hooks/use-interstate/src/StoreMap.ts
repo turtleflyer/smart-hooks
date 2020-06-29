@@ -3,8 +3,8 @@ import type { Setter, StateKey } from './InterstateParam';
 import type { SettersListBase, SettersListEntryBase, SettersListIterator } from './SettersLists';
 
 export interface MapValueSettersListEntry extends SettersListEntryBase {
-  prev?: (MapValueSettersListEntry & { next: {} }) | undefined;
-  next?: (MapValueSettersListEntry & { prev: {} }) | undefined;
+  prev?: (MapValueSettersListEntry & { next: object }) | undefined;
+  next?: (MapValueSettersListEntry & { prev: object }) | undefined;
 
   readonly setter: Setter;
 

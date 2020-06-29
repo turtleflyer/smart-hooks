@@ -85,7 +85,7 @@ export function removeSetterEntry<E extends SettersListEntryBase, L extends Sett
     throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
   }
 
-  const { start, end } = list as SettersListBase & { start: {}; end: {} };
+  const { start, end } = list as SettersListBase & { start: object; end: object };
 
   list.start = closeSettersListEndpoint(start, 'next');
   list.end = closeSettersListEndpoint(end, 'prev');
