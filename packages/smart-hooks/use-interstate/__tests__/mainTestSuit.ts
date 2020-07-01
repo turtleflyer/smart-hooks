@@ -9,6 +9,7 @@ import sophisticatedStructure from './tests/sophisticatedStructure';
 import testContext from './tests/testContext';
 import testErrorHandling from './tests/testErrorHandling';
 import testErrorMethods from './tests/testErrorMethods';
+import testSettersImmutability from './tests/testSettersImmutability';
 import valuesRemainAfterTreeUnmount from './tests/valuesRemainAfterTreeUnmount';
 import { AssetsImport, TestParameter, UseInterstateImport } from './testsAssets';
 
@@ -64,6 +65,7 @@ const mainTestSuit = (packagePath: string) =>
       test(...valuesRemainAfterTreeUnmount(testParameter));
       test(...rerenderWithInitValueResetState(testParameter));
       test(...testErrorMethods(testParameter));
+      test(...testSettersImmutability(testParameter));
       test(...checkTypes(testParameter));
     }
 

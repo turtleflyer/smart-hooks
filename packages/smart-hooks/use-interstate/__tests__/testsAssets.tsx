@@ -191,6 +191,7 @@ interface AssetsBase {
   readonly settersCounterFactory: typeof settersCounterFactory;
   readonly executionCountersFactory: typeof executionCountersFactory;
   readonly createAssertWrapper: AssertWrapperCreator;
+  readonly wrapWithStrictModeComponent: typeof wrapWithStrictModeComponent;
 }
 
 export interface AssetsImport extends AssetsBase {
@@ -218,4 +219,5 @@ export {
   composeCanUpdate,
   composeCanListenAndUpdate,
   createAssertWrapper,
+  wrapWithStrictModeComponent,
 };

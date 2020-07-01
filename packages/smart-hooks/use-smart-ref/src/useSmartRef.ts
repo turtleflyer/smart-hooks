@@ -4,7 +4,7 @@ export type SmartRefEffect<T extends HTMLElement = HTMLElement> = (
   el: T
 ) => (() => void) | undefined | void;
 
-type CallbackRef<T extends HTMLElement = HTMLElement> = (el: T | null) => void;
+export type CallbackRef<T extends HTMLElement = HTMLElement> = (el: T | null) => void;
 
 interface Store<T extends HTMLElement> {
   cleanUp?: () => void;

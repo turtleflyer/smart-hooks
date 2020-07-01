@@ -1,6 +1,7 @@
 import cleaningAfterUnmount from './tests/cleaningAfterUnmount';
 import refBindingUpdate from './tests/refBindingUpdate';
 import shouldFireOnlyWhenNodeChanges from './tests/shouldFireOnlyWhenNodeChanges';
+import testCallbackRefImmutability from './tests/testCallbackRefImmutability';
 import testOmittingOptionalAPI from './tests/testOmittingOptionalAPI';
 import typeParameter from './tests/typeParameter';
 import { AssetsImport, TestParameter, UseSmartRefImport } from './testsAssets';
@@ -22,6 +23,7 @@ const mainTestSuit = (packagePath: string) =>
     test(...testOmittingOptionalAPI(testParameter));
     test(...shouldFireOnlyWhenNodeChanges(testParameter));
     test(...typeParameter(testParameter));
+    test(...testCallbackRefImmutability(testParameter));
   });
 
 export default mainTestSuit;
