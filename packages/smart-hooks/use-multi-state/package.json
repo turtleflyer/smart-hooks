@@ -1,0 +1,40 @@
+{
+  "name": "@smart-hooks/use-multi-state",
+  "version": "1.0.0",
+  "description": "Use one useMultiState instead multiple useState's",
+  "main": "./dist/use-multi-state.cjs.js",
+  "module": "./dist/use-multi-state.esm.js",
+  "browser": "./dist/use-multi-state.umd.js",
+  "types": "./dist/use-multi-state.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test:pre": "jest pre",
+    "test:post": "jest post",
+    "build:js": "tsc -p ./tsconfig.bundle.json --rootDir .",
+    "build:types": "tsc -p ./tsconfig.bundle.json --emitDeclarationOnly --declaration --outDir dist",
+    "cleanup_dist": "node ../../../bundle_utilities/cleanUpDistFolder.js dist",
+    "bundle": "npm run cleanup_dist && npm run build:js && npm run build:types && rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turtleflyer/smart-hooks.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Andrei Kovalev <turtlefly@gmail.com>",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/turtleflyer/smart-hooks/issues"
+  },
+  "homepage": "https://github.com/turtleflyer/smart-hooks#readme",
+  "peerDependencies": {
+    "react": "^16.9.0"
+  },
+  "gitHead": "9a47ccf24e6f09b4f17ebf01516e8c4833f2290f"
+}
