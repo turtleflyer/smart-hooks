@@ -1,6 +1,6 @@
 {
   "name": "@smart-hooks/use-smart-ref",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Extends useRef logic",
   "main": "./dist/use-smart-ref.cjs.js",
   "module": "./dist/use-smart-ref.esm.js",
