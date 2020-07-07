@@ -3,8 +3,9 @@ import { fireEvent, render } from '@testing-library/react';
 import React, { useEffect, useMemo } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
-import * as mockedCreateStoreState from '../src/createStoreState';
+import * as mockedCreateStoreStateImport from '../src/createStoreState';
 import {
+  getUseInterstate,
   getUseInterstateErrorsHandleMethods,
   isUseInterstateError,
   Scope,
@@ -15,11 +16,12 @@ import type {
   InterstateParam,
   UseInterstateError,
 } from '../src/useInterstate';
+import type { SettersCounterFactory } from '../src/__mocks__/createStoreState';
 
 jest.mock('../src/createStoreState.ts');
 
-const { settersCounterFactory } = mockedCreateStoreState as typeof mockedCreateStoreState & {
-  settersCounterFactory(): (key: InterstateID) => number | undefined;
+const { settersCounterFactory } = (mockedCreateStoreStateImport as unknown) as {
+  settersCounterFactory: SettersCounterFactory;
 };
 
 type ExtractFirstArgType<T> = T extends (firstArg: infer R, ...restArg: any) => any ? R : never;
@@ -180,28 +182,26 @@ const createAssertWrapper: AssertWrapperCreator = () => {
 };
 
 export interface UseInterstateImport {
+  readonly getUseInterstate: typeof getUseInterstate;
   readonly Scope: typeof Scope;
   readonly useInterstate: typeof useInterstate;
   readonly getUseInterstateErrorsHandleMethods: typeof getUseInterstateErrorsHandleMethods;
   readonly isUseInterstateError: typeof isUseInterstateError;
 }
 
-interface AssetsBase {
+export interface AssetsImport {
   readonly render: typeof newRender;
-  readonly settersCounterFactory: typeof settersCounterFactory;
+  readonly settersCounterFactory: SettersCounterFactory;
   readonly executionCountersFactory: typeof executionCountersFactory;
   readonly createAssertWrapper: AssertWrapperCreator;
   readonly wrapWithStrictModeComponent: typeof wrapWithStrictModeComponent;
-}
-
-export interface AssetsImport extends AssetsBase {
   readonly composeCanListen: ComposeComponent;
   readonly composeCanUpdate: ComposeComponent;
   readonly composeCanListenAndUpdate: ComposeComponent;
 }
 
 export interface TestParameter {
-  assets: AssetsBase &
+  assets: AssetsImport &
     UseInterstateImport & {
       readonly CanListen: React.FunctionComponent<TestComponentsProps>;
       readonly CanUpdate: React.FunctionComponent<TestComponentsProps>;

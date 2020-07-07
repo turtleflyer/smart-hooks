@@ -2,20 +2,22 @@ import { createStoreState } from '../createStoreState';
 import type { StateKey } from '../InterstateParam';
 import type { StoreState } from '../StoreState';
 
-let originalStoreState: StoreState;
+const originalStoreState: StoreState[] = [];
 
 const {
   createStoreState: originalCreateStoreState,
 }: { createStoreState: typeof createStoreState } = jest.requireActual('../createStoreState.ts');
 
 function mockedCreateStoreState(): StoreState {
-  originalStoreState = originalCreateStoreState();
+  originalStoreState.unshift(originalCreateStoreState());
 
-  return originalStoreState;
+  return originalStoreState[0];
 }
 
-export function settersCounterFactory(): (key: StateKey) => number | undefined {
-  const memStoreState = originalStoreState;
+export type SettersCounterFactory = (n?: number) => (key: StateKey) => number | undefined;
+
+export const settersCounterFactory: SettersCounterFactory = (n = 0) => {
+  const memStoreState = originalStoreState[n];
 
   return (key) => {
     const { storeMap } = memStoreState;
@@ -31,6 +33,6 @@ export function settersCounterFactory(): (key: StateKey) => number | undefined {
 
     return count;
   };
-}
+};
 
 export { mockedCreateStoreState as createStoreState };
