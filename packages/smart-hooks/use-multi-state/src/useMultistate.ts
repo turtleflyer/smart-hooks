@@ -23,7 +23,7 @@ export function useMultiState<S extends object>(
     []
   ) as Array<keyof S>;
 
-  let stateObject = {} as S;
+  const stateObject = {} as S;
   const { current: settersObject } = useRef({} as UnsealReadOnly<SettersObject<S>>);
 
   for (const key of enumKeys) {
@@ -32,5 +32,5 @@ export function useMultiState<S extends object>(
     settersObject[key] = setter;
   }
 
-  return [stateObject as StateObject<S>, settersObject as SettersObject<S>];
+  return [stateObject, settersObject];
 }
