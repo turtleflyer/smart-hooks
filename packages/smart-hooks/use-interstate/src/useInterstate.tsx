@@ -33,6 +33,18 @@ export function getUseInterstate() {
     return globalStore;
   }
 
+  function useInterstate<T extends undefined>(
+    key: StateKey,
+    initValue?: T
+  ): [() => unknown, SetInterstate<unknown>];
+
+  function useInterstate<T>(
+    key: StateKey,
+    initValue: InterstateInitializeParam<T>
+  ): (() => void) extends () => T
+    ? [() => undefined, SetInterstate<undefined>]
+    : [() => T, SetInterstate<T>];
+
   function useInterstate<T>(
     key: StateKey,
     initValue?: InterstateInitializeParam<T>
