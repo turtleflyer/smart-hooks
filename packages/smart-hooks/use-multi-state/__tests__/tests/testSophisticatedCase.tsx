@@ -33,23 +33,27 @@ const testSophisticatedCase: TestDescription = (p) => [
     const testId10 = 'item-type-input';
     const testId11 = 'item-size-input';
 
-    type ItemState = {
-      readonly type: string | undefined;
-      readonly size: string | undefined;
+    type OnlyStringsInProperties = {
+      [P in number | string | symbol]: string | undefined;
     };
 
-    type StoreState = {
+    interface ItemState {
+      readonly type: string | undefined;
+      readonly size: string | undefined;
+    }
+
+    interface StoreState {
       readonly name: string | undefined;
       readonly location: string | undefined;
-    };
+    }
 
     const customerName = Symbol('customer name');
     const customerGender = Symbol('customer gender');
 
-    type CustomerState = {
+    interface CustomerState {
       readonly [customerName]: string | undefined;
       readonly [customerGender]: string | undefined;
-    };
+    }
 
     const defItemState: ItemState = { type: undefined, size: undefined };
 
@@ -60,29 +64,23 @@ const testSophisticatedCase: TestDescription = (p) => [
       [customerGender]: undefined,
     };
 
-    type OnlyStringsInProperties = {
-      [P in number | string | symbol]: string | undefined;
+    type InputFormProps<S extends OnlyStringsInProperties, P extends keyof S> = {
+      labelText: string;
+      dataTestId: string;
+      setters: SettersObject<S>;
+      keyOfState: P;
     };
 
-    type InputFormProps<S extends object> = S extends OnlyStringsInProperties
-      ? {
-          labelText: string;
-          dataTestId: string;
-          setters: SettersObject<S>;
-          keyOfState: keyof S;
-        }
-      : never;
+    type InputFormComponent = <S extends OnlyStringsInProperties, P extends keyof S>(
+      arg: InputFormProps<S, P>
+    ) => ReturnType<React.FunctionComponent<InputFormProps<S, P>>>;
 
-    type InputFormComponent = <S extends object>(
-      arg: InputFormProps<S>
-    ) => ReturnType<React.FunctionComponent<InputFormProps<S>>>;
-
-    const InputForm: InputFormComponent = <S extends object>({
+    const InputForm: InputFormComponent = <S extends OnlyStringsInProperties, P extends keyof S>({
       labelText,
       dataTestId,
       setters,
       keyOfState,
-    }: InputFormProps<S>) => (
+    }: InputFormProps<S, P>) => (
       <form>
         <label>{labelText}</label>
         <input
@@ -93,6 +91,13 @@ const testSophisticatedCase: TestDescription = (p) => [
           }
         />
       </form>
+    );
+
+    const DisplayPieceOfState: React.FunctionComponent<{
+      pieceOfState: string | undefined;
+      dataTestId: string;
+    }> = ({ pieceOfState, dataTestId }) => (
+      <div data-testid={dataTestId}>{pieceOfState ?? 'N/A'}</div>
     );
 
     const StoreContext = createContext<[StoreState, SettersObject<StoreState>] | undefined>(
@@ -112,8 +117,8 @@ const testSophisticatedCase: TestDescription = (p) => [
 
       return (
         <>
-          <div data-testid={testId0}>{storeState.name ?? 'N/A'}</div>
-          <div data-testid={testId1}>{storeState.location ?? 'N/A'}</div>
+          <DisplayPieceOfState pieceOfState={storeState.name} dataTestId={testId0} />
+          <DisplayPieceOfState pieceOfState={storeState.location} dataTestId={testId1} />
           <InputForm
             labelText="Input store name"
             dataTestId={testId2}
@@ -138,8 +143,8 @@ const testSophisticatedCase: TestDescription = (p) => [
 
       return (
         <>
-          <div data-testid={testId4}>{customerState[customerName] ?? 'N/A'}</div>
-          <div data-testid={testId5}>{customerState[customerGender] ?? 'N/A'}</div>
+          <DisplayPieceOfState pieceOfState={customerState[customerName]} dataTestId={testId4} />
+          <DisplayPieceOfState pieceOfState={customerState[customerGender]} dataTestId={testId5} />
           <InputForm
             labelText="Input customer name"
             dataTestId={testId6}
@@ -167,8 +172,8 @@ const testSophisticatedCase: TestDescription = (p) => [
             <Store />
           </StoreProvider>
           <Customer {...{ customerState, setCustomerState }} />
-          <div data-testid={testId8}>{itemState.type ?? 'N/A'}</div>
-          <div data-testid={testId9}>{itemState.size ?? 'N/A'}</div>
+          <DisplayPieceOfState pieceOfState={itemState.type} dataTestId={testId8} />
+          <DisplayPieceOfState pieceOfState={itemState.size} dataTestId={testId9} />
           <InputForm
             labelText="Input item type"
             dataTestId={testId10}
