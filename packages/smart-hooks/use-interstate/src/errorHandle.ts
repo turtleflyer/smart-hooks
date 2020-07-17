@@ -8,6 +8,8 @@ export enum UseInterstateErrorCodes {
 
   MULTIPLE_ATTEMPT_SET_STATE,
 
+  INVALID_INTERFACE_CHANGE,
+
   UNEXPECTED_ERROR,
 }
 
@@ -25,6 +27,11 @@ const UseInterstateErrorOptions: { [P in UseInterstateErrorCodes]: { message: st
   [UseInterstateErrorCodes.MULTIPLE_ATTEMPT_SET_STATE]: {
     message:
       'Multiple attempt of setting value for the key %%key%% is registered during the same cycle',
+  },
+
+  [UseInterstateErrorCodes.INVALID_INTERFACE_CHANGE]: {
+    message:
+      'Invalid attempt to change of using interface during a life of a component is registered',
   },
 
   [UseInterstateErrorCodes.UNEXPECTED_ERROR]: {

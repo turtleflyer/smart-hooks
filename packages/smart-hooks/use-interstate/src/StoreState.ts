@@ -1,3 +1,4 @@
+import type { UseInterstateThrowError } from './errorHandle';
 import type {
   InterstateInitializeParam,
   InterstateParam,
@@ -42,4 +43,5 @@ export interface Store {
   readonly initializeState: InitializeState;
   readonly runRenderTask: (key: StateKey) => void;
   readonly runEffectTask: () => void;
+  readonly throwError: UseInterstateThrowError;
 }

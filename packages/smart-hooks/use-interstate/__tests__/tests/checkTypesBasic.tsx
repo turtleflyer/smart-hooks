@@ -1,5 +1,5 @@
 import type { FinalCheck, FirstStageCheck } from '../../../../../test_utilities/checkTypes';
-import type { SetInterstate, InterstateParam } from '../../src/useInterstate';
+import type { InterstateParam, SetInterstate } from '../../src/useInterstate';
 import type { TestDescription } from '../testsAssets';
 
 const checkTypesBasic: TestDescription = (p) => [
@@ -29,6 +29,9 @@ const checkTypesBasic: TestDescription = (p) => [
     const tu11 = () => useInterstate<string>(Symbol('1'), u02);
     const tu12 = () => useInterstate<string | boolean>(Symbol('1'), u01);
     const tu13 = () => useInterstate<string | boolean>(Symbol('1'), u02);
+    const tu14 = () => useInterstate<undefined>(Symbol('1'), u05);
+    const tu15 = () => useInterstate<string>(Symbol('1'), u06);
+
     // It should get an error:
     // const _tu = () => useInterstate('1', (c: number) => c + 1);
 
@@ -77,6 +80,12 @@ const checkTypesBasic: TestDescription = (p) => [
         [() => string | boolean, SetInterstate<string | boolean>]
       >
     >;
+    type CU14 = FinalCheck<
+      FirstStageCheck<ReturnType<typeof tu14>, [() => undefined, SetInterstate<undefined>]>
+    >;
+    type CU15 = FinalCheck<
+      FirstStageCheck<ReturnType<typeof tu15>, [() => string, SetInterstate<string>]>
+    >;
 
     type T1 = string;
     type T2 = (a: boolean) => number;
@@ -108,6 +117,111 @@ const checkTypesBasic: TestDescription = (p) => [
       FirstStageCheck<
         InterstateParam<T4>,
         boolean[] | ((p: (() => string) | boolean[]) => (() => string) | boolean[])
+      >
+    >;
+
+    const symbolKey = Symbol('jee');
+    const m01 = { a: 1, 2: 'uy' };
+    const m02 = { [symbolKey]: false };
+    const m03 = { a: () => 'nis', 2: () => () => {} };
+    const m04 = { a: undefined, 2: () => undefined, [symbolKey]: () => {} };
+
+    const tm01 = () => useInterstate(m01);
+    const tm02 = () => useInterstate(m02);
+    const tm03 = () => useInterstate(m03);
+    const tm04 = () => useInterstate(m04);
+    const tm05 = () => useInterstate<{ [symbolKey]: number | boolean }>(m02);
+    const tm06 = () => useInterstate<{ a: string; 2: () => void }>(m03);
+    const tm07 = () => useInterstate<{ a: unknown; 2: undefined; [symbolKey]: undefined }>(m04);
+    const tm08 = () =>
+      useInterstate<{
+        a: string | boolean;
+        2: (() => string) | undefined;
+        [symbolKey]: number | undefined;
+      }>(m04);
+
+    // It should get an error:
+    // const _tm = () => useInterstate({ a: (p: string) => 1 });
+
+    type CM01 = FinalCheck<
+      FirstStageCheck<
+        ReturnType<typeof tm01>,
+        [() => { a: number; 2: string }, { a: SetInterstate<number>; 2: SetInterstate<string> }]
+      >
+    >;
+    type CM02 = FinalCheck<
+      FirstStageCheck<
+        ReturnType<typeof tm02>,
+        [() => { [symbolKey]: boolean }, { [symbolKey]: SetInterstate<boolean> }]
+      >
+    >;
+    type CM03 = FinalCheck<
+      FirstStageCheck<
+        ReturnType<typeof tm03>,
+        [
+          () => { a: string; 2: () => void },
+          { a: SetInterstate<string>; 2: SetInterstate<() => void> }
+        ]
+      >
+    >;
+    // TODO: Make the scheme to work
+    //
+    // type CM04 = FinalCheck<
+    //   FirstStageCheck<
+    //     ReturnType<typeof tm04>,
+    //     [
+    //       () => { a: unknown; 2: undefined; [symbolKey]: undefined },
+    //       {
+    //         a: SetInterstate<unknown>;
+    //         2: SetInterstate<undefined>;
+    //         [symbolKey]: SetInterstate<undefined>;
+    //       }
+    //     ]
+    //   >
+    // >;
+    type CM05 = FinalCheck<
+      FirstStageCheck<
+        ReturnType<typeof tm05>,
+        [() => { [symbolKey]: number | boolean }, { [symbolKey]: SetInterstate<number | boolean> }]
+      >
+    >;
+    type CM06 = FinalCheck<
+      FirstStageCheck<
+        ReturnType<typeof tm06>,
+        [
+          () => { a: string; 2: () => void },
+          { a: SetInterstate<string>; 2: SetInterstate<() => void> }
+        ]
+      >
+    >;
+    type CM07 = FinalCheck<
+      FirstStageCheck<
+        ReturnType<typeof tm07>,
+        [
+          () => { a: unknown; 2: undefined; [symbolKey]: undefined },
+          {
+            a: SetInterstate<unknown>;
+            2: SetInterstate<undefined>;
+            [symbolKey]: SetInterstate<undefined>;
+          }
+        ]
+      >
+    >;
+    type CM08 = FinalCheck<
+      FirstStageCheck<
+        ReturnType<typeof tm08>,
+        [
+          () => {
+            a: string | boolean;
+            2: (() => string) | undefined;
+            [symbolKey]: number | undefined;
+          },
+          {
+            a: SetInterstate<string | boolean>;
+            2: SetInterstate<(() => string) | undefined>;
+            [symbolKey]: SetInterstate<number | undefined>;
+          }
+        ]
       >
     >;
   },

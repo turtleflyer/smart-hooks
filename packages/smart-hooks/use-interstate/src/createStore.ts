@@ -2,7 +2,12 @@ import { createSettersList } from './createSettersList';
 import { createSettersListEntry } from './createSettersListEntry';
 import { createStoreState } from './createStoreState';
 import { createThrowError, UseInterstateErrorCodes } from './errorHandle';
-import type { InterstateParam, Setter, StateKey } from './InterstateParam';
+import type {
+  InterstateInitializeParam,
+  InterstateParam,
+  Setter,
+  StateKey,
+} from './InterstateParam';
 import { removeSetterEntry } from './removeSetterEntry';
 import type { SettersWatchList, SettersWatchListEntry } from './SettersLists';
 import { isSetterListEntryErrorChunk } from './StoreMap';
@@ -11,8 +16,18 @@ import type { ConductInitValue, InitializeState, Store } from './StoreState';
 
 declare function fixControlFlowAnalysis(): never;
 
-function isFunction(p: any): p is (...arg: any[]) => any {
+function initParamIsFunction<T>(
+  p: InterstateInitializeParam<T>
+): p is InterstateInitializeParam<T> & (() => T) {
   return typeof p === 'function';
+}
+
+function paramIsFunction<T>(p: InterstateParam<T>): p is (a: T) => T {
+  return typeof p === 'function';
+}
+
+function isDefined<T>(val: T | undefined, isSetUp: boolean): val is T {
+  return isSetUp;
 }
 
 export function createStore(): Store {
@@ -36,11 +51,9 @@ export function createStore(): Store {
 
     const { isValueSetUp, initStatus } = mapEntryValue;
 
-    let evalValue: T | undefined;
-
     if (conductInitValue && (initStatus || !isValueSetUp)) {
       const { value } = conductInitValue;
-      evalValue = isFunction(value) ? value() : value;
+      const evalValue = initParamIsFunction(value) ? value() : (value as T);
 
       if (initStatus) {
         if (initStatus.value !== evalValue) {
@@ -75,11 +88,12 @@ export function createStore(): Store {
           throwError(UseInterstateErrorCodes.MULTIPLE_ATTEMPT_SET_STATE, { key });
         }
 
-        if (!isValueSetUp) {
+        if (!isDefined(curVal, isValueSetUp)) {
           throwError(UseInterstateErrorCodes.ACCESS_VALUE_NOT_BEEN_SET, { key });
+          fixControlFlowAnalysis();
         }
 
-        const evalVal = isFunction(value) ? value(<T>curVal) : value;
+        const evalVal = paramIsFunction(value) ? value(curVal) : value;
 
         if (!Object.is(curVal, evalVal)) {
           mapEntryValue.value = evalVal;
@@ -186,5 +200,6 @@ export function createStore(): Store {
     initializeState,
     runRenderTask,
     runEffectTask,
+    throwError,
   };
 }

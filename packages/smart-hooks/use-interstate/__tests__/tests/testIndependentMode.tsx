@@ -92,7 +92,7 @@ const testIndependentMode: TestDescription = (p) => [
       </>
     );
 
-    const { fireNode, getTextFromNode, rerender, unmount } = render(<TestComponent />);
+    const { fireNode, getTextFromNode, unmount } = render(<TestComponent />);
     const countSetter1 = settersCounterFactory(0);
     const countSetter2 = settersCounterFactory(1);
     const countSetter3 = settersCounterFactory(2);

@@ -6,10 +6,12 @@ import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
 import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetState';
 import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
 import sophisticatedStructure from './tests/sophisticatedStructure';
+import testChangeInterface from './tests/testChangeInterface';
 import testContext from './tests/testContext';
 import testErrorHandling from './tests/testErrorHandling';
 import testErrorMethods from './tests/testErrorMethods';
 import testIndependentMode from './tests/testIndependentMode';
+import testMultistateInterface from './tests/testMultistateInterface';
 import testSettersImmutability from './tests/testSettersImmutability';
 import valuesRemainAfterTreeUnmount from './tests/valuesRemainAfterTreeUnmount';
 import { AssetsImport, TestParameter, UseInterstateImport } from './testsAssets';
@@ -77,6 +79,7 @@ const mainTestSuit = (packagePath: string) =>
     test(...testContext(testParameter));
     test(...testErrorHandling(testParameter));
     test(...testIndependentMode(testParameter));
+    test(...testMultistateInterface(testParameter));
 
     if (!flags.SHOULD_TEST_PERFORMANCE) {
       test(...checkInitializationConcurrency(testParameter));
@@ -84,6 +87,7 @@ const mainTestSuit = (packagePath: string) =>
       test(...rerenderWithInitValueResetState(testParameter));
       test(...testErrorMethods(testParameter));
       test(...testSettersImmutability(testParameter));
+      test(...testChangeInterface(testParameter));
       test(...checkTypesBasic(testParameter));
     }
 
