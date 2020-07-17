@@ -1,12 +1,11 @@
 import React, { useMemo, useRef, useState } from 'react';
+import type { UnsealReadOnly } from '../../../../common_types/UnsealReadOnly';
 
 export type SettersObject<S extends object> = {
   readonly [P in keyof S]: React.Dispatch<React.SetStateAction<S[P]>>;
 };
 
 export type StateObject<S extends object> = { readonly [P in keyof S]: S[P] };
-
-type UnsealReadOnly<R extends object> = { [P in keyof R]: R[P] };
 
 export function useMultiState<S extends object>(
   stateScheme: S
