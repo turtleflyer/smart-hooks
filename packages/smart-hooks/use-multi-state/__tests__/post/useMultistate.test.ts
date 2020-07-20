@@ -1,3 +1,3 @@
 import mainTestSuit from '../mainTestSuit';
 
-mainTestSuit('../dist/use-multi-state.cjs.js');
+mainTestSuit('../lib/use-multi-state.cjs.js');

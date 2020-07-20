@@ -2,37 +2,41 @@
   "name": "@smart-hooks/use-smart-ref",
   "version": "2.1.0",
   "description": "Extends useRef logic",
-  "main": "./dist/use-smart-ref.cjs.js",
-  "module": "./dist/use-smart-ref.esm.js",
-  "browser": "./dist/use-smart-ref.umd.js",
-  "types": "./dist/use-smart-ref.d.ts",
+  "keywords": [
+    "react"
+  ],
+  "author": "Andrei Kovalev <35089047+turtleflyer@users.noreply.github.com>",
+  "homepage": "https://github.com/turtleflyer/smart-hooks/tree/master/packages/smart-hooks/use-smart-ref#readme",
+  "license": "Unlicense",
+  "main": "lib/use-smart-ref.cjs.js",
+  "module": "lib/use-smart-ref.esm.js",
+  "browser": "lib/use-smart-ref.umd.js",
+  "types": "lib/use-smart-ref.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
   "files": [
-    "dist"
+    "lib"
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "scripts": {
-    "test:pre": "jest pre",
-    "test:post": "jest post",
-    "build:js": "tsc -p ./tsconfig.bundle.json --rootDir .",
-    "build:types": "tsc -p ./tsconfig.bundle.json --emitDeclarationOnly --declaration --outDir dist",
-    "cleanup_dist": "node ../../../bundle_utilities/cleanUpDistFolder.js dist",
-    "bundle": "npm run cleanup_dist && npm run build:js && npm run build:types && rollup -c"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/turtleflyer/smart-hooks.git"
   },
-  "keywords": [
-    "react"
-  ],
-  "author": "Andrei Kovalev <turtlefly@gmail.com>",
-  "license": "Unlicense",
+  "scripts": {
+    "test:pre": "jest pre",
+    "test:post": "jest post",
+    "build:js": "tsc -p ./tsconfig.bundle.json --rootDir .",
+    "build:types": "tsc -p ./tsconfig.bundle.json --emitDeclarationOnly --declaration --outDir lib",
+    "cleanup_dist": "node ../../../bundle_utilities/cleanUpDistFolder.js lib",
+    "bundle": "npm run cleanup_dist && npm run build:js && npm run build:types && rollup -c"
+  },
   "bugs": {
     "url": "https://github.com/turtleflyer/smart-hooks/issues"
   },
-  "homepage": "https://github.com/turtleflyer/smart-hooks#readme",
   "peerDependencies": {
     "react": "^16.9.0"
   },
