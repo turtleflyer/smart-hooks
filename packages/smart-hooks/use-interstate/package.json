@@ -31,8 +31,8 @@
     "test:post": "jest post",
     "build:js": "tsc -p ./tsconfig.bundle.json --rootDir .",
     "build:types": "tsc -p ./tsconfig.bundle.json --emitDeclarationOnly --declaration --outDir lib",
-    "cleanup_dist": "node ../../../bundle_utilities/cleanUpDistFolder.js lib",
-    "bundle": "npm run cleanup_dist && npm run build:js && npm run build:types && rollup -c"
+    "cleanup_lib": "node ../../../bundle_utilities/cleanUpDistFolder.js lib",
+    "bundle": "npm run cleanup_lib && npm run build:js && npm run build:types && rollup -c"
   },
   "bugs": {
     "url": "https://github.com/turtleflyer/smart-hooks/issues"
@@ -41,6 +41,7 @@
     "react": "^16.9.0"
   },
   "dependencies": {
+    "@smart-hooks/helper-traverse-scheme-keys": "^0.0.0",
     "@smart-hooks/use-smart-memo": "^2.0.0"
   },
   "gitHead": "9a47ccf24e6f09b4f17ebf01516e8c4833f2290f"
