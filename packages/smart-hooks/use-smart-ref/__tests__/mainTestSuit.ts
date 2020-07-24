@@ -1,3 +1,4 @@
+import { cleanup } from '@testing-library/react';
 import cleaningAfterUnmount from './tests/cleaningAfterUnmount';
 import refBindingUpdate from './tests/refBindingUpdate';
 import shouldFireOnlyWhenNodeChanges from './tests/shouldFireOnlyWhenNodeChanges';
@@ -17,6 +18,8 @@ const mainTestSuit = (packagePath: string) =>
         testParameter.assets = { ...assets, ...useSmartRefImport };
       });
     });
+
+    afterEach(cleanup);
 
     test(...refBindingUpdate(testParameter));
     test(...cleaningAfterUnmount(testParameter));

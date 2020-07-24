@@ -1,3 +1,4 @@
+import { cleanup } from '@testing-library/react';
 import { flagManager } from './testFlags';
 import checkRecalculation from './tests/checkRecalculation';
 import edgeCases from './tests/edgeCases';
@@ -23,6 +24,8 @@ const mainTestSuit = (packagePath: string) =>
         testParameter.assets = { ...assets, ...useSmartMemoImport };
       });
     });
+
+    afterEach(cleanup);
 
     test(...generalFunctionality(testParameter));
     test(...checkRecalculation(testParameter));

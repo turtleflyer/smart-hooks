@@ -1,3 +1,4 @@
+import { cleanup } from '@testing-library/react';
 import testSetterImmutability from './tests/testSetterImmutability';
 import testSophisticatedCase from './tests/testSophisticatedCase';
 import { AssetsImport, TestParameter, UseMultistateImport } from './testsAssets';
@@ -13,6 +14,8 @@ const mainTestSuit = (packagePath: string) =>
         testParameter.assets = { ...assets, ...useMultistateImport };
       });
     });
+
+    afterEach(cleanup);
 
     test(...testSetterImmutability(testParameter));
     test(...testSophisticatedCase(testParameter));
