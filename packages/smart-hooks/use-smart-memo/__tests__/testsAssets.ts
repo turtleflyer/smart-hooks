@@ -1,4 +1,8 @@
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import type {
+  TestDescriptionG,
+  TestParameterG,
+} from '../../../../test_utilities/testDescriptionTypes';
 import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
 import { useSmartMemo } from '../src/useSmartMemo';
 
@@ -11,10 +15,8 @@ export interface UseSmartMemoImport {
   useSmartMemo: typeof useSmartMemo;
 }
 
-export interface TestParameter {
-  assets: AssetsImport & UseSmartMemoImport;
-}
+export type TestParameter = TestParameterG<AssetsImport & UseSmartMemoImport>;
 
-export type TestDescription = (p: TestParameter) => [string, () => void];
+export type TestDescription = TestDescriptionG<TestParameter>;
 
 export { executionCountersFactory, wrapWithStrictModeComponent };

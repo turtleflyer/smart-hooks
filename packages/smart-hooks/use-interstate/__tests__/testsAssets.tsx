@@ -2,6 +2,10 @@ import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render } from '@testing-library/react';
 import React, { useEffect, useMemo } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import type {
+  TestDescriptionG,
+  TestParameterG,
+} from '../../../../test_utilities/testDescriptionTypes';
 import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
 import * as mockedCreateStoreStateImport from '../src/createStoreState';
 import {
@@ -200,16 +204,16 @@ export interface AssetsImport {
   readonly composeCanListenAndUpdate: ComposeComponent;
 }
 
-export interface TestParameter {
-  assets: AssetsImport &
+export type TestParameter = TestParameterG<
+  AssetsImport &
     UseInterstateImport & {
       readonly CanListen: React.FunctionComponent<TestComponentsProps>;
       readonly CanUpdate: React.FunctionComponent<TestComponentsProps>;
       readonly CanListenAndUpdate: React.FunctionComponent<TestComponentsProps>;
-    };
-}
+    }
+>;
 
-export type TestDescription = (p: TestParameter) => [string, () => void];
+export type TestDescription = TestDescriptionG<TestParameter>;
 
 export {
   newRender as render,
