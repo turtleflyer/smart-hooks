@@ -5,7 +5,9 @@ const path = require('path');
 function cleanUpDistFolder(dirName) {
   fs.readdir(dirName, (err, files) => {
     if (err) {
-      console.error('While bundling the error occurred:', err);
+      if (err.code !== 'ENOENT') {
+        console.error('While bundling the error occurred:', err);
+      }
     } else if (files.length) {
       files.forEach((f) =>
         fs.unlink(path.join(dirName, f), (err2) => {
