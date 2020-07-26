@@ -16,7 +16,7 @@ export default [
   {
     input,
 
-    external: ['react', '@smart-hooks/use-smart-memo'],
+    external: ['react', '@smart-hooks/use-smart-memo', '@smart-hooks/helper-traverse-scheme-keys'],
 
     plugins: [babel({ extensions: ['.js'] })],
 
