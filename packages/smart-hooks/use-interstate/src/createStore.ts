@@ -12,7 +12,7 @@ import { removeSetterEntry } from './removeSetterEntry';
 import type { SettersWatchList, SettersWatchListEntry } from './SettersLists';
 import { isSetterListEntryErrorChunk } from './StoreMap';
 import type { MapValue, MapValueSettersListEntry } from './StoreMap';
-import type { ConductInitValue, InitializeState, Store } from './StoreState';
+import type { InitializeState, Store } from './StoreState';
 
 declare function fixControlFlowAnalysis(): never;
 
@@ -39,7 +39,7 @@ export function createStore(): Store {
 
   const initializeState: InitializeState = <T>(
     key: StateKey,
-    conductInitValue?: ConductInitValue<T>
+    initValue: InterstateInitializeParam<T> | undefined
   ) => {
     const _mapEntryValue = storeMap.get(key);
     if (!_mapEntryValue) {
@@ -51,9 +51,8 @@ export function createStore(): Store {
 
     const { isValueSetUp, initStatus } = mapEntryValue;
 
-    if (conductInitValue && (initStatus || !isValueSetUp)) {
-      const { value } = conductInitValue;
-      const evalValue = initParamIsFunction(value) ? value() : (value as T);
+    if (initValue !== undefined && (initStatus || !isValueSetUp)) {
+      const evalValue = initParamIsFunction(initValue) ? initValue() : (initValue as T);
 
       if (initStatus) {
         if (initStatus.value !== evalValue) {

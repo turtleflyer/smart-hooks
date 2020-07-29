@@ -30,13 +30,9 @@ export interface StoreMethods<T> {
   readonly addSetter: (setter: Setter) => SetterMethods | void;
 }
 
-export interface ConductInitValue<T> {
-  readonly value: InterstateInitializeParam<T>;
-}
-
 export type InitializeState = <T>(
   key: StateKey,
-  conductInitValue?: ConductInitValue<T>
+  initValue: InterstateInitializeParam<T> | undefined
 ) => StoreMethods<T>;
 
 export interface Store {

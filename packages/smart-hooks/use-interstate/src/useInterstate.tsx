@@ -108,16 +108,7 @@ export function getUseInterstate() {
       runRenderTask(key);
 
       useSmartMemo(() => {
-        memState.current = initializeState(
-          key,
-
-          /**
-           * Initializing usInterstate without an init value (or undefined value) preserves the last
-           * recorded value. If it is needed to set the value to undefined on the stage of
-           * initializing then pass the function parameter () => undefined;
-           */
-          initValue === undefined ? undefined : { value: initValue }
-        );
+        memState.current = initializeState(key, initValue);
       }, [key]);
 
       useEffect(() => runEffectTask());
@@ -135,8 +126,8 @@ export function getUseInterstate() {
         const [, setter] = useState<boolean>(true);
 
         /**
-         * Update or initialize storing the setter in a record keeping other setters corresponding the
-         * stateKey
+         * For the first call or in the case of changing the subscription key it will place the
+         * setter in the list relevant to this key
          */
         useSmartMemo(() => {
           const {
