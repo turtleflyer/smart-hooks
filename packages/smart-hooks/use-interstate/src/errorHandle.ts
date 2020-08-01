@@ -101,14 +101,10 @@ interface ErrorOptions {
   readonly key?: StateKey;
 }
 
-interface ComposeMethodParam {
-  memValuesMap: MemValueMap;
-}
-
 interface ErrorMethodTemplate {
   readonly nameOfMethod: keyof UseInterstateErrorMethods;
   readonly composeMethod: (
-    prop: ComposeMethodParam,
+    memValuesMap: MemValueMap,
     key?: StateKey
   ) => ((isToRevertData: boolean) => void) | undefined;
   readonly getCountSignature: (key?: StateKey) => number | undefined;
@@ -155,7 +151,7 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
   const errorMethodsTemplates: ErrorMethodTemplate[] = [
     {
       nameOfMethod: 'flushValueOfKey',
-      composeMethod: ({ memValuesMap }: ComposeMethodParam, key) =>
+      composeMethod: (memValuesMap, key) =>
         key === undefined || !storeMap.has(key)
           ? undefined
           : (isToRevertData) => {
@@ -170,12 +166,12 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
   ];
 
   function createMethodRegardingCountSignature(
-    param: ComposeMethodParam,
+    memValuesMap: MemValueMap,
     template: ErrorMethodTemplate,
     key?: StateKey
   ): ((isToRevertData?: boolean) => boolean) | undefined {
     const { composeMethod, getCountSignature, incrementCountSignature } = template;
-    const method = composeMethod(param, key);
+    const method = composeMethod(memValuesMap, key);
     const memCountSignature = getCountSignature(key);
 
     return method
@@ -202,7 +198,7 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
       mapValue.caughtError = errorCode;
     }
 
-    const param: ComposeMethodParam = { memValuesMap: storeState.memValuesMap };
+    const { memValuesMap } = storeState;
 
     const error = Error(message) as UseInterstateError;
 
@@ -219,7 +215,10 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
         error,
 
         methods: errorMethodsTemplates.reduce((ev, t) => {
-          return { ...ev, [t.nameOfMethod]: createMethodRegardingCountSignature(param, t, key) };
+          return {
+            ...ev,
+            [t.nameOfMethod]: createMethodRegardingCountSignature(memValuesMap, t, key),
+          };
         }, {} as UseInterstateErrorMethods),
 
         lifeSignature: futureLifeSignature,
