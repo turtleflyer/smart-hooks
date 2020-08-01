@@ -27,7 +27,7 @@ export interface SetterMethods {
 export interface StoreMethods<T> {
   readonly getValue: () => T;
   readonly setValue: (value: InterstateParam<T>) => void;
-  readonly addSetter: (setter: Setter) => SetterMethods | void;
+  readonly addSetter: (setter: Setter) => SetterMethods | undefined;
 }
 
 export type InitializeState = <T>(

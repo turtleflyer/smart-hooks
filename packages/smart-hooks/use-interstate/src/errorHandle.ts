@@ -1,3 +1,4 @@
+import type { TrueObjectAssign } from './CommonTypes';
 import type { StateKey } from './InterstateParam';
 import type { MemValueMap, StoreState } from './StoreState';
 
@@ -129,11 +130,13 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
       s.errorChunk = true;
     }
 
-    mapValue.start = undefined;
-    mapValue.end = undefined;
-    mapValue.initStatus = undefined;
-    mapValue.caughtError = undefined;
-    mapValue.triggerRegistered = false;
+    (Object.assign as TrueObjectAssign)(mapValue, {
+      start: undefined,
+      end: undefined,
+      initStatus: undefined,
+      caughtError: undefined,
+      triggerRegistered: false,
+    });
 
     if (isToRevertData) {
       if (memValuesMap.has(key)) {

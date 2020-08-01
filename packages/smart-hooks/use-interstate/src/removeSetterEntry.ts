@@ -1,30 +1,25 @@
+import { fixControlFlowAnalysis } from './CommonTypes';
+import type { TrueObjectAssign } from './CommonTypes';
 import { UseInterstateErrorCodes } from './errorHandle';
 import type { ErrorHandleOptions } from './errorHandle';
 import type { SettersListBase, SettersListEntryBase } from './SettersLists';
 
-declare function fixControlFlowAnalysis(): never;
-
-function isSettersListNotSubscribed<L extends SettersListBase>(
+function isSettersListSubscribed<L extends SettersListBase>(
   v: L,
   { throwError, key }: ErrorHandleOptions
-): L extends SettersListBase & { start?: undefined; end?: undefined } ? true : false;
-
-function isSettersListNotSubscribed(
-  v: SettersListBase,
-  { throwError, key }: ErrorHandleOptions
-): boolean {
+): v is L & { start: object; end: object } {
   const { start, end } = v;
 
   if (!start) {
     if (end) {
       throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
     }
-    return true;
+    return false;
   } else if (!end) {
     throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
   }
 
-  return false;
+  return true;
 }
 
 export function removeSetterEntry<E extends SettersListEntryBase, L extends SettersListBase>(
@@ -39,9 +34,9 @@ export function removeSetterEntry<E extends SettersListEntryBase, L extends Sett
     : never
   : never;
 
-export function removeSetterEntry<E extends SettersListEntryBase, L extends SettersListBase>(
-  entry: E,
-  list: L,
+export function removeSetterEntry(
+  entry: SettersListEntryBase,
+  list: SettersListBase,
   { throwError, key }: ErrorHandleOptions
 ): void {
   function closeSettersListEndpoint<
@@ -81,14 +76,17 @@ export function removeSetterEntry<E extends SettersListEntryBase, L extends Sett
     return;
   }
 
-  if (isSettersListNotSubscribed(list, { throwError })) {
+  if (!isSettersListSubscribed(list, { throwError })) {
     throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
+    fixControlFlowAnalysis();
   }
 
-  const { start, end } = list as SettersListBase & { start: object; end: object };
+  const { start, end } = list;
 
-  list.start = closeSettersListEndpoint(start, 'next');
-  list.end = closeSettersListEndpoint(end, 'prev');
+  (Object.assign as TrueObjectAssign)(list, {
+    start: closeSettersListEndpoint(start, 'next'),
+    end: closeSettersListEndpoint(end, 'prev'),
+  });
 
   entry.beenRemoved = true;
 }

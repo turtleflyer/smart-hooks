@@ -1,17 +1,19 @@
+type TrueObjectAssign = <T, U extends Partial<T>>(target: T, source: U) => T & U;
+
 export interface FlagManager<T> {
   reset: () => void;
-  set: <A extends object>(newFlags: A) => T extends A ? void : never;
+  set: <A extends T>(newFlags: A) => void;
   read: <F extends keyof T>(flag: F) => T[F];
 }
 
 export function createFlagManager<T>(flags: T, def: T) {
   return {
     reset() {
-      Object.assign(flags, def);
+      (Object.assign as TrueObjectAssign)(flags, def);
     },
 
     set(newFlags) {
-      Object.assign(flags, newFlags);
+      (Object.assign as TrueObjectAssign)(flags, newFlags);
     },
 
     read(flag) {

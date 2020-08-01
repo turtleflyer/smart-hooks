@@ -1,3 +1,4 @@
+import type { TrueObjectAssign } from './CommonTypes';
 import { createCyclesTask } from './createLifeCyclesTask';
 import { createSettersList } from './createSettersList';
 import type { StateKey } from './InterstateParam';
@@ -21,8 +22,7 @@ export function createStoreState(): StoreState {
         storeState.memValuesMap = new Map<StateKey, { value: any } | undefined>();
         effectTask.reset();
 
-        settersWatchList.start = undefined;
-        settersWatchList.end = undefined;
+        (Object.assign as TrueObjectAssign)(settersWatchList, { start: undefined, end: undefined });
       }
     ),
     effectTask: createCyclesTask(

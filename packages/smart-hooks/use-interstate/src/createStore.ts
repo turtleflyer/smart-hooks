@@ -1,3 +1,5 @@
+import { fixControlFlowAnalysis } from './CommonTypes';
+import type { TrueObjectAssign } from './CommonTypes';
 import { createSettersList } from './createSettersList';
 import { createSettersListEntry } from './createSettersListEntry';
 import { createStoreState } from './createStoreState';
@@ -13,8 +15,6 @@ import type { SettersWatchList, SettersWatchListEntry } from './SettersLists';
 import { isSetterListEntryErrorChunk } from './StoreMap';
 import type { MapValue, MapValueSettersListEntry } from './StoreMap';
 import type { InitializeState, Store } from './StoreState';
-
-declare function fixControlFlowAnalysis(): never;
 
 function initParamIsFunction<T>(
   p: InterstateInitializeParam<T>
@@ -59,9 +59,11 @@ export function createStore(): Store {
           throwError(UseInterstateErrorCodes.CONCURRENTLY_PROVIDED_INIT_VALUE, { key });
         }
       } else {
-        mapEntryValue.value = evalValue;
-        mapEntryValue.initStatus = { value: evalValue };
-        mapEntryValue.isValueSetUp = true;
+        (Object.assign as TrueObjectAssign)(mapEntryValue, {
+          value: evalValue,
+          initStatus: { value: evalValue },
+          isValueSetUp: true,
+        });
       }
     }
 
@@ -185,9 +187,11 @@ export function createStore(): Store {
     if (!memValuesMap.has(key)) {
       memValuesMap.set(key, isValueSetUp ? { value } : undefined);
 
-      mapValue.caughtError = undefined;
-      mapValue.triggerRegistered = false;
-      mapValue.initStatus = undefined;
+      (Object.assign as TrueObjectAssign)(mapValue, {
+        caughtError: undefined,
+        triggerRegistered: false,
+        initStatus: undefined,
+      });
     }
   }
 

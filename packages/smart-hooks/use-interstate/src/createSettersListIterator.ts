@@ -1,6 +1,6 @@
 import type { SettersListBase, SettersListEntryBase, SettersListIterator } from './SettersLists';
 
-export function createSettersListIterator<L extends SettersListBase>(
+export function createSettersListIterator<L extends Omit<SettersListBase, never>>(
   v: L
 ): L extends { start?: infer S }
   ? S extends infer E & { prev: undefined }
@@ -8,9 +8,7 @@ export function createSettersListIterator<L extends SettersListBase>(
     : never
   : never;
 
-export function createSettersListIterator(
-  v: SettersListBase
-): SettersListIterator<SettersListEntryBase> {
+export function createSettersListIterator(v: Omit<SettersListBase, never>): SettersListIterator {
   return function mapValueIterator() {
     let entry = v.start as SettersListEntryBase | undefined;
 

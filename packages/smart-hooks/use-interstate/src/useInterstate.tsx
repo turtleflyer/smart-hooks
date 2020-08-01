@@ -114,7 +114,7 @@ export function getUseInterstate() {
       useEffect(() => runEffectTask());
 
       function useSubscribe() {
-        const subscribeMemState = useRef<Partial<SetterMethods>>({});
+        const subscribeMemState = useRef<Partial<SetterMethods> | undefined>({});
         const {
           current: { getValue },
         } = memState;
@@ -134,33 +134,14 @@ export function getUseInterstate() {
             current: { addSetter },
           } = memState;
 
-          const {
-            current: { removeSetterFromKeyList },
-          } = subscribeMemState;
+          subscribeMemState.current?.removeSetterFromKeyList?.();
 
-          removeSetterFromKeyList?.();
-
-          subscribeMemState.current = { ...addSetter(setter) };
+          subscribeMemState.current = addSetter(setter);
         }, [key]);
 
-        useEffect(() => {
-          const {
-            current: { removeSetterFromWatchList },
-          } = subscribeMemState;
+        useEffect(() => subscribeMemState.current?.removeSetterFromWatchList?.(), [key]);
 
-          removeSetterFromWatchList?.();
-        }, [key]);
-
-        useEffect(
-          () => () => {
-            const {
-              current: { removeSetterFromKeyList },
-            } = subscribeMemState;
-
-            removeSetterFromKeyList?.();
-          },
-          []
-        );
+        useEffect(() => () => subscribeMemState.current?.removeSetterFromKeyList?.(), []);
 
         return getValue();
       }

@@ -1,7 +1,8 @@
+import type { TrueObjectAssign } from './CommonTypes';
 import { createSettersListIterator } from './createSettersListIterator';
 import { UseInterstateErrorCodes } from './errorHandle';
 import type { ErrorHandleOptions } from './errorHandle';
-import type { SettersListBase, SettersListEntryBase, SettersListIterator } from './SettersLists';
+import type { SettersListBase, SettersListIterator } from './SettersLists';
 
 export function createSettersList<
   L extends SettersListBase,
@@ -21,13 +22,9 @@ export function createSettersList(
     throw Error('Uncaught error occurs in useInterstate');
   }
 
-  const list = { ...props };
+  const list = { ...props } as SettersListBase;
 
-  const mergeWithIterator: {
-    [Symbol.iterator]: SettersListIterator<SettersListEntryBase>;
-  } = {
-    [Symbol.iterator]: createSettersListIterator(<SettersListBase>list),
-  };
-
-  return Object.assign(list, mergeWithIterator);
+  return (Object.assign as TrueObjectAssign)(list, {
+    [Symbol.iterator]: createSettersListIterator(list),
+  } as Partial<SettersListBase> & { [Symbol.iterator]: SettersListIterator });
 }
