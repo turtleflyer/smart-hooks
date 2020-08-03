@@ -1,6 +1,6 @@
 {
   "name": "@smart-hooks/use-smart-ref",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Extends useRef logic",
   "keywords": [
     "react"
