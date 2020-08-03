@@ -1,3 +1,3 @@
-## 2.0.0 (Jun 27, 2020)
+## 1.0.0 (Aug 3, 2020)
 
 Publish stable release

@@ -1,3 +1,12 @@
+## 2.1.0 (Aug 3, 2020)
+### Added
+- getUseInterstate method.
+- Multi state call interface.
+
+### Changed
+- Add dependency on a helper shared package @smart-hooks/helper-traverse-scheme-keys.
+- Update the documentation.
+
 ## 2.0.0 (Jun 27, 2020)
 
 Publish stable release

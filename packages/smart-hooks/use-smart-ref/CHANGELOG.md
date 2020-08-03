@@ -1,3 +1,6 @@
+## 2.1.1 (Aug 3, 2020)
+Version bump
+
 ## 2.1.0 (Jul 4, 2020)
 
 ### Features
