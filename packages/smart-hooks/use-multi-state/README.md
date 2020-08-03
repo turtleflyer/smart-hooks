@@ -13,6 +13,8 @@ npm install @smart-hooks/use-multi-state --save
 
 ## Usage
 
+Giving the following example where we use ordinary `useState`:
+
 ```jsx
 function Component() {
   const [color, setColor] = useState('blue');
@@ -28,7 +30,7 @@ function Component() {
 }
 ```
 
-You can rewrite this logic by using `useMultiState`:
+We can rewrite this logic by using `useMultiState` in more compact and readable way:
 
 ```jsx
 import { useMultiState } from '@smart-hooks/use-multi-state';
@@ -46,10 +48,11 @@ function Component() {
       <DisplayComponent {...state} />
     </>
   );
+}
 ```
 
 As in the case of using `useState` when you get setter that is [guaranteed stable and
 immutable](https://reactjs.org/docs/hooks-reference.html#usestate), with `usMultiState` you have an
-object that alone has a stable identity and its properties on their turn effectively are setters
-emitted by `useState` calls so stable and immutable. You can use numbers, strings, and symbols for
-properties names.
+object that alone has a stable identity, and its properties on their turn effectively are setters
+emitted by `useState` calls hence stable and immutable. You can use numbers, strings, and symbols
+for properties names.
