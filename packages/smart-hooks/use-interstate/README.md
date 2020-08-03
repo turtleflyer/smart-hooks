@@ -8,7 +8,7 @@ hook [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate). It is
 does not require too much to start using. No special boilerplates. No big learning curve. The hook
 `useInterstate` is just working familiarly out-of-box. Also, it should work in the upcoming
 [concurrent mode](https://reactjs.org/docs/concurrent-mode-intro.html) as we can judge assuming from
-information that is available now and based on our tries with the experimental build of React.
+information available now and based on our tries with the experimental build of React.
 
 The library is written in TypeScript and nicely typed. The test coverage is solid and embraces
 various complex use cases. More than that, its name sounds cool.
@@ -20,6 +20,13 @@ npm install @smart-hooks/use-interstate --save
 ```
 
 ## Usage
+
+There area two call interfaces for `useInterstate`.
+
+### `useInterstate(key, initValue)`
+
+The first one is very close to the interface by which the standard React hook `useState` is managing
+the state.
 
 ```jsx
 import React from 'react';
@@ -56,145 +63,253 @@ const InterstateExample = () => (
 );
 ```
 
-As was said, the use of `useInterstate` is very close to the interface by which the standard React
-hook `useState` is managing the state. There are two notable differences, though. The first thing is
-that to handle a particular state needs to provide a unique key coupled with that state. It must be
-a `number`, `string`, or `symbol`. Of course, we guarantee that a mutable value linked to the key
-will be the same in any part of an application at the same moment. The way how to pass changes to
-the global state will be provided. And any components that have subscribed to the pair key and value
-will be aware of the changes transmitted to the global state regarding this key virtually with no
-delay. The second, one more step is needed to subscribe to the state. Just compare:
+You must keep in mind two notable differences from `useState`.
 
-```js
-const [state, setState] = useState(initValue);
+1. It needs to give a unique key to handle the state related to that key. It must be a `number`,
+   `string`, or `symbol`. Of course, we guarantee that a mutable value linked to the key that
+   constitutes the part of the global state will be the same in any part of an application at the
+   same moment. The returned method provides the way how to pass changes to the global state. And
+   any components that have subscribed to the pair key and value will be aware of the changes
+   transmitted to the global state related to this key virtually with no delay.
+
+2. One more step is needed to subscribe to the state. Just compare:
+
+   ```js
+   const [state, setState] = useState(initValue);
+   ```
+
+   and
+
+   ```js
+   const [useSubscribe, setState] = useInterstate(key, initValue);
+   const state = useSubscribe();
+   ```
+
+   `useInterstate` is not giving a stored value just after calling the hook. Instead, it returns
+   other hook that, being called, for its part returns a requested value of the state. The returned
+   subscription hook obeys [the rules of hooks](https://reactjs.org/docs/hooks-rules.html). It may
+   not be in a conditional clause, for example. Exactly this hook will listen to state changes and
+   trigger re-rendering the component when the change occurs. Indeed, we broke up the subscribing
+   process onto two steps due to a performance cost coming along with it, and oftentimes you need
+   only to have a way to change the state not to subscribe to those changes. Let us take a look at
+   different scenarios. If we only need to have a function to update the sate:
+
+   ```js
+   const [, setState] = useInterstate('size', 9);
+   ```
+
+   Now we want to subscribe to changes in the state (that will cause re-rendering the component):
+
+   ```js
+   const [useSubscribe] = useInterstate('size', 9);
+   const state = useSubscribe();
+   ```
+
+   Both:
+
+   ```js
+   const [useSubscribe, setState] = useInterstate('size', 9);
+   const state = useSubscribe();
+   ```
+
+The default value passed to the hook can be a function. It will run only once, and its return will
+provide an actual initialization value. If the specific key has been initialized earlier in a
+different part of the application the provided init value will be ignored as it is for the further
+calls in the same component after each re-rendering. (It is how standard `useState` behaves.)
+
+### `useInterstate({key1: initValue1, key2: initValue2})`
+
+The second interface is similar to what is using in our other hook
+[`useMultiState`](https://github.com/turtleflyer/smart-hooks/blob/master/packages/smart-hooks/use-multi-state#readme).
+And as in the case of `useMultiState`, this call interface replaces multiple uses of the hook in one
+component.
+
+```jsx
+function Component1() {
+  const [, setState] = useInterstate({
+    color: 'blue',
+    theme: { textSize: 'medium', hyphenations: true },
+    density: 100,
+  });
+
+  return <ControlComponent {...setState} />;
+}
+
+function Component2() {
+  const [useSubscribe] = useInterstate({
+    color: 'blue',
+    theme: { textSize: 'medium', hyphenations: true },
+    density: 100,
+  });
+  const state = useSubscribe();
+
+  return <DisplayComponent {...state} />;
+}
 ```
 
-and
+Notable differences with `useMultiState`:
+
+- The properties' names are global and corresponding to the global state keys.
+
+- `useInterstate` does not return the object with the values of the state in its relevant
+  properties. Instead, it returns a hook whose call provides such an object. It means you need one
+  more step to subscribe as it was described for [the first call
+  interface](#useInterstatekey-initValue).
+
+  Effectively, instead of the construction:
+
+  ```js
+  const [useSubscribeToKey1, setStateForKey1] = useInterstate(key1, initValue1);
+  const state1 = useSubscribeToKey1();
+
+  const [useSubscribeToKey2, setStateForKey2] = useInterstate(key2, initValue1);
+  const state2 = useSubscribeToKey1();
+  ```
+
+  you can write:
+
+  ```js
+  const [useSubscribe, { key1: setStateForKey1, key2: setStateForKey2 }] = useInterstate({
+    key1: initValue1,
+    key2: initValue2,
+  });
+  const { key1: state1, key2: state2 } = useSubscribe();
+  ```
+
+If you need to have setters for one set of keys and subscribe to another one, it is better to use
+the hook twice with different init objects aiming performance optimization.
 
 ```js
-const [useSubscribe, setState] = useInterstate(KEY, initValue);
+const [, state] = useInterstate({
+  key1: initValue1,
+  key2: initValue2,
+});
+const [useSubscribe] = useInterstate({
+  key2: initValue2,
+  key3: initValue3,
+  key4: initValue4,
+});
 const state = useSubscribe();
 ```
-
-`useInterstate` is not giving a value just after calling the hook. Instead, it returns a new hook
-that, being called, for its part returns an actual value of the state. It is because subscribing to
-updates in the state has its own performance cost and it is not doing automatically. Let us take a
-look at different scenarios. If we only need to have a way to update the sate:
-
-```js
-const [, setState] = useInterstate('size', 9);
-```
-
-Now we just want to mirror changes in the state (that will cause rerendering the component):
-
-```js
-const [useSubscribe] = useInterstate('size', 9);
-const state = useSubscribe();
-```
-
-Both:
-
-```js
-const [useSubscribe, setState] = useInterstate('size', 9);
-const state = useSubscribe();
-```
-
-The default value passed to the hook can be a function. In this case the state of the key will be
-initialized by the value returned from this function that is running only once.
 
 ## Important notes
 
-There are some limitations to using `useInterstate` that, when being broken, may lead to errors. The
-first thing worth mentioning is that before accessing the value of a particular key of the state it
-must be initialized with a provided default value.
+There are some limitations to using `useInterstate` that, when being broken, may lead to errors.
+Also, there are some advanced use cases that may add power and resilience to your code.
 
-```js
-const [useSubscribe, setState] = useInterstate('name');
-// A default value is not provided in the hook and in other parts of the code for this key
+- One of the powerful abilities of useInterstate is that it can resubscribe to different keys of the
+  global state dynamically.
 
-const state = useSubscribe();
-// Accessing to the state, but it was not initialized, so an error is caused
-```
+  ```js
+  const [useSubscribeReceivedKey] = useInterstate({ passKey: 'city', initVForReceivedKey: 'NY' });
+  const received = useSubscribeReceivedKey();
+  // Subscribe to a pair key and default value for the second useInterstate. If they change the
+  // second hook will dynamically resubscribe to a new key.
 
-```js
-setState('Vincent van Gogh');
-// Calling setState is reckoned as an access to the state
-```
+  const [useSubscribe, setState] = useInterstate(received.passKey, received.initVForReceivedKey);
+  ```
 
-It is not possible to initialize the key by omitting the default value or explicitly passing
-`undefined`. If you need the default value to be `undefined`, then passing a function returning
-`undefined` as a default statement is required. If you omit any default value or pass `undefined`,
-it will mean skipping the initializing step in that part of the code.
+  Every time a key value that passed to `useInterstate` changes the hook goes back to the stage
+  where it sees whether the record for the new key has not been initialized, so `useInterstate`
+  tries to initialize the record using a provided argument. After that you become subscribed to the
+  new key of the state and is able to manipulate it.
 
-```js
-const [useSubscribe, setState] = useInterstate('color', () => undefined);
-// Initializing the state of key with undefined value
+  It is true for [the first call interface](#useInterstatekey-initValue). When you pass a
+  multi-state object for the first time the hook will memoize it and use it over the course of the
+  life of the component regardless you change it later. If you switch from one interface to another
+  it will cause an error.
 
-const [useSubscribe, setState] = useInterstate('color');
-// Skipping the initializing
-```
+- Before accessing the value of a particular key of the state it must be initialized with a provided
+  default value.
 
-If you need to initialize the key with a function value, you pass a function returning the desired
-function.
+  ```js
+  const [useSubscribe, setState] = useInterstate('name');
+  // A default value is not provided in the hook and other parts of the code for this key
 
-```js
-const [useSubscribe, setState] = useInterstate('getLink', () => () => {
+  const state = useSubscribe();
+  // Accessing to the state, but it was not initialized, so an error occurs
+  ```
+
+  ```js
+  setState('Vincent van Gogh');
+  // Calling setState is reckoned as an access to the state, so still error
+  ```
+
+- It is not possible to initialize the key by omitting the default value or explicitly passing
+  `undefined`. If you need the default value to be `undefined`, then passing a function returning
+  `undefined` as an init argument is required. If you omit any default value or pass `undefined`, it
+  will mean skipping the initializing step.
+
+  ```js
+  const [useSubscribe, setState] = useInterstate('color', () => undefined);
+  // Initializing the state of a key with undefined value
+
+  const [useSubscribe, setState] = useInterstate('color');
+  // Skip initializing
+  ```
+
+- If you need to initialize the key with a function value, you pass a function returning the desired
+  function.
+
+  ```js
+  const [useSubscribe, setState] = useInterstate('getLink', () => () => {
+    // ...
+  });
+  // Initializing with a function value
+  ```
+
+- You might run into trouble if you try to initialize a key giving differing default values in
+  various parts of the application concurrently.
+
+  ```js
+  useInterstate('pitch', 'C');
+
   // ...
-});
-// Initializing the state of key by function value
-```
 
-You might run into trouble if you try to initialize the particular key giving differing default
-values in various parts of the application concurrently.
+  useInterstate('pitch', 'D');
+  // If you initialize concurrently in another part of the code with a different default value,
+  // it causes an error
+  ```
 
-```js
-useInterstate('pitch', 'C');
+  ```js
+  useInterstate('pitch', 'A');
 
-// ...
+  // ...
 
-useInterstate('pitch', 'D');
-// If you initialize concurrently in another part of the code with a different default value,
-// it causes an error
-```
+  useInterstate('pitch', 'A');
+  // It's Ok
+  ```
 
-```js
-useInterstate('pitch', 'A');
+- If a state for a key has already been initialized, a default value passed to `useInterstate` will
+  be ignored.
 
-// ...
+- If you try to change the value of the same key in different parts of the application at the same
+  moment it will lead to an error.
 
-useInterstate('pitch', 'A');
-// It's Ok
-```
+  ```js
+  setState(1);
+  setState(2);
+  // If they are called both, it will throw an error
+  ```
 
-If a state for a key has already been initialized, a default value passed to `useInterstate` is
-being ignored in any following statements.
-
-If you try to change the value of the same key in different parts of the application at the same
-moment it will lead to an error.
-
-```js
-setState(1);
-setState(2);
-// If they are called both it will throw an error
-```
-
-A setter returned by `useInterstate` itself is not changing in the course of the component life as
-it is for the standard hook [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate).
-The hook that allows us to subscribe to the key's state and that we received as a result of
-`useInterstate` execution must be handled following [the common hooks
-rules](https://reactjs.org/docs/hooks-rules.html).
+- A setter function returned by `useInterstate` is not changing during the component life and having
+  stable identity similarly to the standard hook
+  [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate).
 
 ## Scope
 
-The notable distinction of `useInterstate` is it does not require wrapping the whole tree into a
-specific context provider component. The library is working with no additional requirements. Unique
-keys are using broadly within the borders of the entire application with identical values for any
-given key. But what if you want to use the equivalent keys in different parts of the code in
-isolation? The library provides a special wrapping component `Scope`. It slices a branch of
-components tree giving it a separate space where an isolated state takes a place. It is useful when
-you need to make a reusable component driven by the `useInterstate` state management. You have to
-wrap the component with the `Scope` tag, unless, multiple instances of this component will interfere
-with each other sharing the same state.
+The notable distinction of `useInterstate` comparing with other global state management solutions is
+it does not require wrapping the whole tree into a specific context provider component. The library
+is working with no additional requirements. It is especially important when you prototyping as you
+do not need to get interrupted by annoying duties to make specific time-consuming prerequisites.
+Unique keys are in use broadly within the boundaries of the entire application with exactly same
+values for any given key right after the first component with `useInterstate` taking this key as an
+argument has been rendered. But what if we want to use the identical keys in different parts of the
+code in isolation? The library provides a special wrapping component `Scope`. It cuts a branch of
+components tree giving it a separate space where you have an isolated state. It is useful when you
+need to make a reusable component driven by `useInterstate` state management. You have to wrap the
+component with the `Scope` tag, otherwise, multiple instances of this component in the common
+components tree will interfere with each other sharing the same state.
 
 ```jsx
 import { Scope } from '@smart-hooks/use-interstate';
@@ -216,33 +331,54 @@ import { isUseInterstateError } from '@smart-hooks/use-interstate';
 
 // ...
 
-if (isUseInterstateError(e)) {
+if (isUseInterstateError(error)) {
   // ...
 })
-
 ```
 
-To clean up after an error occurred you use `getUseInterstateErrorsHandleMethods` receiving a method
-`flushValueOfKey`. It removes inconsistency in the records linked to a key where the error had a
-place. The method accepts a boolean flag that orders to revert a value of the key to an old state if
-it is `true`.
+To clean up after an error occurred you call `getUseInterstateErrorsHandleMethods` receiving a
+method `flushValueOfKey`. It removes inconsistency in the records linked to a key where the error
+occurred. The method accepts a boolean flag that orders to revert a value of the key to an old state
+if it is `true`.
 
 ```js
 import { getUseInterstateErrorsHandleMethods } from '@smart-hooks/use-interstate';
 
 // ...
 
-const methods = getUseInterstateErrorsHandleMethods(e);
+const methods = getUseInterstateErrorsHandleMethods(error);
 
-if (methods) {
+if (methods && methods.flushValueOfKey) {
   methods.flushValueOfKey(true);
 }
 ```
 
 ## Security remarks
 
-The state management provided by `useInterstate` could be isolated only from ancestors in the
-component tree structure (by [`Scope`](#scope)). That means if you use third-party
-components there is a risk that they may have unrestricted access to the state of the entire
-application being able to use the same keys names. The recommended way to avoid it is by using
-`symbols` as keys.
+When you use third-party components there is a risk that they may have unrestricted access to the
+state of the entire application being able to use the same keys names. The state management provided
+by `useInterstate` could be isolated from ancestors in the components tree structure by
+[`Scope`](#scope). But it is annoying to wrap every imported component in `Scope` to prevent its
+access to the app state.
+
+There are two approaches to avoid this scenario:
+
+1. You can use unique `Symbols` as keys in your state structure.
+
+2. There is an alternative way to import `useInterstate` that will guarantee a separate space for
+   the entire application restricting access from outer components.
+
+   ```js
+   // useInterstate.js
+   import { getUseInterstate } from '@smart-hooks/use-interstate';
+
+   const { Scope, useInterstate } = getUseInterstate();
+
+   export { Scope, useInterstate };
+   ```
+
+   ```js
+   import { Scope, useInterstate } from './useInterstate.js';
+   ```
+
+   Just remember to use the same instances of the hook and `Scope` component across the entire app.
