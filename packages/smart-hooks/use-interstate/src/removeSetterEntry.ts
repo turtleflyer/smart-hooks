@@ -1,8 +1,9 @@
-import { fixControlFlowAnalysis } from './CommonTypes';
 import type { TrueObjectAssign } from './CommonTypes';
 import { UseInterstateErrorCodes } from './errorHandle';
 import type { ErrorHandleOptions } from './errorHandle';
 import type { SettersListBase, SettersListEntryBase } from './SettersLists';
+
+declare function fixControlFlowAnalysis(): never;
 
 function isSettersListSubscribed<L extends SettersListBase>(
   v: L,

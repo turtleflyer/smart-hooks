@@ -1,4 +1,3 @@
-import { fixControlFlowAnalysis } from './CommonTypes';
 import type { TrueObjectAssign } from './CommonTypes';
 import { createSettersList } from './createSettersList';
 import { createSettersListEntry } from './createSettersListEntry';
@@ -15,6 +14,8 @@ import type { SettersWatchList, SettersWatchListEntry } from './SettersLists';
 import { isSetterListEntryErrorChunk } from './StoreMap';
 import type { MapValue, MapValueSettersListEntry } from './StoreMap';
 import type { InitializeState, Store } from './StoreState';
+
+declare function fixControlFlowAnalysis(): never;
 
 function initParamIsFunction<T>(
   p: InterstateInitializeParam<T>
