@@ -50,8 +50,6 @@ export function getUseInterstate() {
     return globalStore;
   }
 
-  type ResolveStructure<T> = T extends object ? { [P in keyof T]: T[P] } : { a: false };
-
   interface MainHookState {
     usingMultiStateScheme?: boolean;
     throwError: UseInterstateThrowError;
@@ -64,10 +62,7 @@ export function getUseInterstate() {
 
   function useInterstate<S extends object>(
     stateScheme: UseInterstateInitializeObject<S>
-  ): [
-    () => ResolveStructure<UseInterstateStateObject<S>>,
-    ResolveStructure<UseInterstateSettersObject<S>>
-  ];
+  ): [() => UseInterstateStateObject<S>, UseInterstateSettersObject<S>];
 
   function useInterstate<T>(
     key: StateKey,
