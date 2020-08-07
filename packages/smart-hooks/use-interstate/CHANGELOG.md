@@ -1,3 +1,9 @@
+## 2.1.3 (Aug 7, 2020)
+
+### Fix
+
+- Fix redundant type in useInterstate definition.
+
 ## 2.1.2 (Aug 3, 2020)
 
 ### Fix
