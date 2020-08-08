@@ -1,3 +1,9 @@
+## 1.1.3 (Aug 7, 2020)
+
+### Changed
+
+- Version bump
+
 ## 1.1.2 (Aug 3, 2020)
 
 ### Fix
