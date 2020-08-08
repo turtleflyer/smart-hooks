@@ -67,9 +67,7 @@ export function getUseInterstate() {
   function useInterstate<T>(
     key: StateKey,
     initValue?: InterstateInitializeParam<T>
-  ): (() => void) extends () => T
-    ? [() => undefined, SetInterstate<undefined>]
-    : [() => T, SetInterstate<T>];
+  ): T[] extends void[] ? [() => undefined, SetInterstate<undefined>] : [() => T, SetInterstate<T>];
 
   function useInterstate<T>(
     p1: StateKey | UseInterstateInitializeObject<T & object>,
