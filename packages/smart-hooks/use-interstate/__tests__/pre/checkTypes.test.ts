@@ -1,14 +1,9 @@
 import type { FinalCheck, FirstStageCheck } from '../../../../../test_utilities/checkTypes';
+import { useInterstate } from '../../src/useInterstate';
 import type { InterstateParam, SetInterstate } from '../../src/useInterstate';
-import type { TestDescription } from '../testsAssets';
 
-const checkTypesBasic: TestDescription = (p) => [
-  'basic types are consistent',
-  () => {
-    const {
-      assets: { useInterstate },
-    } = p;
-
+describe('Check types', () => {
+  test('types are consistent', () => {
     const u01 = 'ni';
     const u02 = () => 'ni';
     const u03 = () => () => {};
@@ -224,7 +219,5 @@ const checkTypesBasic: TestDescription = (p) => [
         ]
       >
     >;
-  },
-];
-
-export default checkTypesBasic;
+  });
+});

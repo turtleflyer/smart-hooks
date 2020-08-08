@@ -1,14 +1,9 @@
 import type { FinalCheck, FirstStageCheck } from '../../../../../test_utilities/checkTypes';
-import type { TestDescription } from '../testsAssets';
-import type { DeriveScheme, FulfillTraversingKeys } from '../../src/useTraverseKeys';
+import type { DeriveScheme, FulfillTraversingKeys } from '../../lib/helper-traverse-scheme-keys';
+import { useTraverseKeys } from '../../lib/helper-traverse-scheme-keys';
 
-const checkTypes: TestDescription = (p) => [
-  'types are consistent',
-  () => {
-    const {
-      assets: { useTraverseKeys },
-    } = p;
-
+describe('Check types', () => {
+  test('types are consistent', () => {
     const symbolKey = Symbol();
     const s01 = { 1: 'string', foo: true, [symbolKey]: 34 };
 
@@ -106,21 +101,19 @@ const checkTypes: TestDescription = (p) => [
         ]
       >
     >;
-  },
-];
 
-type D01 = FinalCheck<
-  FirstStageCheck<
-    DeriveScheme<{ a: number; 2: string | boolean }>,
-    { readonly a: any; readonly 2: undefined }
-  >
->;
+    type D01 = FinalCheck<
+      FirstStageCheck<
+        DeriveScheme<{ a: number; 2: string | boolean }>,
+        { readonly a: any; readonly 2: undefined }
+      >
+    >;
 
-type F01 = FinalCheck<
-  FirstStageCheck<
-    FulfillTraversingKeys<{ a: number; 2: string | boolean }, 2>,
-    (p: string | boolean) => void
-  >
->;
-
-export default checkTypes;
+    type F01 = FinalCheck<
+      FirstStageCheck<
+        FulfillTraversingKeys<{ a: number; 2: string | boolean }, 2>,
+        (p: string | boolean) => void
+      >
+    >;
+  });
+});

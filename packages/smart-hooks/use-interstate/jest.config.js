@@ -8,4 +8,5 @@ module.exports = {
       tsConfig: 'tsconfig.test.json',
     },
   },
+  moduleFileExtensions: ['js', 'json', 'jsx', 'ts', 'tsx', 'node', 'd.ts'],
 };

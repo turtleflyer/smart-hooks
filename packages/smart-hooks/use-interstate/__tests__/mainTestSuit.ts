@@ -1,7 +1,6 @@
 import { cleanup } from '@testing-library/react';
 import { flagManager } from './testFlags';
 import checkInitializationConcurrency from './tests/checkInitializationConcurrency';
-import checkTypesBasic from './tests/checkTypesBasic';
 import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
 import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetState';
 import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
@@ -88,7 +87,6 @@ const mainTestSuit = (packagePath: string) =>
       test(...testErrorMethods(testParameter));
       test(...testSettersImmutability(testParameter));
       test(...testChangeInterface(testParameter));
-      test(...checkTypesBasic(testParameter));
     }
 
     test('proof of mock', () => {
