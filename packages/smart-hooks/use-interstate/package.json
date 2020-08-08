@@ -1,6 +1,6 @@
 {
   "name": "@smart-hooks/use-interstate",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "useState on steroids",
   "keywords": [
     "react"
@@ -41,7 +41,7 @@
     "react": "^16.9.0"
   },
   "dependencies": {
-    "@smart-hooks/helper-traverse-scheme-keys": "^1.0.2",
+    "@smart-hooks/helper-traverse-scheme-keys": "^1.0.3",
     "@smart-hooks/use-smart-memo": "^2.0.3"
   },
   "gitHead": "9a47ccf24e6f09b4f17ebf01516e8c4833f2290f"
