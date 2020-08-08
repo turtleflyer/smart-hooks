@@ -1,3 +1,13 @@
+## 2.1.4 (Aug 7, 2020)
+
+### Fix
+
+- Fix typescript compiler has a bug emitting type declarations
+
+### Change
+
+- Rearrange the test suites to have types checked in the compiled bundle.
+
 ## 2.1.3 (Aug 7, 2020)
 
 ### Fix
