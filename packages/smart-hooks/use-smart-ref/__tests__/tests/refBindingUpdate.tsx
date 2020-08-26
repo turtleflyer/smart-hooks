@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React, { useRef } from 'react';
+import type { FC } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const refBindingUpdate: TestDescription = (p) => [
@@ -23,7 +24,7 @@ const refBindingUpdate: TestDescription = (p) => [
     let dataKeyOfElement: string | undefined | null;
     let dataKeyFromRef: string | undefined | null;
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       scenario: 1 | 2 | 3;
       arg: string;
       writeRefs?: boolean;
@@ -44,21 +45,11 @@ const refBindingUpdate: TestDescription = (p) => [
 
       return (
         <>
-          {(() => {
-            switch (scenario) {
-              case 1:
-                return <div key="1" data-key="1" ref={ref} />;
-
-              case 2:
-                return <div key="2" data-key="2" ref={ref} />;
-
-              case 3:
-                return;
-
-              default:
-                break;
-            }
-          })()}
+          {scenario === 1 ? (
+            <div key="1" data-key="1" ref={ref} />
+          ) : scenario === 2 ? (
+            <div key="2" data-key="2" ref={ref} />
+          ) : null}
         </>
       );
     });
@@ -69,7 +60,7 @@ const refBindingUpdate: TestDescription = (p) => [
     expect(cleanCounter.howManyTimesBeenCalled()).toBe(0);
     expect(storeArgAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} arg="red" writeRefs={true} />);
+    rerender(<TestComponent scenario={1} arg="red" writeRefs />);
     expect(dataKeyFromRef).toBe('1');
 
     rerender(<TestComponent scenario={1} arg="yellow" />);
@@ -78,7 +69,7 @@ const refBindingUpdate: TestDescription = (p) => [
     expect(cleanCounter.howManyTimesBeenCalled()).toBe(0);
     expect(storeArgAfterClean).toBeUndefined();
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} arg="yellow" writeRefs={true} />);
+    rerender(<TestComponent scenario={1} arg="yellow" writeRefs />);
     expect(dataKeyFromRef).toBe('1');
 
     rerender(<TestComponent scenario={2} arg="magenta" />);
@@ -87,7 +78,7 @@ const refBindingUpdate: TestDescription = (p) => [
     expect(cleanCounter.howManyTimesBeenCalled()).toBe(1);
     expect(storeArgAfterClean).toBe('red');
     expect(dataKeyOfElement).toBe('2');
-    rerender(<TestComponent scenario={2} arg="magenta" writeRefs={true} />);
+    rerender(<TestComponent scenario={2} arg="magenta" writeRefs />);
     expect(dataKeyFromRef).toBe('2');
 
     rerender(<TestComponent scenario={1} arg="pink" />);
@@ -96,7 +87,7 @@ const refBindingUpdate: TestDescription = (p) => [
     expect(cleanCounter.howManyTimesBeenCalled()).toBe(2);
     expect(storeArgAfterClean).toBe('magenta');
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={1} arg="pink" writeRefs={true} />);
+    rerender(<TestComponent scenario={1} arg="pink" writeRefs />);
     expect(dataKeyFromRef).toBe('1');
 
     rerender(<TestComponent scenario={3} arg="brown" />);
@@ -105,7 +96,7 @@ const refBindingUpdate: TestDescription = (p) => [
     expect(cleanCounter.howManyTimesBeenCalled()).toBe(3);
     expect(storeArgAfterClean).toBe('pink');
     expect(dataKeyOfElement).toBe('1');
-    rerender(<TestComponent scenario={3} arg="brown" writeRefs={true} />);
+    rerender(<TestComponent scenario={3} arg="brown" writeRefs />);
     expect(dataKeyFromRef).toBe(null);
 
     unmount();

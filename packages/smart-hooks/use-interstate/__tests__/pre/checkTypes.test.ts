@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import type { FinalCheck, FirstStageCheck } from '../../../../../test_utilities/checkTypes';
 import { useInterstate } from '../../src/useInterstate';
 import type { InterstateParam, SetInterstate } from '../../src/useInterstate';

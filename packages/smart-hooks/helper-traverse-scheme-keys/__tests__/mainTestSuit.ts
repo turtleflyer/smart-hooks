@@ -1,3 +1,6 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { cleanup } from '@testing-library/react';
 import testHelper from './tests/testHelper';
 import { AssetsImport, TestParameter, UseTraverseKeysImport } from './testsAssets';

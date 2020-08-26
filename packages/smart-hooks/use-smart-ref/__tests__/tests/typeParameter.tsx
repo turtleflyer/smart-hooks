@@ -1,5 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { render } from '@testing-library/react';
 import React, { useRef } from 'react';
+import type { FC } from 'react';
 import { TestDescription } from '../testsAssets';
 
 const typeParameter: TestDescription = (p) => [
@@ -9,12 +12,18 @@ const typeParameter: TestDescription = (p) => [
       assets: { wrapWithStrictModeComponent, useSmartRef },
     } = p;
 
-    const TestComponent: React.FunctionComponent = wrapWithStrictModeComponent(() => {
+    const TestComponent: FC = wrapWithStrictModeComponent(() => {
       const commonElementRef = useRef();
       const anchorElementRef = useRef<HTMLAnchorElement>();
-      const divRefCallback = useSmartRef((el: HTMLDivElement) => {}, commonElementRef);
-      const anchorRefCallback = useSmartRef(() => {}, anchorElementRef);
-      const commonRefCallback = useSmartRef(() => {}, commonElementRef);
+      const divRefCallback = useSmartRef(() => {
+        // placeholder function
+      }, commonElementRef);
+      const anchorRefCallback = useSmartRef(() => {
+        // placeholder function
+      }, anchorElementRef);
+      const commonRefCallback = useSmartRef(() => {
+        // placeholder function
+      }, commonElementRef);
       return (
         <>
           <div ref={divRefCallback} />

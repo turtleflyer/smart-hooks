@@ -16,7 +16,9 @@ function isSettersListSubscribed<L extends SettersListBase>(
       throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
     }
     return false;
-  } else if (!end) {
+  }
+
+  if (!end) {
     throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
   }
 
@@ -60,17 +62,17 @@ export function removeSetterEntry(
   ): (SettersListEntryBase & ({ prev: undefined } | { next: undefined })) | undefined {
     if (entry === endpoint) {
       return entry[sideKey] as SettersListEntryBase & ({ prev: undefined } | { next: undefined });
-    } else {
-      const neighbor = entry[sideKey === 'prev' ? 'next' : 'prev'];
-      if (!neighbor) {
-        throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
-        fixControlFlowAnalysis();
-      }
-
-      (<SettersListEntryBase | undefined>neighbor[sideKey]) = entry[sideKey];
-
-      return endpoint;
     }
+
+    const neighbor = entry[sideKey === 'prev' ? 'next' : 'prev'];
+    if (!neighbor) {
+      throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
+      fixControlFlowAnalysis();
+    }
+
+    (neighbor[sideKey] as SettersListEntryBase | undefined) = entry[sideKey];
+
+    return endpoint;
   }
 
   if (entry.beenRemoved) {
@@ -89,5 +91,6 @@ export function removeSetterEntry(
     end: closeSettersListEndpoint(end, 'prev'),
   });
 
+  // eslint-disable-next-line no-param-reassign
   entry.beenRemoved = true;
 }

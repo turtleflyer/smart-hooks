@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
+import type { FC } from 'react';
 import { TestDescription } from '../testsAssets';
 
 const generalFunctionality: TestDescription = (p) => [
@@ -15,7 +16,7 @@ const generalFunctionality: TestDescription = (p) => [
     let value1!: number;
     let value2!: number;
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       param1: number;
       param2: number;
     }> = wrapWithStrictModeComponent(({ param1, param2 }) => {

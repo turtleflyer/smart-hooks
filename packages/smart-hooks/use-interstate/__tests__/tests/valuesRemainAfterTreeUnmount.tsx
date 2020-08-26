@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import { flagManager } from '../testFlags';
 import type { ComposeCallback, TestDescription } from '../testsAssets';
 
@@ -14,7 +15,7 @@ const valuesRemainAfterTreeUnmount: TestDescription = (p) => [
     const altComposeCallback: ComposeCallback = (set) => ({ target: { value } }) => {
       set((old: string) => (old || '') + value);
     };
-    const TestComponent: React.FunctionComponent<{ initV?: string }> = ({ initV }) => (
+    const TestComponent: FC<{ initV?: string }> = ({ initV }) => (
       <>
         <CanUpdate
           {...{

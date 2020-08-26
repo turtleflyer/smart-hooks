@@ -17,17 +17,19 @@ import type { InitializeState, Store } from './StoreState';
 
 declare function fixControlFlowAnalysis(): never;
 
-function initParamIsFunction<T>(
+function isFunction(p: unknown): p is (...arg: never[]) => unknown {
+  return typeof p === 'function';
+}
+
+const initParamIsFunction: <T extends unknown>(
   p: InterstateInitializeParam<T>
-): p is InterstateInitializeParam<T> & (() => T) {
-  return typeof p === 'function';
-}
+) => p is InterstateInitializeParam<T> & (() => T) = isFunction as never;
 
-function paramIsFunction<T>(p: InterstateParam<T>): p is (a: T) => T {
-  return typeof p === 'function';
-}
+const paramIsFunction: <T extends unknown>(
+  p: InterstateParam<T>
+) => p is (a: T) => T = isFunction as never;
 
-function isDefined<T>(val: T | undefined, isSetUp: boolean): val is T {
+function isDefined<T extends unknown>(val: T | undefined, isSetUp: boolean): val is T {
   return isSetUp;
 }
 
@@ -38,25 +40,25 @@ export function createStore(): Store {
 
   const { storeMap, settersWatchList, renderTask, effectTask } = storeState;
 
-  const initializeState: InitializeState = <T>(
+  const initializeState: InitializeState = <T extends unknown>(
     key: StateKey,
     initValue: InterstateInitializeParam<T> | undefined
   ) => {
-    const _mapEntryValue = storeMap.get(key);
-    if (!_mapEntryValue) {
+    const considerMapEntryValue = storeMap.get(key) as MapValue<T> | undefined;
+    if (!considerMapEntryValue) {
       throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
       fixControlFlowAnalysis();
     }
 
-    const mapEntryValue: MapValue<T> = _mapEntryValue;
+    const mapEntryValue: MapValue<T> = considerMapEntryValue;
 
-    const { isValueSetUp, initStatus } = mapEntryValue;
+    const { isValueSetUp: isValueSetUpWhileInit, initStatus: initStatusWhileInit } = mapEntryValue;
 
-    if (initValue !== undefined && (initStatus || !isValueSetUp)) {
+    if (initValue !== undefined && (initStatusWhileInit || !isValueSetUpWhileInit)) {
       const evalValue = initParamIsFunction(initValue) ? initValue() : (initValue as T);
 
-      if (initStatus) {
-        if (initStatus.value !== evalValue) {
+      if (initStatusWhileInit) {
+        if (initStatusWhileInit.value !== evalValue) {
           throwError(UseInterstateErrorCodes.CONCURRENTLY_PROVIDED_INIT_VALUE, { key });
         }
       } else {
@@ -100,6 +102,7 @@ export function createStore(): Store {
         if (!Object.is(curVal, evalVal)) {
           mapEntryValue.value = evalVal;
 
+          // eslint-disable-next-line no-restricted-syntax
           for (const setterEntry of mapEntryValue) {
             if (isSetterListEntryErrorChunk(setterEntry)) {
               throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
@@ -116,7 +119,7 @@ export function createStore(): Store {
         const { end, caughtError } = mapEntryValue;
 
         if (caughtError !== undefined) {
-          return;
+          return null;
         }
 
         if (isSetterListEntryErrorChunk(end)) {
@@ -124,6 +127,7 @@ export function createStore(): Store {
         }
 
         function removeSetterFromKeyList() {
+          // eslint-disable-next-line no-use-before-define
           removeSetterEntry(setterEntry, mapEntryValue, {
             throwError,
             key,
@@ -131,6 +135,7 @@ export function createStore(): Store {
         }
 
         function removeSetterFromWatchList() {
+          // eslint-disable-next-line no-use-before-define
           removeSetterEntry(watchListEntry, settersWatchList, {
             throwError,
             key,
@@ -179,7 +184,7 @@ export function createStore(): Store {
       );
     }
 
-    const mapValue = storeMap.get(key)!;
+    const mapValue = storeMap.get(key) as MapValue<unknown>;
 
     const { value, isValueSetUp } = mapValue;
 

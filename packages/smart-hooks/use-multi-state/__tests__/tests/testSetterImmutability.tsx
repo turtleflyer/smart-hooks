@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
+import type { FC } from 'react';
 import type { SettersObject } from '../../src/useMultiState';
 import type { TestDescription } from '../testsAssets';
 
@@ -21,7 +22,7 @@ const testSetterImmutability: TestDescription = (p) => [
 
     let memSetter!: SettersObject<MainState>;
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       initState: MainState;
     }> = wrapWithStrictModeComponent(({ initState }) => {
       const [, setState] = useMultiState(initState);

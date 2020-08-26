@@ -1,5 +1,6 @@
 import { cleanup } from '@testing-library/react';
 import React, { useEffect } from 'react';
+import type { FC } from 'react';
 import type { UseInterstateError } from '../../src/useInterstate';
 import type { TestDescription } from '../testsAssets';
 
@@ -29,7 +30,7 @@ const testErrorMethods: TestDescription = (p) => [
       return wait;
     }
 
-    const ErrorEmitterRegardingInit: React.FunctionComponent<{
+    const ErrorEmitterRegardingInit: FC<{
       subscribeId?: number;
       initV1?: string;
       initV2?: string;
@@ -50,7 +51,7 @@ const testErrorMethods: TestDescription = (p) => [
       </>
     );
 
-    const InnerSet: React.FunctionComponent<{ toSet: string }> = ({ toSet }) => {
+    const InnerSet: FC<{ toSet: string }> = ({ toSet }) => {
       const [, setInterstate] = useInterstate<string>(subscribeId3);
 
       useEffect(() => setInterstate(toSet));
@@ -58,22 +59,20 @@ const testErrorMethods: TestDescription = (p) => [
       return <div>should be last</div>;
     };
 
-    const InnerInit: React.FunctionComponent = () => {
+    const InnerInit: FC = () => {
       const [useSubscribe] = useInterstate(subscribeId3, 'cold');
       const val = useSubscribe();
 
       return <div>{val}</div>;
     };
 
-    const ErrorEmitterRegardingSetValue: React.FunctionComponent = () => {
-      return (
-        <>
-          <InnerSet toSet="warm" />
-          <InnerInit />
-          <InnerSet toSet="hot" />
-        </>
-      );
-    };
+    const ErrorEmitterRegardingSetValue: FC = () => (
+      <>
+        <InnerSet toSet="warm" />
+        <InnerInit />
+        <InnerSet toSet="hot" />
+      </>
+    );
 
     jest.useFakeTimers();
     jest.advanceTimersByTime(20000);
@@ -145,12 +144,12 @@ const testErrorMethods: TestDescription = (p) => [
       )
     ).toEqual([false, false, false, false]);
 
-    expect(errorMethods1.flushValueOfKey!()).toBeTruthy();
-    expect(errorMethods2.flushValueOfKey!()).toBeFalsy();
-    expect(errorMethods3.flushValueOfKey!()).toBeTruthy();
-    expect(errorMethods4.flushValueOfKey!()).toBeTruthy();
+    expect(errorMethods1.flushValueOfKey?.()).toBeTruthy();
+    expect(errorMethods2.flushValueOfKey?.()).toBeFalsy();
+    expect(errorMethods3.flushValueOfKey?.()).toBeTruthy();
+    expect(errorMethods4.flushValueOfKey?.()).toBeTruthy();
 
-    let curError: Error | UseInterstateError;
+    let curError!: Error | UseInterstateError;
     function throwExpectedError() {
       expect(() =>
         assertWrapper(() =>
@@ -161,19 +160,19 @@ const testErrorMethods: TestDescription = (p) => [
       );
       ({ current: curError } = errorRecord);
       const errorMethods = getUseInterstateErrorsHandleMethods(curError);
-      errorMethods?.flushValueOfKey!(true);
+      errorMethods?.flushValueOfKey?.(true);
       cleanup();
     }
 
     for (let i = 0; i < 50; i++) {
       throwExpectedError();
     }
-    expect(isUseInterstateError(curError!)).toBeTruthy();
+    expect(isUseInterstateError(curError)).toBeTruthy();
 
     for (let i = 0; i < 51; i++) {
       throwExpectedError();
     }
-    expect(isUseInterstateError(curError!)).toBeFalsy();
+    expect(isUseInterstateError(curError)).toBeFalsy();
   },
 ];
 

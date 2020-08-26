@@ -1,6 +1,11 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-empty-function */
+// eslint-disable-next-line import/no-unresolved
 import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render } from '@testing-library/react';
+import type { RenderResult } from '@testing-library/react';
 import React, { useEffect, useMemo } from 'react';
+import type { FC } from 'react';
 import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
 import type {
   TestDescriptionG,
@@ -28,9 +33,16 @@ const { settersCounterFactory } = (mockedCreateStoreStateImport as unknown) as {
   settersCounterFactory: SettersCounterFactory;
 };
 
-type ExtractFirstArgType<T> = T extends (firstArg: infer R, ...restArg: any) => any ? R : never;
+type ExtractFirstArgType<T> = T extends (firstArg: infer R, ...restArg: never[]) => unknown
+  ? R
+  : never;
 
-function newRender(arg: ExtractFirstArgType<typeof render>) {
+function newRender(
+  arg: ExtractFirstArgType<typeof render>
+): RenderResult & {
+  fireNode: (testId: string, value: string) => void;
+  getTextFromNode: (testId: string) => string;
+} {
   const fromRender = render(arg);
   const { getByTestId } = fromRender;
 
@@ -46,10 +58,10 @@ function newRender(arg: ExtractFirstArgType<typeof render>) {
     }
   };
 
-  const getTextFromNode = (testId: string) => {
+  const getTextFromNode = (testId: string): string => {
     const element = getByTestId(testId);
     return element && element.firstChild && element.firstChild.nodeName === '#text'
-      ? element.firstChild.textContent
+      ? (element.firstChild.textContent as string)
       : '';
   };
 
@@ -68,7 +80,7 @@ interface TestComponentsProps {
   readonly subscribeId: InterstateID;
   readonly initialValue?: InitType;
   readonly testId?: string;
-  readonly composeCallback?: (...args: any[]) => any;
+  readonly composeCallback?: ComposeCallback;
   readonly countRender?: () => void;
 }
 
@@ -76,12 +88,10 @@ const defaultComposeCallback: ComposeCallback = (set) => ({ target: { value } })
   set(value);
 };
 
-type ComposeComponent = (
-  importedUseInterstate: typeof useInterstate
-) => React.FunctionComponent<TestComponentsProps>;
+type ComposeComponent = (importedUseInterstate: typeof useInterstate) => FC<TestComponentsProps>;
 
 const composeCanListen: ComposeComponent = (importedUseInterstate) => {
-  const Inner: React.FunctionComponent<TestComponentsProps> = ({
+  const Inner: FC<TestComponentsProps> = ({
     subscribeId,
     initialValue,
     testId = '',
@@ -106,7 +116,7 @@ const composeCanListen: ComposeComponent = (importedUseInterstate) => {
 };
 
 const composeCanUpdate: ComposeComponent = (importedUseInterstate) => {
-  const Inner: React.FunctionComponent<TestComponentsProps> = ({
+  const Inner: FC<TestComponentsProps> = ({
     subscribeId,
     initialValue,
     testId = '',
@@ -132,7 +142,7 @@ const composeCanUpdate: ComposeComponent = (importedUseInterstate) => {
 };
 
 const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => {
-  const Inner: React.FunctionComponent<TestComponentsProps> = ({
+  const Inner: FC<TestComponentsProps> = ({
     subscribeId,
     initialValue,
     testId = '',
@@ -207,9 +217,9 @@ export interface AssetsImport {
 export type TestParameter = TestParameterG<
   AssetsImport &
     UseInterstateImport & {
-      readonly CanListen: React.FunctionComponent<TestComponentsProps>;
-      readonly CanUpdate: React.FunctionComponent<TestComponentsProps>;
-      readonly CanListenAndUpdate: React.FunctionComponent<TestComponentsProps>;
+      readonly CanListen: FC<TestComponentsProps>;
+      readonly CanUpdate: FC<TestComponentsProps>;
+      readonly CanListenAndUpdate: FC<TestComponentsProps>;
     }
 >;
 

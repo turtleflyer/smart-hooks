@@ -1,3 +1,4 @@
+/* eslint-disable symbol-description */
 import type { FinalCheck, FirstStageCheck } from '../../../../../test_utilities/checkTypes';
 import type { DeriveScheme, FulfillTraversingKeys } from '../../src/useTraverseKeys';
 import { useTraverseKeys } from '../../src/useTraverseKeys';
@@ -105,7 +106,7 @@ describe('Check types', () => {
     type D01 = FinalCheck<
       FirstStageCheck<
         DeriveScheme<{ a: number; 2: string | boolean }>,
-        { readonly a: any; readonly 2: undefined }
+        { readonly a: unknown; readonly 2: unknown }
       >
     >;
 

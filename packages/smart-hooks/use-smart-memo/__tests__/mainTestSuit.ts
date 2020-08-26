@@ -1,3 +1,6 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { cleanup } from '@testing-library/react';
 import { flagManager } from './testFlags';
 import checkRecalculation from './tests/checkRecalculation';
@@ -5,7 +8,7 @@ import edgeCases from './tests/edgeCases';
 import generalFunctionality from './tests/generalFunctionality';
 import { AssetsImport, TestParameter, UseSmartMemoImport } from './testsAssets';
 
-const mainTestSuit = (packagePath: string) =>
+const mainTestSuit = (packagePath: string): void =>
   describe.each([
     ['using original useMemo', () => flagManager.set({ MOCK_USE_MEMO: false }), 'original'],
     ['using mocked useMemo', () => flagManager.set({ MOCK_USE_MEMO: true }), 'mocked'],

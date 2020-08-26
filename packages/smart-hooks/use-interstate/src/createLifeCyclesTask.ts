@@ -4,38 +4,45 @@ function isLifeCyclesTaskDone<T extends LifeCyclesTaskBase>(task: T): task is T 
   return task.done;
 }
 
+type RunOrResetProp = 'run' | 'reset';
+
 export function createCyclesTask<T extends LifeCyclesTaskBase>(
   initTask: () => Omit<T, 'run' | 'reset' | 'done'>,
-  runProto: (...args: Parameters<T['run']>) => void = () => ({}),
-  resetProto: (...args: Parameters<T['reset']>) => void = () => ({})
+  runProto: (...arg: Parameters<T['run']>) => void = () => ({}),
+  resetProto: (...arg: Parameters<T['reset']>) => void = () => ({})
 ): T & { done: false } {
-  function runOrReset<P extends 'run' | 'reset'>(keyName: P, proto: (...args: any[]) => void) {
-    return (...args: any[]) => {
+  function runOrReset<P extends RunOrResetProp>(
+    propName: P,
+    proto: (...arg: Parameters<T[RunOrResetProp]>[]) => void
+  ) {
+    return (...arg: Parameters<T[P]>[]) => {
+      // eslint-disable-next-line no-use-before-define
       if (isLifeCyclesTaskDone(memTask)) {
-        if (keyName === 'run') {
+        if (propName === 'run') {
           return;
         }
-      } else if (keyName === 'reset') {
+      } else if (propName === 'reset') {
         return;
       }
 
-      proto(...(<Parameters<T[P]>>args));
-      memTask.done = keyName === 'run' ? true : false;
+      proto(...arg);
+      // eslint-disable-next-line no-use-before-define
+      memTask.done = propName === 'run';
     };
   }
 
   const memTask = {
     ...initTask(),
-    ...(<['run' | 'reset', (...args: any[]) => void][]>[
+    ...([
       ['run', runProto],
       ['reset', resetProto],
-    ]).reduce(
+    ] as [RunOrResetProp, (...arg: Parameters<T[RunOrResetProp]>[]) => void][]).reduce(
       (ev, [key, proto]) =>
         ({
           ...ev,
           [key]: runOrReset(key, proto),
-        } as Pick<T, 'run' | 'reset'>),
-      {} as Pick<T, 'run' | 'reset'>
+        } as Pick<T, RunOrResetProp>),
+      {} as Pick<T, RunOrResetProp>
     ),
     done: false,
   } as T;

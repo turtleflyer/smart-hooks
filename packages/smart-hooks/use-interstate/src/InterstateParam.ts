@@ -1,9 +1,13 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 export type StateKey = string | number | symbol;
 
-export type Setter = React.Dispatch<React.SetStateAction<boolean>>;
+export type Setter = Dispatch<SetStateAction<boolean>>;
 
-export type InterstateParam<T> = Exclude<T, (...arg: any[]) => any> | ((prevValue: T) => T);
+export type InterstateParam<T extends unknown> =
+  | Exclude<T, (...arg: never[]) => unknown>
+  | ((prevValue: T) => T);
 
-export type InterstateInitializeParam<T> = T extends undefined
+export type InterstateInitializeParam<T extends unknown> = T extends undefined
   ? () => undefined | void
-  : Exclude<T, (...arg: any[]) => any | undefined | void> | (() => T);
+  : Exclude<T, (...arg: never[]) => unknown | undefined | void> | (() => T);

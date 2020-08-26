@@ -8,10 +8,8 @@ export function createSettersListEntry<O extends SettersListEntryBase, L extends
   { throwError, key }: ErrorHandleOptions
 ): L extends { start?: infer EP }
   ? EP extends infer E & { prev: undefined }
-    ? E extends O
-      ? O extends E
-        ? E
-        : never
+    ? ((p: E) => E) extends (p: O) => O
+      ? E
       : never
     : never
   : never;
@@ -29,14 +27,16 @@ export function createSettersListEntry(
 
   const entry: SettersListEntryBase & { next: undefined } = {
     ...entryProps,
-    prev: end as (SettersListEntryBase & { next: {} }) | undefined,
+    prev: end as (SettersListEntryBase & { next: object }) | undefined,
     next: undefined,
   };
 
+  // eslint-disable-next-line no-param-reassign
   list.end = entry;
   if (end) {
-    (<SettersListEntryBase>end).next = entry as SettersListEntryBase & { prev: {} };
+    (end as SettersListEntryBase).next = entry as SettersListEntryBase & { prev: object };
   } else {
+    // eslint-disable-next-line no-param-reassign
     list.start = entry as SettersListEntryBase & { prev: undefined };
   }
 

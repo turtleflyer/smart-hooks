@@ -1,6 +1,7 @@
 import type { TrueObjectAssign } from './CommonTypes';
 import type { StateKey } from './InterstateParam';
 import type { MemValueMap, StoreState } from './StoreState';
+import type { MapValue } from './StoreMap';
 
 export enum UseInterstateErrorCodes {
   CONCURRENTLY_PROVIDED_INIT_VALUE,
@@ -54,7 +55,7 @@ let errorsPool: {
 }[] = [];
 
 let currentLifeSignature: symbol | undefined;
-let futureLifeSignature = Symbol();
+let futureLifeSignature = Symbol('futureLifeSignature');
 
 function setNextInterval() {
   setTimeout(() => {
@@ -64,7 +65,7 @@ function setNextInterval() {
 
     if (errorsPool.length > 0) {
       currentLifeSignature = futureLifeSignature;
-      futureLifeSignature = Symbol();
+      futureLifeSignature = Symbol('futureLifeSignature');
       setNextInterval();
     } else {
       currentLifeSignature = undefined;
@@ -72,7 +73,7 @@ function setNextInterval() {
   }, MAINTENANCE_TIMEOUT);
 }
 
-type Impossible<T> = T & { [P: string]: never };
+type Impossible<T extends unknown> = T & { [P: string]: never };
 
 export type UseInterstateError = Impossible<Error>;
 
@@ -95,6 +96,8 @@ export function getUseInterstateErrorsHandleMethods(
   if (isUseInterstateError(e)) {
     return extractedMethods;
   }
+
+  return undefined;
 }
 
 interface ErrorOptions {
@@ -120,7 +123,8 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
   const { storeMap } = storeState;
 
   function flushMapValue(key: StateKey, memValuesMap: MemValueMap, isToRevertData: boolean) {
-    const mapValue = storeMap.get(key)!;
+    const mapValue = storeMap.get(key) as MapValue<unknown>;
+    // eslint-disable-next-line no-restricted-syntax
     for (const s of mapValue) {
       s.removeFromWatchList();
       s.errorChunk = true;
@@ -146,7 +150,7 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
     }
   }
 
-  const flushValueOfKeyCountSignMap = new Map<StateKey, number>();
+  const flushValueOfKeyCountSignMap = new Map<StateKey | undefined, number>();
 
   const errorMethodsTemplates: ErrorMethodTemplate[] = [
     {
@@ -157,10 +161,10 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
           : (isToRevertData) => {
               flushMapValue(key, memValuesMap, isToRevertData);
             },
-      getCountSignature: (key) => flushValueOfKeyCountSignMap.get(key!) ?? 0,
+      getCountSignature: (key) => flushValueOfKeyCountSignMap.get(key) ?? 0,
       incrementCountSignature: (key) => {
-        const countSignature = flushValueOfKeyCountSignMap.get(key!);
-        flushValueOfKeyCountSignMap.set(key!, countSignature ?? 0 + 1);
+        const countSignature = flushValueOfKeyCountSignMap.get(key);
+        flushValueOfKeyCountSignMap.set(key, countSignature ?? 0 + 1);
       },
     },
   ];
@@ -194,7 +198,7 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
     )}`;
 
     if (key !== undefined) {
-      const mapValue = storeMap.get(key)!;
+      const mapValue = storeMap.get(key) as MapValue<unknown>;
       mapValue.caughtError = errorCode;
     }
 
@@ -214,12 +218,13 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
       errorsPool.push({
         error,
 
-        methods: errorMethodsTemplates.reduce((ev, t) => {
-          return {
+        methods: errorMethodsTemplates.reduce(
+          (ev, t) => ({
             ...ev,
             [t.nameOfMethod]: createMethodRegardingCountSignature(memValuesMap, t, key),
-          };
-        }, {} as UseInterstateErrorMethods),
+          }),
+          {} as UseInterstateErrorMethods
+        ),
 
         lifeSignature: futureLifeSignature,
       });

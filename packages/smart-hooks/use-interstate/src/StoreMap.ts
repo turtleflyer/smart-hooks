@@ -19,9 +19,9 @@ export function isSetterListEntryErrorChunk(
   return !!e?.errorChunk;
 }
 
-type InitStatus<T> = { readonly value: T };
+type InitStatus<T extends unknown> = { readonly value: T };
 
-export interface MapValue<T = any> extends SettersListBase {
+export interface MapValue<T extends unknown = unknown> extends SettersListBase {
   start?: MapValueSettersListEntry & { prev: undefined };
   end?: MapValueSettersListEntry & { next: undefined };
 
@@ -37,4 +37,4 @@ export interface MapValue<T = any> extends SettersListBase {
   readonly [Symbol.iterator]: SettersListIterator<MapValueSettersListEntry>;
 }
 
-export type StoreMap = Map<StateKey, MapValue<any>>;
+export type StoreMap = Map<StateKey, MapValue>;

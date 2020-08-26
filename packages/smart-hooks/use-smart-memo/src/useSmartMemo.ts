@@ -1,26 +1,26 @@
 import { useMemo, useRef } from 'react';
 
-interface MemoStore<T> {
-  deps?: ReadonlyArray<any>;
+interface MemoStore<T extends unknown> {
+  deps?: ReadonlyArray<unknown>;
   value?: T;
 }
 
-function useSmartMemo<T>(factory: () => T, deps: ReadonlyArray<any>): T {
-  const memStore = useRef<MemoStore<T>>({});
+function useSmartMemo<T extends unknown>(factory: () => T, deps: ReadonlyArray<unknown>): T {
+  const memoStore = useRef<MemoStore<T>>({});
   return useMemo<T>(() => {
     const {
       current: { deps: curDeps, value: curValue },
-    } = memStore;
+    } = memoStore;
 
-    let gottaRecalculate = !curDeps || curDeps.length !== deps.length;
+    let gottaRecalculate = curDeps?.length !== deps.length;
 
-    for (let i = 0; !gottaRecalculate && i < (curDeps as ReadonlyArray<any>).length; i++) {
-      gottaRecalculate = !Object.is((curDeps as any[])[i], deps[i]);
+    for (let i = 0; !gottaRecalculate && curDeps && i < curDeps.length; i++) {
+      gottaRecalculate = !Object.is(curDeps[i], deps[i]);
     }
 
     if (gottaRecalculate) {
       const evalValue = factory();
-      memStore.current = { deps, value: evalValue };
+      memoStore.current = { deps, value: evalValue };
       return evalValue;
     }
 

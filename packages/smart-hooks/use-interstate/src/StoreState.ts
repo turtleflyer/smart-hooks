@@ -9,7 +9,7 @@ import type { StoreMapEffectTask, StoreRenderTask } from './LifeCyclesTasks';
 import type { SettersWatchList } from './SettersLists';
 import type { StoreMap } from './StoreMap';
 
-export type MemValueMap = Map<StateKey, { value: any } | undefined>;
+export type MemValueMap = Map<StateKey, { value: unknown } | undefined>;
 
 export interface StoreState {
   readonly storeMap: StoreMap;
@@ -24,13 +24,13 @@ export interface SetterMethods {
   readonly removeSetterFromWatchList: () => void;
 }
 
-export interface StoreMethods<T> {
+export interface StoreMethods<T extends unknown> {
   readonly getValue: () => T;
   readonly setValue: (value: InterstateParam<T>) => void;
-  readonly addSetter: (setter: Setter) => SetterMethods | undefined;
+  readonly addSetter: (setter: Setter) => SetterMethods | null;
 }
 
-export type InitializeState = <T>(
+export type InitializeState = <T extends unknown>(
   key: StateKey,
   initValue: InterstateInitializeParam<T> | undefined
 ) => StoreMethods<T>;

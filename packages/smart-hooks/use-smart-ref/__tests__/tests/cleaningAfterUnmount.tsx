@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React, { useRef } from 'react';
+import type { FC, MutableRefObject } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const cleaningAfterUnmount: TestDescription = (p) => [
@@ -20,9 +21,9 @@ const cleaningAfterUnmount: TestDescription = (p) => [
       cleanerCounter.count();
       storeCleanerArg = arg;
     };
-    let refElement!: React.MutableRefObject<HTMLDivElement | undefined | null>;
+    let refElement!: MutableRefObject<HTMLDivElement | undefined | null>;
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       scenario: 1 | 2;
       arg: string;
     }> = wrapWithStrictModeComponent(({ scenario, arg }) => {

@@ -1,5 +1,6 @@
 import { cleanup } from '@testing-library/react';
 import React from 'react';
+import type { FC } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const checkInitializationConcurrency: TestDescription = (p) => [
@@ -19,7 +20,7 @@ const checkInitializationConcurrency: TestDescription = (p) => [
     const testId = 'first';
     const [assertWrapper, errorRecord] = createAssertWrapper();
 
-    const InnerComponent: React.FunctionComponent<{
+    const InnerComponent: FC<{
       initV?: string;
     }> = ({ initV }) => (
       <div>
@@ -32,7 +33,7 @@ const checkInitializationConcurrency: TestDescription = (p) => [
       </div>
     );
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       initV1?: string;
       initV2?: string;
       initV3?: string;
@@ -63,28 +64,28 @@ const checkInitializationConcurrency: TestDescription = (p) => [
       assertWrapper(() => render(<TestComponent initV1="a" initV2="b" initV3="c" />))
     ).toThrow(/\(useInterstate Error\) .* concurrently/);
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
+    getUseInterstateErrorsHandleMethods(errorRecord.current)?.flushValueOfKey?.(true);
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV1="d" initV2="e" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
+    getUseInterstateErrorsHandleMethods(errorRecord.current)?.flushValueOfKey?.(true);
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV1="f" initV3="g" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
+    getUseInterstateErrorsHandleMethods(errorRecord.current)?.flushValueOfKey?.(true);
     cleanup();
 
     expect(() => assertWrapper(() => render(<TestComponent initV2="h" initV3="i" />))).toThrow(
       /\(useInterstate Error\) .* concurrently/
     );
 
-    getUseInterstateErrorsHandleMethods(errorRecord.current)!.flushValueOfKey!(true);
+    getUseInterstateErrorsHandleMethods(errorRecord.current)?.flushValueOfKey?.(true);
     cleanup();
 
     const { unmount, getTextFromNode } = render(<TestComponent initV1="j" />);

@@ -1,22 +1,21 @@
 import { FlagManager } from './createFlagManager';
 
-type UseMemo = <T>(factory: () => T, deps: ReadonlyArray<any> | undefined) => T;
+type UseMemo = <T extends unknown>(factory: () => T, deps: ReadonlyArray<unknown> | undefined) => T;
 
 function mockReactUseMemo<
+  R extends { useMemo: UseMemo },
   T extends { MOCK_USE_MEMO: boolean; PROOF_OF_MOCK: 'mocked' | 'original' }
->(reactExport: { useMemo: UseMemo }, flagManager: FlagManager<T>) {
+>(reactExport: R, flagManager: FlagManager<T>): R {
   const { useMemo } = reactExport;
 
-  function mockUseMemo<R>(factory: () => R, deps: ReadonlyArray<any> | undefined) {
+  const mockUseMemo: UseMemo = (factory, deps) => {
     if (flagManager.read('MOCK_USE_MEMO')) {
       flagManager.set({ PROOF_OF_MOCK: 'mocked' } as Readonly<T>);
       return factory();
-    } else {
-      flagManager.set({ PROOF_OF_MOCK: 'original' } as Readonly<T>);
-      // tslint:disable-next-line: react-hooks-nesting
-      return useMemo(factory, deps);
     }
-  }
+    flagManager.set({ PROOF_OF_MOCK: 'original' } as Readonly<T>);
+    return useMemo(factory, deps);
+  };
 
   return { ...reactExport, useMemo: mockUseMemo };
 }

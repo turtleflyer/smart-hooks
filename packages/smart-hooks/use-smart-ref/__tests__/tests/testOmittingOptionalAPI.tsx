@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
+import type { FC } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const testOmittingOptionalAPI: TestDescription = (p) => [
@@ -11,14 +12,12 @@ const testOmittingOptionalAPI: TestDescription = (p) => [
 
     let recordElement: HTMLDivElement | undefined | null;
 
-    const TestComponent: React.FunctionComponent<{ dataKey: string }> = wrapWithStrictModeComponent(
-      ({ dataKey }) => {
-        const ref = useSmartRef((el: HTMLDivElement) => {
-          recordElement = el;
-        });
-        return <div data-key={dataKey} ref={ref} />;
-      }
-    );
+    const TestComponent: FC<{ dataKey: string }> = wrapWithStrictModeComponent(({ dataKey }) => {
+      const ref = useSmartRef((el: HTMLDivElement) => {
+        recordElement = el;
+      });
+      return <div data-key={dataKey} ref={ref} />;
+    });
 
     const { rerender, unmount } = render(<TestComponent dataKey="Baltimore" />);
     expect(recordElement && recordElement.getAttribute('data-key')).toBe('Baltimore');

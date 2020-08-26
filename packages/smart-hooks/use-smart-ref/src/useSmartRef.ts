@@ -1,4 +1,5 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import type { MutableRefObject } from 'react';
 
 export type SmartRefEffect<T extends HTMLElement = HTMLElement> = (
   el: T
@@ -14,8 +15,8 @@ interface Store<T extends HTMLElement> {
 
 export function useSmartRef<T extends HTMLElement = HTMLElement>(
   effect: SmartRefEffect<T>,
-  ref?: React.MutableRefObject<T | null | undefined>
-) {
+  ref?: MutableRefObject<T | null | undefined>
+): CallbackRef<T> {
   const memStore = useRef<Store<T>>({ effect });
   memStore.current = { ...memStore.current, effect };
 
@@ -51,10 +52,11 @@ export function useSmartRef<T extends HTMLElement = HTMLElement>(
   const callbackRef = useCallback<CallbackRef<T>>((element) => {
     const {
       current: curStore,
-      current: { effect, cleanUp: curCleanUp },
+      current: { effect: curEffect, cleanUp: curCleanUp },
     } = memStore;
 
     if (ref) {
+      // eslint-disable-next-line no-param-reassign
       ref.current = element;
     }
 
@@ -62,7 +64,7 @@ export function useSmartRef<T extends HTMLElement = HTMLElement>(
 
     if (element) {
       cleanUpIfDefined();
-      cleanUp = effect(element) as (() => void) | undefined;
+      cleanUp = curEffect(element) as (() => void) | undefined;
     }
 
     memStore.current = { ...curStore, element, cleanUp };

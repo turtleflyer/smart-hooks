@@ -27,6 +27,7 @@ export const settersCounterFactory: SettersCounterFactory = (n = 0) => {
     }
 
     let count = 0;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-restricted-syntax
     for (const _ of mapVal) {
       count++;
     }

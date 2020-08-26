@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -31,7 +32,7 @@ const testContext: TestDescription = (p) => [
     const countRender5 = executionCountersFactory();
     const countRender6 = executionCountersFactory();
 
-    const IsolatedBlock: React.FunctionComponent<{
+    const IsolatedBlock: FC<{
       initVS1?: string;
       initVS2?: string;
       listenerId: number;
@@ -63,7 +64,7 @@ const testContext: TestDescription = (p) => [
       </>
     );
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       isolate?: boolean;
       listenerId: number;
       initV1?: string;
@@ -154,7 +155,7 @@ const testContext: TestDescription = (p) => [
       expect(countSetter1(subscribeId2)).toBe(2);
     }
 
-    rerender(<TestComponent isolate={true} listenerId={subscribeId1} initV3="" initV4="" />);
+    rerender(<TestComponent isolate listenerId={subscribeId1} initV3="" initV4="" />);
     const countSetter2 = settersCounterFactory();
     fireNode(testId1, 'truck');
 
@@ -216,7 +217,7 @@ const testContext: TestDescription = (p) => [
     }
 
     rerender(
-      <TestComponent isolate={true} listenerId={subscribeId1} initV3="rocket" initV4="helicopter" />
+      <TestComponent isolate listenerId={subscribeId1} initV3="rocket" initV4="helicopter" />
     );
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {

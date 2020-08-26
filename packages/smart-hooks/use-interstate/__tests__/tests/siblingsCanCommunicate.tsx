@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -13,7 +14,7 @@ const siblingsCanCommunicate: TestDescription = (p) => [
     const testId2 = 'listener';
     const countRender1 = executionCountersFactory();
     const countRender2 = executionCountersFactory();
-    const TestComponent: React.FunctionComponent<{ initV: string }> = ({ initV }) => (
+    const TestComponent: FC<{ initV: string }> = ({ initV }) => (
       <>
         <CanUpdate
           {...{

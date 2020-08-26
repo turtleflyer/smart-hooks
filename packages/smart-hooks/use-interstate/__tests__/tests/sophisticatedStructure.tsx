@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import { flagManager } from '../testFlags';
 import type { ComposeCallback, TestDescription } from '../testsAssets';
 
@@ -39,10 +40,7 @@ const sophisticatedStructure: TestDescription = (p) => [
     const countRender8 = executionCountersFactory();
     const countRender9 = executionCountersFactory();
 
-    const TestComponent: React.FunctionComponent<{ initV1: string; initV2: string }> = ({
-      initV1,
-      initV2,
-    }) => (
+    const TestComponent: FC<{ initV1: string; initV2: string }> = ({ initV1, initV2 }) => (
       <>
         <CanListen
           {...{

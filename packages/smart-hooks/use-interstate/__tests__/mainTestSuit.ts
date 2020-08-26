@@ -1,3 +1,6 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { cleanup } from '@testing-library/react';
 import { flagManager } from './testFlags';
 import checkInitializationConcurrency from './tests/checkInitializationConcurrency';
@@ -15,7 +18,7 @@ import testSettersImmutability from './tests/testSettersImmutability';
 import valuesRemainAfterTreeUnmount from './tests/valuesRemainAfterTreeUnmount';
 import { AssetsImport, TestParameter, UseInterstateImport } from './testsAssets';
 
-const mainTestSuit = (packagePath: string) =>
+const mainTestSuit = (packagePath: string): void =>
   describe.each([
     [
       'test logic',

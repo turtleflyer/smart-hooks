@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
+import type { FC } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const shouldFireOnlyWhenNodeChanges: TestDescription = (p) => [
@@ -11,23 +12,21 @@ const shouldFireOnlyWhenNodeChanges: TestDescription = (p) => [
     const actionCounter = executionCountersFactory();
     const cleanerCounter = executionCountersFactory();
 
-    const TestComponent: React.FunctionComponent<{ scenario: 1 | 2 }> = wrapWithStrictModeComponent(
-      ({ scenario }) => {
-        const ref = useSmartRef<HTMLDivElement>(() => {
-          actionCounter.count();
-          return () => {
-            cleanerCounter.count();
-          };
-        });
+    const TestComponent: FC<{ scenario: 1 | 2 }> = wrapWithStrictModeComponent(({ scenario }) => {
+      const ref = useSmartRef<HTMLDivElement>(() => {
+        actionCounter.count();
+        return () => {
+          cleanerCounter.count();
+        };
+      });
 
-        return (
-          <div>
-            <div data-key="element" ref={ref} />
-            {scenario === 1 && <div />}
-          </div>
-        );
-      }
-    );
+      return (
+        <div>
+          <div data-key="element" ref={ref} />
+          {scenario === 1 && <div />}
+        </div>
+      );
+    });
 
     const { rerender, unmount } = render(<TestComponent scenario={1} />);
     expect(actionCounter.howManyTimesBeenCalled()).toBe(1);

@@ -1,3 +1,6 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { cleanup } from '@testing-library/react';
 import cleaningAfterUnmount from './tests/cleaningAfterUnmount';
 import refBindingUpdate from './tests/refBindingUpdate';
@@ -7,7 +10,7 @@ import testOmittingOptionalAPI from './tests/testOmittingOptionalAPI';
 import typeParameter from './tests/typeParameter';
 import { AssetsImport, TestParameter, UseSmartRefImport } from './testsAssets';
 
-const mainTestSuit = (packagePath: string) =>
+const mainTestSuit = (packagePath: string): void =>
   describe('Test useSmartRef correctness', () => {
     const testParameter: TestParameter = {} as TestParameter;
 

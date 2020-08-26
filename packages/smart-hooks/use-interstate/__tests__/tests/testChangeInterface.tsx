@@ -1,5 +1,7 @@
 import { cleanup } from '@testing-library/react';
+import type { RenderResult } from '@testing-library/react';
 import React from 'react';
+import type { FC, ReactElement } from 'react';
 import type {
   InterstateInitializeParam,
   StateKey,
@@ -21,26 +23,26 @@ const testChangeInterface: TestDescription = (p) => [
       | [StateKey, InterstateInitializeParam<unknown>]
       | [UseInterstateInitializeObject<object>];
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       args: Args;
       keyToRead: string | number;
     }> = wrapWithStrictModeComponent(({ args, keyToRead }) => {
-      useInterstate(...(args as [any, any]));
+      useInterstate(...(args as [never, never]));
       const [useSubscribeToKey] = useInterstate<string | number | boolean>(keyToRead);
       const stateOfKey = useSubscribeToKey();
 
       return <div data-testid={testId}>{stateOfKey.toString()}</div>;
     });
 
-    let rerender: any;
-    let unmount: any;
-    let getByTestId: any;
+    let rerender: (ui: ReactElement) => void;
+    let unmount: () => boolean;
+    let getByTestId: RenderResult['getByTestId'];
 
     ({ rerender, getByTestId } = render(<TestComponent args={[1, 'low']} keyToRead={1} />));
-    expect(getByTestId(testId).textContent).toBe('low');
+    expect(getByTestId(testId)?.textContent).toBe('low');
 
     rerender(<TestComponent args={[2, 'high']} keyToRead={2} />);
-    expect(getByTestId(testId).textContent).toBe('high');
+    expect(getByTestId(testId)?.textContent).toBe('high');
 
     expect(() =>
       assertWrapper(() => rerender(<TestComponent args={[{ 1: 'low' }]} keyToRead={1} />))
@@ -59,6 +61,7 @@ const testChangeInterface: TestDescription = (p) => [
     ).toThrow(/(useInterstate Error).*value never been set/);
     cleanup();
 
+    // eslint-disable-next-line prefer-const
     ({ rerender, getByTestId, unmount } = render(
       <TestComponent args={[{ country: 'UK' }]} keyToRead="country" />
     ));

@@ -1,6 +1,7 @@
 import { useTraverseKeys } from '@smart-hooks/helper-traverse-scheme-keys';
 import { useSmartMemo } from '@smart-hooks/use-smart-memo';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import type { FC } from 'react';
 import { createStore } from './createStore';
 import { UseInterstateErrorCodes } from './errorHandle';
 import type { UseInterstateThrowError } from './errorHandle';
@@ -13,7 +14,7 @@ export type UseInterstateInitializeObject<S extends object> = {
   [P in keyof S]: InterstateInitializeParam<S[P]> | undefined;
 };
 
-export type SetInterstate<T = any> = (p: InterstateParam<T>) => void;
+export type SetInterstate<T extends unknown = unknown> = (p: InterstateParam<T>) => void;
 
 export type UseInterstateSettersObject<S extends object> = {
   readonly [P in keyof S]: SetInterstate<S[P]>;
@@ -23,14 +24,27 @@ export type UseInterstateStateObject<S extends object> = {
   readonly [P in keyof S]: S[P];
 };
 
-export function getUseInterstate() {
+export interface UseInterstate {
+  <T extends undefined>(key: StateKey, initValue?: T): [() => unknown, SetInterstate<unknown>];
+
+  <S extends object>(stateScheme: UseInterstateInitializeObject<S>): [
+    () => UseInterstateStateObject<S>,
+    UseInterstateSettersObject<S>
+  ];
+
+  <T extends unknown>(key: StateKey, initValue?: InterstateInitializeParam<T>): T[] extends void[]
+    ? [() => undefined, SetInterstate<undefined>]
+    : [() => T, SetInterstate<T>];
+}
+
+export function getUseInterstate(): { Scope: FC; useInterstate: UseInterstate } {
   let globalStore: Store;
 
   type ScopeContextValue = { readonly store: Store } | undefined;
 
   const ScopeContext = createContext<ScopeContextValue>(undefined);
 
-  const Scope: React.FunctionComponent = ({ children }) => {
+  const Scope: FC = ({ children }) => {
     const [isolatedStore] = useState(createStore);
 
     return (
@@ -55,26 +69,12 @@ export function getUseInterstate() {
     throwError: UseInterstateThrowError;
   }
 
-  function useInterstate<T extends undefined>(
-    key: StateKey,
-    initValue?: T
-  ): [() => unknown, SetInterstate<unknown>];
-
-  function useInterstate<S extends object>(
-    stateScheme: UseInterstateInitializeObject<S>
-  ): [() => UseInterstateStateObject<S>, UseInterstateSettersObject<S>];
-
-  function useInterstate<T>(
-    key: StateKey,
-    initValue?: InterstateInitializeParam<T>
-  ): T[] extends void[] ? [() => undefined, SetInterstate<undefined>] : [() => T, SetInterstate<T>];
-
-  function useInterstate<T>(
+  const useInterstate = (<T extends unknown>(
     p1: StateKey | UseInterstateInitializeObject<T & object>,
     initValue?: InterstateInitializeParam<T>
   ):
     | [() => T, SetInterstate<T>]
-    | [() => UseInterstateStateObject<T & object>, UseInterstateSettersObject<T & object>] {
+    | [() => UseInterstateStateObject<T & object>, UseInterstateSettersObject<T & object>] => {
     const mainRecord = useRef({} as MainHookState);
 
     const {
@@ -90,24 +90,24 @@ export function getUseInterstate() {
       }
     }
 
-    function usePlainInterstate<T>(
+    function usePlainInterstate<T extends unknown>(
       key: StateKey,
-      initValue?: InterstateInitializeParam<T>
+      initV?: InterstateInitializeParam<T>
     ): [() => T, SetInterstate<T>] {
-      const { initializeState, runRenderTask, runEffectTask, throwError } = useStore();
-      mainRecord.current = { ...mainRecord.current, throwError };
+      const { initializeState, runRenderTask, runEffectTask, throwError: throwErr } = useStore();
+      mainRecord.current = { ...mainRecord.current, throwError: throwErr };
 
       const memState = useRef({} as StoreMethods<T>);
       runRenderTask(key);
 
       useSmartMemo(() => {
-        memState.current = initializeState(key, initValue);
+        memState.current = initializeState(key, initV);
       }, [key]);
 
       useEffect(() => runEffectTask());
 
       function useSubscribe() {
-        const subscribeMemState = useRef<Partial<SetterMethods> | undefined>({});
+        const subscribeMemState = useRef<Partial<SetterMethods> | null>({});
         const {
           current: { getValue },
         } = memState;
@@ -158,16 +158,18 @@ export function getUseInterstate() {
         { readonly [P in keyof S]: () => S[P] },
         UseInterstateSettersObject<S>
       >(stateScheme, (key, memStateScheme, subscribeObjectFulfill, settersObjectFulfill) => {
-        const [useSubscribe, setter] = usePlainInterstate(key, memStateScheme[key]);
-        subscribeObjectFulfill(useSubscribe);
+        const [useSubscr, setter] = usePlainInterstate(key, memStateScheme[key]);
+        subscribeObjectFulfill(useSubscr);
         settersObjectFulfill(setter);
       });
 
-      function useSubscribe() {
-        return enumKeys.reduce((evalState, key) => {
+      function useSubscribe(): UseInterstateStateObject<S> {
+        const evalState = {} as UnsealReadOnly<UseInterstateStateObject<S>>;
+        enumKeys.forEach((key) => {
           evalState[key] = subscribeObject[key]();
           return evalState;
-        }, {} as UnsealReadOnly<UseInterstateStateObject<S>>);
+        });
+        return evalState;
       }
 
       return [useSubscribe, settersObject];
@@ -179,8 +181,8 @@ export function getUseInterstate() {
     }
 
     checkUsingSchemeIntegrity(false);
-    return usePlainInterstate(p1 as StateKey, initValue);
-  }
+    return usePlainInterstate(p1, initValue);
+  }) as UseInterstate;
 
   return { Scope, useInterstate };
 }

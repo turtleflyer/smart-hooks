@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import React, { memo, useEffect } from 'react';
+import type { FC } from 'react';
 import type { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
 import type {
   UseInterstateInitializeObject,
@@ -63,17 +64,17 @@ const testMultistateInterface: TestDescription = (p) => [
 
     type InputFormComponent = <S extends Partial<AppState>, P extends keyof S>(
       arg: InputFormProps<S, P>
-    ) => ReturnType<React.FunctionComponent<InputFormProps<S, P>>>;
+    ) => ReturnType<FC<InputFormProps<S, P>>>;
 
     const InputForm: InputFormComponent = <S extends Partial<AppState>, P extends keyof S>({
       labelText,
       dataTestId,
       setters,
       keyOfState,
-    }: InputFormProps<S, P>) => {
-      return (
-        <form>
-          <label>{labelText}</label>
+    }: InputFormProps<S, P>) => (
+      <form>
+        <label>
+          {labelText}
           <input
             data-testid={dataTestId}
             type="text"
@@ -83,18 +84,18 @@ const testMultistateInterface: TestDescription = (p) => [
               )
             }
           />
-        </form>
-      );
-    };
+        </label>
+      </form>
+    );
 
-    const DisplayPieceOfState: React.FunctionComponent<{
+    const DisplayPieceOfState: FC<{
       pieceOfState: string | undefined;
       dataTestId: string;
     }> = ({ pieceOfState, dataTestId }) => (
       <div data-testid={dataTestId}>{pieceOfState ?? 'N/A'}</div>
     );
 
-    const Store: React.FunctionComponent = memo(() => {
+    const Store: FC = memo(() => {
       const [, setState] = useInterstate({ storeName: undefined, storeLocation: undefined });
       useCounter(storeComponentCounter);
 
@@ -116,7 +117,7 @@ const testMultistateInterface: TestDescription = (p) => [
       );
     });
 
-    const Mixed: React.FunctionComponent = memo(() => {
+    const Mixed: FC = memo(() => {
       const [, setState] = useInterstate({
         storeName: undefined,
         [customerName]: undefined,
@@ -153,7 +154,7 @@ const testMultistateInterface: TestDescription = (p) => [
       );
     });
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       defState: UseInterstateInitializeObject<AppState>;
     }> = wrapWithStrictModeComponent(({ defState }) => {
       useInterstate(defState);
@@ -212,8 +213,9 @@ const testMultistateInterface: TestDescription = (p) => [
       expect(testComponentCounter.howManyTimesBeenCalled()).toBe(1);
     }
 
+    let elementWithId = queryByTestId(testId0);
     expect(
-      fireEvent.change(queryByTestId(testId0)!, { target: { value: 'Walmart' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'Walmart' } })
     ).toBeTruthy();
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
@@ -224,8 +226,9 @@ const testMultistateInterface: TestDescription = (p) => [
       expect(testComponentCounter.howManyTimesBeenCalled()).toBe(2);
     }
 
+    elementWithId = queryByTestId(testId1);
     expect(
-      fireEvent.change(queryByTestId(testId1)!, { target: { value: 'North Pole' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'North Pole' } })
     ).toBeTruthy();
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
@@ -237,7 +240,10 @@ const testMultistateInterface: TestDescription = (p) => [
       expect(testComponentCounter.howManyTimesBeenCalled()).toBe(3);
     }
 
-    expect(fireEvent.change(queryByTestId(testId6)!, { target: { value: 'male' } })).toBeTruthy();
+    elementWithId = queryByTestId(testId6);
+    expect(
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'male' } })
+    ).toBeTruthy();
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(queryByTestId(testId10)?.firstChild?.textContent).toBe('male');
@@ -247,8 +253,9 @@ const testMultistateInterface: TestDescription = (p) => [
       expect(testComponentCounter.howManyTimesBeenCalled()).toBe(4);
     }
 
+    elementWithId = queryByTestId(testId12);
     expect(
-      fireEvent.change(queryByTestId(testId12)!, { target: { value: 'female' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'female' } })
     ).toBeTruthy();
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
@@ -259,7 +266,10 @@ const testMultistateInterface: TestDescription = (p) => [
       expect(testComponentCounter.howManyTimesBeenCalled()).toBe(5);
     }
 
-    expect(fireEvent.change(queryByTestId(testId5)!, { target: { value: 'Susan' } })).toBeTruthy();
+    elementWithId = queryByTestId(testId5);
+    expect(
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'Susan' } })
+    ).toBeTruthy();
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(queryByTestId(testId3)?.firstChild?.textContent).toBe('Susan');
@@ -270,7 +280,10 @@ const testMultistateInterface: TestDescription = (p) => [
       expect(testComponentCounter.howManyTimesBeenCalled()).toBe(6);
     }
 
-    expect(fireEvent.change(queryByTestId(testId11)!, { target: { value: 'John' } })).toBeTruthy();
+    elementWithId = queryByTestId(testId11);
+    expect(
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'John' } })
+    ).toBeTruthy();
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {
       expect(queryByTestId(testId3)?.firstChild?.textContent).toBe('John');
@@ -281,8 +294,9 @@ const testMultistateInterface: TestDescription = (p) => [
       expect(testComponentCounter.howManyTimesBeenCalled()).toBe(7);
     }
 
+    elementWithId = queryByTestId(testId4);
     expect(
-      fireEvent.change(queryByTestId(testId4)!, { target: { value: 'Walmart' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'Walmart' } })
     ).toBeTruthy();
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {

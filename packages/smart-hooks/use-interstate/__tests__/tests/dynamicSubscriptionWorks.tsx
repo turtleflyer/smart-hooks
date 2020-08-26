@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -21,47 +22,45 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
     const countRender3 = executionCountersFactory();
     const countRender4 = executionCountersFactory();
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       initV1?: string;
       dynamicSubscribe: number | string | symbol;
       initV2?: string | (() => string);
-    }> = ({ initV1 = 'sun', dynamicSubscribe, initV2 = undefined }) => {
-      return (
-        <>
+    }> = ({ initV1 = 'sun', dynamicSubscribe, initV2 = undefined }) => (
+      <>
+        <CanUpdate
+          {...{
+            subscribeId: subscribeId1,
+            testId: testId1,
+            countRender: countRender1.count,
+            initialValue: initV1,
+          }}
+        >
           <CanUpdate
             {...{
-              subscribeId: subscribeId1,
-              testId: testId1,
-              countRender: countRender1.count,
-              initialValue: initV1,
-            }}
-          >
-            <CanUpdate
-              {...{
-                subscribeId: dynamicSubscribe,
-                testId: testId2,
-                countRender: countRender2.count,
-                initialValue: initV2,
-              }}
-            />
-            <CanListen
-              {...{
-                subscribeId: subscribeId1,
-                testId: testId3,
-                countRender: countRender3.count,
-              }}
-            />
-          </CanUpdate>
-          <CanListen
-            {...{
               subscribeId: dynamicSubscribe,
-              testId: testId4,
-              countRender: countRender4.count,
+              testId: testId2,
+              countRender: countRender2.count,
+              initialValue: initV2,
             }}
           />
-        </>
-      );
-    };
+          <CanListen
+            {...{
+              subscribeId: subscribeId1,
+              testId: testId3,
+              countRender: countRender3.count,
+            }}
+          />
+        </CanUpdate>
+        <CanListen
+          {...{
+            subscribeId: dynamicSubscribe,
+            testId: testId4,
+            countRender: countRender4.count,
+          }}
+        />
+      </>
+    );
 
     const { rerender, fireNode, getTextFromNode, unmount } = render(
       <TestComponent dynamicSubscribe={subscribeId1} />

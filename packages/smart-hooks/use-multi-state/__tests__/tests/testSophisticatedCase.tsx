@@ -1,7 +1,8 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { createContext, useContext, useEffect } from 'react';
+import type { FC } from 'react';
 import type { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
-import type { SettersObject } from '../../src/useMultistate';
+import type { SettersObject } from '../../src/useMultiState';
 import type { TestDescription } from '../testsAssets';
 
 const testSophisticatedCase: TestDescription = (p) => [
@@ -33,9 +34,7 @@ const testSophisticatedCase: TestDescription = (p) => [
     const testId10 = 'item-type-input';
     const testId11 = 'item-size-input';
 
-    type OnlyStringsInProperties = {
-      [P in number | string | symbol]: string | undefined;
-    };
+    type OnlyStringsInProperties = Record<number | string | symbol, string | undefined>;
 
     interface ItemState {
       readonly type: string | undefined;
@@ -73,7 +72,7 @@ const testSophisticatedCase: TestDescription = (p) => [
 
     type InputFormComponent = <S extends OnlyStringsInProperties, P extends keyof S>(
       arg: InputFormProps<S, P>
-    ) => ReturnType<React.FunctionComponent<InputFormProps<S, P>>>;
+    ) => ReturnType<FC<InputFormProps<S, P>>>;
 
     const InputForm: InputFormComponent = <S extends OnlyStringsInProperties, P extends keyof S>({
       labelText,
@@ -93,26 +92,24 @@ const testSophisticatedCase: TestDescription = (p) => [
       </form>
     );
 
-    const DisplayPieceOfState: React.FunctionComponent<{
+    const DisplayPieceOfState: FC<{
       pieceOfState: string | undefined;
       dataTestId: string;
     }> = ({ pieceOfState, dataTestId }) => (
       <div data-testid={dataTestId}>{pieceOfState ?? 'N/A'}</div>
     );
 
-    const StoreContext = createContext<[StoreState, SettersObject<StoreState>] | undefined>(
-      undefined
-    );
+    const StoreContext = createContext<[StoreState, SettersObject<StoreState>]>(undefined as never);
 
-    const StoreProvider: React.FunctionComponent = ({ children }) => {
+    const StoreProvider: FC = ({ children }) => {
       const toProvide = useMultiState(defStoreState);
       useCounter(storeProviderCounter);
 
       return <StoreContext.Provider value={toProvide}>{children}</StoreContext.Provider>;
     };
 
-    const Store: React.FunctionComponent = () => {
-      const [storeState, setStoreState] = useContext(StoreContext)!;
+    const Store: FC = () => {
+      const [storeState, setStoreState] = useContext(StoreContext);
       useCounter(storeComponentCounter);
 
       return (
@@ -135,7 +132,7 @@ const testSophisticatedCase: TestDescription = (p) => [
       );
     };
 
-    const Customer: React.FunctionComponent<{
+    const Customer: FC<{
       customerState: CustomerState;
       setCustomerState: SettersObject<CustomerState>;
     }> = ({ customerState, setCustomerState }) => {
@@ -161,7 +158,7 @@ const testSophisticatedCase: TestDescription = (p) => [
       );
     };
 
-    const TestComponent: React.FunctionComponent = wrapWithStrictModeComponent(() => {
+    const TestComponent: FC = wrapWithStrictModeComponent(() => {
       const [itemState, setItemState] = useMultiState(defItemState);
       const [customerState, setCustomerState] = useMultiState(defCustomerState);
       useCounter(testComponentCounter);
@@ -203,8 +200,9 @@ const testSophisticatedCase: TestDescription = (p) => [
     expect(customerComponentCounter.howManyTimesBeenCalled()).toBe(1);
     expect(testComponentCounter.howManyTimesBeenCalled()).toBe(1);
 
+    let elementWithId = queryByTestId(testId2);
     expect(
-      fireEvent.change(queryByTestId(testId2)!, { target: { value: 'Walmart' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'Walmart' } })
     ).toBeTruthy();
 
     expect(queryByTestId(testId0)?.firstChild?.textContent).toBe('Walmart');
@@ -213,8 +211,9 @@ const testSophisticatedCase: TestDescription = (p) => [
     expect(customerComponentCounter.howManyTimesBeenCalled()).toBe(1);
     expect(testComponentCounter.howManyTimesBeenCalled()).toBe(1);
 
+    elementWithId = queryByTestId(testId3);
     expect(
-      fireEvent.change(queryByTestId(testId3)!, { target: { value: 'North Pole' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'North Pole' } })
     ).toBeTruthy();
 
     expect(queryByTestId(testId1)?.firstChild?.textContent).toBe('North Pole');
@@ -223,8 +222,9 @@ const testSophisticatedCase: TestDescription = (p) => [
     expect(customerComponentCounter.howManyTimesBeenCalled()).toBe(1);
     expect(testComponentCounter.howManyTimesBeenCalled()).toBe(1);
 
+    elementWithId = queryByTestId(testId6);
     expect(
-      fireEvent.change(queryByTestId(testId6)!, { target: { value: 'Teddy Bear' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'Teddy Bear' } })
     ).toBeTruthy();
 
     expect(queryByTestId(testId4)?.firstChild?.textContent).toBe('Teddy Bear');
@@ -233,7 +233,10 @@ const testSophisticatedCase: TestDescription = (p) => [
     expect(customerComponentCounter.howManyTimesBeenCalled()).toBe(2);
     expect(testComponentCounter.howManyTimesBeenCalled()).toBe(2);
 
-    expect(fireEvent.change(queryByTestId(testId7)!, { target: { value: 'male' } })).toBeTruthy();
+    elementWithId = queryByTestId(testId7);
+    expect(
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'male' } })
+    ).toBeTruthy();
 
     expect(queryByTestId(testId5)?.firstChild?.textContent).toBe('male');
     expect(storeProviderCounter.howManyTimesBeenCalled()).toBe(5);
@@ -241,8 +244,9 @@ const testSophisticatedCase: TestDescription = (p) => [
     expect(customerComponentCounter.howManyTimesBeenCalled()).toBe(3);
     expect(testComponentCounter.howManyTimesBeenCalled()).toBe(3);
 
+    elementWithId = queryByTestId(testId10);
     expect(
-      fireEvent.change(queryByTestId(testId10)!, { target: { value: 'gloves' } })
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'gloves' } })
     ).toBeTruthy();
 
     expect(queryByTestId(testId8)?.firstChild?.textContent).toBe('gloves');
@@ -251,7 +255,10 @@ const testSophisticatedCase: TestDescription = (p) => [
     expect(customerComponentCounter.howManyTimesBeenCalled()).toBe(4);
     expect(testComponentCounter.howManyTimesBeenCalled()).toBe(4);
 
-    expect(fireEvent.change(queryByTestId(testId11)!, { target: { value: 'XL' } })).toBeTruthy();
+    elementWithId = queryByTestId(testId11);
+    expect(
+      elementWithId && fireEvent.change(elementWithId, { target: { value: 'XL' } })
+    ).toBeTruthy();
 
     expect(queryByTestId(testId9)?.firstChild?.textContent).toBe('XL');
     expect(storeProviderCounter.howManyTimesBeenCalled()).toBe(7);

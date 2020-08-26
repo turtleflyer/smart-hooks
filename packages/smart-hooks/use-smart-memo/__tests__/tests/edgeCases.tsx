@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
+import type { FC } from 'react';
 import { TestDescription } from '../testsAssets';
 
 const edgeCases: TestDescription = (p) => [
@@ -11,15 +12,15 @@ const edgeCases: TestDescription = (p) => [
 
     const counter = executionCountersFactory();
 
-    const TestComponent: React.FunctionComponent<{ params: any[] }> = wrapWithStrictModeComponent(
-      ({ params }) => {
-        useSmartMemo(() => {
-          counter.count();
-        }, params);
+    const TestComponent: FC<{
+      params: unknown[];
+    }> = wrapWithStrictModeComponent(({ params }) => {
+      useSmartMemo(() => {
+        counter.count();
+      }, params);
 
-        return <></>;
-      }
-    );
+      return <></>;
+    });
 
     const { rerender, unmount } = render(<TestComponent params={[1, 0, 3]} />);
     const firstCount = counter.howManyTimesBeenCalled();

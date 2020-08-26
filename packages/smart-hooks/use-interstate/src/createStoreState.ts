@@ -7,19 +7,20 @@ import type { StoreState } from './StoreState';
 
 export function createStoreState(): StoreState {
   const storeState: StoreState = {
-    storeMap: new Map<StateKey, MapValue<any>>(),
-    memValuesMap: new Map<StateKey, { value: any } | undefined>(),
+    storeMap: new Map<StateKey, MapValue>(),
+    memValuesMap: new Map<StateKey, { value: unknown } | undefined>(),
     settersWatchList: createSettersList({}),
     renderTask: createCyclesTask(
       () => ({}),
       () => {
         const { settersWatchList, effectTask } = storeState;
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const s of settersWatchList) {
           s.removeFromStore();
         }
 
-        storeState.memValuesMap = new Map<StateKey, { value: any } | undefined>();
+        storeState.memValuesMap = new Map<StateKey, { value: unknown } | undefined>();
         effectTask.reset();
 
         (Object.assign as TrueObjectAssign)(settersWatchList, { start: undefined, end: undefined });

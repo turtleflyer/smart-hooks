@@ -1,5 +1,8 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable symbol-description */
 import { render } from '@testing-library/react';
 import React from 'react';
+import type { FC } from 'react';
 import type { DeriveScheme, FulfillTraversingKeys } from '../../src/useTraverseKeys';
 import type { TestDescription } from '../testsAssets';
 
@@ -37,7 +40,7 @@ const testHelper: TestDescription = (p) => [
       SettersSideT extends DeriveScheme<S>
     >(
       p: TestComponentsProps<S, StateSideT, SettersSideT>
-    ) => ReturnType<React.FunctionComponent>;
+    ) => ReturnType<FC>;
 
     const TestComponent: TestComponentType = wrapWithStrictModeComponent(
       ({ scheme, eachKeyProceed, memReturn }) => {
@@ -58,8 +61,8 @@ const testHelper: TestDescription = (p) => [
       <TestComponent
         scheme={scheme1}
         eachKeyProceed={(key, sch, f1, f2) => {
-          f1('a' + sch[key].toString());
-          f2('b' + sch[key].toString());
+          f1(`a${sch[key].toString()}`);
+          f2(`b${sch[key].toString()}`);
         }}
         memReturn={memReturn1}
       />
@@ -68,7 +71,7 @@ const testHelper: TestDescription = (p) => [
     expect(memReturn1.current[0]).toEqual({ a: 'a1', 2: 'ahi', [symbolKey]: 'afalse' });
     expect(memReturn1.current[1]).toEqual({ a: 'b1', 2: 'bhi', [symbolKey]: 'bfalse' });
     expect(
-      (() => memReturn1.current[2].map((e) => ['a', '2', symbolKey].includes(e as any)))()
+      (() => memReturn1.current[2].map((e) => ['a', '2', symbolKey].includes(e as never)))()
     ).toEqual([true, true, true]);
 
     const scheme2 = { b: false };
@@ -80,8 +83,8 @@ const testHelper: TestDescription = (p) => [
       <TestComponent
         scheme={(scheme2 as unknown) as typeof scheme1}
         eachKeyProceed={(key, sch, f1, f2) => {
-          f1('c' + sch[key].toString());
-          f2('d' + sch[key].toString());
+          f1(`c${sch[key].toString()}`);
+          f2(`d${sch[key].toString()}`);
         }}
         memReturn={memReturn2}
       />
@@ -90,7 +93,7 @@ const testHelper: TestDescription = (p) => [
     expect(memReturn2.current[0]).toEqual({ a: 'c1', 2: 'chi', [symbolKey]: 'cfalse' });
     expect(memReturn2.current[1]).toEqual({ a: 'd1', 2: 'dhi', [symbolKey]: 'dfalse' });
     expect(
-      (() => memReturn2.current[2].map((e) => ['a', '2', symbolKey].includes(e as any)))()
+      (() => memReturn2.current[2].map((e) => ['a', '2', symbolKey].includes(e as never)))()
     ).toEqual([true, true, true]);
     expect(memReturn2.current[1]).toBe(memReturn1.current[1]);
 

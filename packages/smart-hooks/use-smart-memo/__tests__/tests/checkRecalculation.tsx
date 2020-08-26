@@ -1,7 +1,8 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import { TestDescription } from '../testsAssets';
+import type { FC } from 'react';
 import { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
+import { TestDescription } from '../testsAssets';
 
 const checkRecalculation: TestDescription = (p) => [
   'factory gets recalculated only when deps changed',
@@ -27,7 +28,7 @@ const checkRecalculation: TestDescription = (p) => [
     const factory4 = newFactory(counter4);
     let value4!: number;
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       param1: string;
       param2: string;
       param3: string;

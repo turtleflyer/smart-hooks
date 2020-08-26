@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const rerenderWithInitValueResetState: TestDescription = (p) => [
@@ -12,7 +13,7 @@ const rerenderWithInitValueResetState: TestDescription = (p) => [
     const testId1 = 'updater';
     const testId2 = 'listener';
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       init?: string | null;
       id?: string;
     }> = ({ init, id = subscribeId1 }) => (

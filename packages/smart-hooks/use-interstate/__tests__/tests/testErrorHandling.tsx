@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { Component, useEffect } from 'react';
+import type { FC } from 'react';
+import type { UseInterstateError } from '../../src/useInterstate';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
-import type { UseInterstateError, UseInterstateErrorMethods } from '../../src/useInterstate';
 
 const testErrorHandling: TestDescription = (p) => [
   'error handling works',
@@ -32,63 +33,49 @@ const testErrorHandling: TestDescription = (p) => [
     const subscribeId3 = 3;
     const subscribeId4 = 4;
 
-    const ErrorFallBack = () => <div data-testid={testId4}>Error</div>;
+    const ErrorFallBack: FC = () => <div data-testid={testId4}>Error</div>;
 
-    interface TestComponentChildrenArg {
-      subscribeId?: number;
-      initV1?: string;
-      initV2?: string;
-      initV3?: string;
-      throwError?: boolean;
-    }
-
-    interface TestComponentProps extends TestComponentChildrenArg {
+    interface ErrorBoundaryProps {
       resetErrorState?: { restoreValue: boolean };
     }
 
-    interface ErrorBoundaryProps extends TestComponentProps {
-      children(arg: TestComponentChildrenArg): React.ReactElement | null;
+    interface ErrorBoundaryState {
+      error?: Error | UseInterstateError | undefined;
     }
 
-    class ErrorBoundary extends React.Component<ErrorBoundaryProps, { hasError: boolean }> {
-      constructor(props: ErrorBoundaryProps) {
-        super(props);
-      }
+    class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+      state = {} as ErrorBoundaryState;
 
-      state = { hasError: false };
-
-      private errorMethods?: UseInterstateErrorMethods;
-
-      static getDerivedStateFromError() {
-        return { hasError: true };
-      }
-
-      componentDidCatch(error: Error | UseInterstateError) {
+      static getDerivedStateFromError(error: Error | UseInterstateError) {
         if (isUseInterstateError(error)) {
-          this.errorMethods = getUseInterstateErrorsHandleMethods(error);
-        } else {
-          throw error as Error;
+          return { error };
         }
+        // eslint-disable-next-line no-throw-literal
+        throw error as Error;
       }
 
-      componentDidUpdate() {
-        const { resetErrorState } = this.props;
-        if (resetErrorState && this.state.hasError) {
-          const { flushValueOfKey } = this.errorMethods!;
-          flushValueOfKey!(resetErrorState.restoreValue);
-          this.setState({ hasError: false });
+      static getDerivedStateFromProps(
+        nextProps: ErrorBoundaryProps,
+        prevState: ErrorBoundaryState
+      ): Partial<ErrorBoundaryState> | null {
+        const { resetErrorState } = nextProps;
+        const { error } = prevState;
+        if (error && resetErrorState) {
+          getUseInterstateErrorsHandleMethods(error)?.flushValueOfKey?.(
+            resetErrorState.restoreValue
+          );
+          return { error: undefined };
         }
+
+        return null;
       }
 
       render() {
-        const { children, resetErrorState, ...restProps } = this.props;
-        const { hasError } = this.state;
-
-        return <>{hasError ? <ErrorFallBack /> : children(restProps)}</>;
+        return <>{this.state.error ? <ErrorFallBack /> : this.props.children}</>;
       }
     }
 
-    const ThrowMultipleAttempt: React.FunctionComponent<{
+    const ThrowMultipleAttempt: FC<{
       throwError: boolean;
       subscribeId: number;
     }> = ({ throwError, subscribeId }) => {
@@ -103,45 +90,50 @@ const testErrorHandling: TestDescription = (p) => [
       return <></>;
     };
 
-    const TestComponent: React.FunctionComponent<TestComponentProps> = (props) => (
-      <ErrorBoundary {...props}>
-        {({
-          subscribeId = subscribeId1,
-          initV1,
-          initV2,
-          initV3,
-          throwError = false,
-        }: TestComponentChildrenArg) => (
-          <>
-            <CanListen
-              {...{
-                subscribeId,
-                testId: testId1,
-                countRender: countRender1.count,
-                initialValue: initV1,
-              }}
-            />
-            <CanListen
-              {...{
-                subscribeId,
-                testId: testId2,
-                countRender: countRender2.count,
-                initialValue: initV2,
-              }}
-            />
-            <CanListen
-              {...{
-                subscribeId,
-                testId: testId3,
-                countRender: countRender3.count,
-                initialValue: initV3,
-              }}
-            />
+    interface TestComponentProps extends ErrorBoundaryProps {
+      subscribeId?: number;
+      initV1?: string;
+      initV2?: string;
+      initV3?: string;
+      throwError?: boolean;
+    }
 
-            <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
-            <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
-          </>
-        )}
+    const TestComponent: FC<TestComponentProps> = ({
+      subscribeId = subscribeId1,
+      initV1,
+      initV2,
+      initV3,
+      resetErrorState,
+      throwError = false,
+    }) => (
+      <ErrorBoundary {...{ resetErrorState }}>
+        <CanListen
+          {...{
+            subscribeId,
+            testId: testId1,
+            countRender: countRender1.count,
+            initialValue: initV1,
+          }}
+        />
+        <CanListen
+          {...{
+            subscribeId,
+            testId: testId2,
+            countRender: countRender2.count,
+            initialValue: initV2,
+          }}
+        />
+        <CanListen
+          {...{
+            subscribeId,
+            testId: testId3,
+            countRender: countRender3.count,
+            initialValue: initV3,
+          }}
+        />
+
+        <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
+        <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
       </ErrorBoundary>
     );
 
@@ -172,7 +164,7 @@ const testErrorHandling: TestDescription = (p) => [
       <TestComponent
         resetErrorState={{ restoreValue: false }}
         subscribeId={subscribeId2}
-        initV1="Python"
+        initV1="LISP"
       />
     );
 

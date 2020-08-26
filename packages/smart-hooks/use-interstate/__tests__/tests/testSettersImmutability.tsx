@@ -1,6 +1,7 @@
 import React from 'react';
-import type { TestDescription } from '../testsAssets';
+import type { FC } from 'react';
 import type { SetInterstate } from '../../src/useInterstate';
+import type { TestDescription } from '../testsAssets';
 
 const testSettersImmutability: TestDescription = (p) => [
   'test setters are immutable',
@@ -12,7 +13,7 @@ const testSettersImmutability: TestDescription = (p) => [
     const subscribeId2 = '2';
     let memSetter!: SetInterstate<string>;
 
-    const TestComponent: React.FunctionComponent<{
+    const TestComponent: FC<{
       subscribeId: string;
       initValue: string;
     }> = wrapWithStrictModeComponent(({ subscribeId, initValue }) => {

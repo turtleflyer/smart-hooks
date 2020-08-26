@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -41,7 +42,7 @@ const testIndependentMode: TestDescription = (p) => [
     const countRender7 = executionCountersFactory();
     const countRender8 = executionCountersFactory();
 
-    const TestComponent: React.FunctionComponent<{}> = () => (
+    const TestComponent: FC = () => (
       <>
         <CanListen
           {...{ testId: testId1, subscribeId, countRender: countRender1.count, initialValue: '' }}

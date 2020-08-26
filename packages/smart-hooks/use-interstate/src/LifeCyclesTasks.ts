@@ -1,7 +1,7 @@
 export interface LifeCyclesTaskBase {
   done: boolean;
-  readonly run: (...args: any[]) => void;
-  readonly reset: (...args: any[]) => void;
+  readonly run: (...args: never[]) => void;
+  readonly reset: (...args: never[]) => void;
 }
 
 export interface StoreRenderTask extends LifeCyclesTaskBase {
