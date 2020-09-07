@@ -419,17 +419,24 @@ declare const rememberActiveUser: UserRecord;
 const [useSubscribe02] = useInterstate('activeUser', rememberActiveUser);
 const activeUser02 = useSubscribe02(); // UserRecord
 
-const [useSubscribe03] = useInterstate('activeUser', 'John Doe'); // Error
+const [useSubscribe03] = useInterstate<'permissions' | 'premiumStatus'>('permissions', undefined);
+const activeUser03 = useSubscribe03(); // boolean | string[]
 
-const [useSubscribe04] = useInterstate<'permissions' | 'premiumStatus'>('permissions', undefined);
-const activeUser04 = useSubscribe04(); // boolean | string[]
-
-const [useSubscribe05] = useInterstate({ activeUser: undefined, cart: undefined });
-const activeUser05 = useSubscribe05();
+const [useSubscribe04] = useInterstate({ activeUser: undefined, cart: undefined });
+const activeUser04 = useSubscribe04();
 // { readonly activeUser: UserRecord; readonly cart: CartState }
 
+const [useSubscribe05] = useInterstate('activeUser', 'John Doe');
+// Error: "activeUser" property is not a string
+
 const [useSubscribe06] = useInterstate({ activeUser: 'John Doe', cart: undefined });
-// Error: activeUser is not a string
+// Error: "activeUser" property is not a string
+
+const [useSubscribe07] = useInterstate({ premiumStatus: true, subscriptionDate: undefined });
+// Error: "subscriptionDate" property is missing in State interface
+
+const [useSubscribe08] = useInterstate('gender', 'female');
+// Error: "gender" property is missing in State interface
 ```
 
 It is also fine to use `getUseInterstate` without providing a state interface. In this case, it is
