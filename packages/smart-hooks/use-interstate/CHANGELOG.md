@@ -1,3 +1,16 @@
+## 3.0.0 (Sep 6, 2020)
+
+### Breaking change
+
+- The library's target for polyfill of CommonJS and ES Modules is changed to the last versions of
+  browsers that is aligned with development mode of React.
+
+### Change
+
+- Add @types/react to dependencies.
+- Add Typescript interfaces to `getUseInterstate` and `useInterstate` allowing to manage massive
+  complex states.
+
 ## 2.1.4 (Aug 7, 2020)
 
 ### Fix

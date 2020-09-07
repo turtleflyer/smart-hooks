@@ -1,3 +1,14 @@
+## 2.0.0 (Sep 6, 2020)
+
+### Breaking change
+
+- The library's target for polyfill of CommonJS and ES Modules is changed to the last versions of
+  browsers that is aligned with development mode of React.
+
+### Change
+
+- Add @types/react to dependencies.
+
 ## 1.1.3 (Aug 7, 2020)
 
 ### Changed
