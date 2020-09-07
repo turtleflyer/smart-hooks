@@ -85,13 +85,17 @@ You must keep in mind two notable differences from `useState`.
    const state = useSubscribe();
    ```
 
-   `useInterstate` is not giving a stored value just after calling the hook. Instead, it returns
-   other hook that, being called, for its part returns a requested value of the state. The returned
-   subscription hook obeys [the rules of hooks](https://reactjs.org/docs/hooks-rules.html). It may
-   not be in a conditional clause, for example. Exactly this hook will listen to state changes and
-   trigger re-rendering the component when the change occurs. Indeed, we broke up the subscribing
-   process onto two steps due to a performance cost coming along with it, and oftentimes you need
-   only to have a way to change the state not to subscribe to those changes. Let us take a look at
+   `useInterstate` will not give a stored value just after calling the hook. Instead, it returns
+   another hook that, being called, for its part returns a requested value of the state. The
+   returned subscription function is considered a standard hook, so it must obey [the rules of
+   hooks](https://reactjs.org/docs/hooks-rules.html) from the very moment of birth. It may not be in
+   a conditional clause, for example. Exactly this hook will listen to state changes and trigger
+   re-rendering the component when the change occurs. Indeed, we broke up the subscribing process
+   onto two separate steps because we aimed to create a tool that has a number of words in the
+   vocabulary as small as possible but still gets a choice to opt-in subscribing on demand.
+   Otherwise, as performing a subscription to the state in a body of a React component has its own
+   performance cost you would get forced to assume it whenever using the hook even if the only thing
+   you need is to have a setter to manipulate the state not listening to it. Let us take a look at
    different scenarios. If we only need to have a function to update the sate:
 
    ```js
@@ -119,7 +123,7 @@ calls in the same component after each re-rendering. (It is how standard `useSta
 
 ### `useInterstate({key1: initValue1, key2: initValue2})`
 
-The second interface is similar to what is using in our other hook
+The second call interface is similar to what is using in our other hook
 [`useMultiState`](https://github.com/turtleflyer/smart-hooks/blob/master/packages/smart-hooks/use-multi-state#readme).
 And as in the case of `useMultiState`, this call interface replaces multiple uses of the hook in one
 component.
@@ -195,7 +199,7 @@ const state = useSubscribe();
 ## Important notes
 
 There are some limitations to using `useInterstate` that, when being broken, may lead to errors.
-Also, there are some advanced use cases that may add power and resilience to your code.
+Also, some advanced use cases may add power and resilience to your code.
 
 - One of the powerful abilities of useInterstate is that it can resubscribe to different keys of the
   global state dynamically.
@@ -209,15 +213,15 @@ Also, there are some advanced use cases that may add power and resilience to you
   const [useSubscribe, setState] = useInterstate(received.passKey, received.initVForReceivedKey);
   ```
 
-  Every time a key value that passed to `useInterstate` changes the hook goes back to the stage
+  Every time a key value that is passed to `useInterstate` changes the hook goes back to the stage
   where it sees whether the record for the new key has not been initialized, so `useInterstate`
-  tries to initialize the record using a provided argument. After that you become subscribed to the
-  new key of the state and is able to manipulate it.
+  tries to initialize the record using a provided argument. After that, you become subscribed to the
+  new key of the state and can manipulate it.
 
   It is true for [the first call interface](#useInterstatekey-initValue). When you pass a
-  multi-state object for the first time the hook will memoize it and use it over the course of the
-  life of the component regardless you change it later. If you switch from one interface to another
-  it will cause an error.
+  multi-state object for the first time the hook will memoize it and use it throughout the life of
+  the component regardless you change it later. If you switch from one interface to another it will
+  cause an error.
 
 - Before accessing the value of a particular key of the state it must be initialized with a provided
   default value.
@@ -232,13 +236,13 @@ Also, there are some advanced use cases that may add power and resilience to you
 
   ```js
   setState('Vincent van Gogh');
-  // Calling setState is reckoned as an access to the state, so still error
+  // Calling setState is reckoned as access to the state, so still error
   ```
 
 - It is not possible to initialize the key by omitting the default value or explicitly passing
-  `undefined`. If you need the default value to be `undefined`, then passing a function returning
-  `undefined` as an init argument is required. If you omit any default value or pass `undefined`, it
-  will mean skipping the initializing step.
+  `undefined`. If you need to have the default value being `undefined`, then passing a function
+  returning `undefined` as an init argument is required. If you omit any default value or pass
+  `undefined`, it will mean skipping the initializing step.
 
   ```js
   const [useSubscribe, setState] = useInterstate('color', () => undefined);
@@ -292,8 +296,8 @@ Also, there are some advanced use cases that may add power and resilience to you
   // If they are called both, it will throw an error
   ```
 
-- A setter function returned by `useInterstate` is not changing during the component life and having
-  stable identity similarly to the standard hook
+- A setter function returned by `useInterstate` will not change during the component life and always
+  has a stable identity similar to the standard hook
   [`useState`](https://reactjs.org/docs/hooks-reference.html#usestate).
 
 ## Scope
@@ -302,8 +306,8 @@ The notable distinction of `useInterstate` comparing with other global state man
 it does not require wrapping the whole tree into a specific context provider component. The library
 is working with no additional requirements. It is especially important when you prototyping as you
 do not need to get interrupted by annoying duties to make specific time-consuming prerequisites.
-Unique keys are in use broadly within the boundaries of the entire application with exactly same
-values for any given key right after the first component with `useInterstate` taking this key as an
+Unique keys are in use broadly within the boundaries of the entire application with the same values
+for any given key right after the first component with `useInterstate` taking this key as an
 argument has been rendered. But what if we want to use the identical keys in different parts of the
 code in isolation? The library provides a special wrapping component `Scope`. It cuts a branch of
 components tree giving it a separate space where you have an isolated state. It is useful when you
@@ -382,3 +386,80 @@ There are two approaches to avoid this scenario:
    ```
 
    Just remember to use the same instances of the hook and `Scope` component across the entire app.
+
+## Typescript and managing complicated state structures
+
+When using `useInterstate` as a JavaScript function it feels much handier in situations where a
+developer wants a rapid simple solution. Drafting and prototyping are such examples. But when it
+comes to a need for managing a complicated various state structure `useInterstate` becomes weak and
+not so useful. JavaScript developer must trace every key name and its relation to the meaning of the
+particular state record on their own. It is a significant limitation of using this hook in big
+projects.
+
+The good news is we have cared about the capabilities of `useInterstate` to put its powerful
+potential and resilience into projects of any grade of sophistication. And it is with no sacrifice
+in terms of simplicity of use. Everything you need is to provide a state interface to
+get`UseInterstate` within the framework of Typescript. On its return, you will have a
+`useInterstate` hook that remembers the interface so you will never get lost.
+
+```ts
+interface State {
+  activeUser: UserRecord;
+  permissions: string[];
+  premiumStatus: boolean;
+  cart: CartState;
+}
+
+const { useInterstate } = getUseInterstate<State>();
+
+const [useSubscribe01] = useInterstate('activeUser', undefined);
+const activeUser01 = useSubscribe01(); // UserRecord
+
+declare const rememberActiveUser: UserRecord;
+const [useSubscribe02] = useInterstate('activeUser', rememberActiveUser);
+const activeUser02 = useSubscribe02(); // UserRecord
+
+const [useSubscribe03] = useInterstate('activeUser', 'John Doe'); // Error
+
+const [useSubscribe04] = useInterstate<'permissions' | 'premiumStatus'>('permissions', undefined);
+const activeUser04 = useSubscribe04(); // boolean | string[]
+
+const [useSubscribe05] = useInterstate({ activeUser: undefined, cart: undefined });
+const activeUser05 = useSubscribe05();
+// { readonly activeUser: UserRecord; readonly cart: CartState }
+
+const [useSubscribe06] = useInterstate({ activeUser: 'John Doe', cart: undefined });
+// Error: activeUser is not a string
+```
+
+It is also fine to use `getUseInterstate` without providing a state interface. In this case, it is
+the responsibility of a developer to maintain the soundness of data types.
+
+```ts
+const { useInterstate } = getUseInterstate();
+
+const [useSubscribe01] = useInterstate('activeUser', undefined);
+const activeUser01 = useSubscribe01(); // unknown
+
+declare const rememberActiveUser: UserRecord;
+const [useSubscribe02] = useInterstate('activeUser', rememberActiveUser);
+const activeUser02 = useSubscribe02(); // UserRecord
+
+const [useSubscribe03] = useInterstate<UserRecord>('activeUser', 'John Doe'); // Error
+
+const [useSubscribe04] = useInterstate<string[]>('permissions', undefined);
+const activeUser04 = useSubscribe04(); // string[]
+
+const [useSubscribe05] = useInterstate<{ activeUser: UserRecord; cart: CartState }>({
+  activeUser: undefined,
+  cart: undefined,
+});
+const activeUser05 = useSubscribe05();
+// { readonly activeUser: UserRecord; readonly cart: CartState }
+
+const [useSubscribe06] = useInterstate<{ activeUser: UserRecord; cart: CartState }>({
+  activeUser: 'John Doe',
+  cart: undefined,
+});
+// Error: activeUser is not a string
+```
