@@ -1,7 +1,7 @@
 import type { TrueObjectAssign } from './CommonTypes';
 import { createCyclesTask } from './createLifeCyclesTask';
 import { createSettersList } from './createSettersList';
-import type { StateKey } from './InterstateParam';
+import type { StateKey } from './UseInterstateInterface';
 import type { MapValue } from './StoreMap';
 import type { StoreState } from './StoreState';
 

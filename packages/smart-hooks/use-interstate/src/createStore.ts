@@ -8,7 +8,7 @@ import type {
   InterstateParam,
   Setter,
   StateKey,
-} from './InterstateParam';
+} from './UseInterstateInterface';
 import { removeSetterEntry } from './removeSetterEntry';
 import type { SettersWatchList, SettersWatchListEntry } from './SettersLists';
 import { isSetterListEntryErrorChunk } from './StoreMap';

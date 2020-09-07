@@ -5,39 +5,20 @@ import type { FC } from 'react';
 import { createStore } from './createStore';
 import { UseInterstateErrorCodes } from './errorHandle';
 import type { UseInterstateThrowError } from './errorHandle';
-import type { InterstateInitializeParam, InterstateParam, StateKey } from './InterstateParam';
 import type { SetterMethods, Store, StoreMethods } from './StoreState';
+import type {
+  GetUseInterstate,
+  InterstateInitializeParam,
+  InterstateParam,
+  SetInterstate,
+  StateKey,
+  UseInterstate,
+  UseInterstateInitializeObject,
+  UseInterstateSettersObject,
+  UseInterstateStateObject,
+} from './UseInterstateInterface';
 
-type UnsealReadOnly<R extends object> = { [P in keyof R]: R[P] };
-
-export type UseInterstateInitializeObject<S extends object> = {
-  [P in keyof S]: InterstateInitializeParam<S[P]> | undefined;
-};
-
-export type SetInterstate<T extends unknown = unknown> = (p: InterstateParam<T>) => void;
-
-export type UseInterstateSettersObject<S extends object> = {
-  readonly [P in keyof S]: SetInterstate<S[P]>;
-};
-
-export type UseInterstateStateObject<S extends object> = {
-  readonly [P in keyof S]: S[P];
-};
-
-export interface UseInterstate {
-  <T extends undefined>(key: StateKey, initValue?: T): [() => unknown, SetInterstate<unknown>];
-
-  <S extends object>(stateScheme: UseInterstateInitializeObject<S>): [
-    () => UseInterstateStateObject<S>,
-    UseInterstateSettersObject<S>
-  ];
-
-  <T extends unknown>(key: StateKey, initValue?: InterstateInitializeParam<T>): T[] extends void[]
-    ? [() => undefined, SetInterstate<undefined>]
-    : [() => T, SetInterstate<T>];
-}
-
-export function getUseInterstate(): { Scope: FC; useInterstate: UseInterstate } {
+export const getUseInterstate: GetUseInterstate = <M extends object>() => {
   let globalStore: Store;
 
   type ScopeContextValue = { readonly store: Store } | undefined;
@@ -70,11 +51,15 @@ export function getUseInterstate(): { Scope: FC; useInterstate: UseInterstate } 
   }
 
   const useInterstate = (<T extends unknown>(
-    p1: StateKey | UseInterstateInitializeObject<T & object>,
+    a1: StateKey | UseInterstateInitializeObject<T & object>,
     initValue?: InterstateInitializeParam<T>
   ):
     | [() => T, SetInterstate<T>]
-    | [() => UseInterstateStateObject<T & object>, UseInterstateSettersObject<T & object>] => {
+    | [() => UseInterstateStateObject<T & object, M>, UseInterstateSettersObject<T & object, M>]
+    | [
+        () => UseInterstateStateObject<T & object, T & object>,
+        UseInterstateSettersObject<T & object, T & object>
+      ] => {
     const mainRecord = useRef({} as MainHookState);
 
     const {
@@ -156,40 +141,50 @@ export function getUseInterstate(): { Scope: FC; useInterstate: UseInterstate } 
       const [subscribeObject, settersObject, enumKeys] = useTraverseKeys<
         UseInterstateInitializeObject<S>,
         { readonly [P in keyof S]: () => S[P] },
-        UseInterstateSettersObject<S>
+        { readonly [P in keyof S]: SetInterstate<S[P]> }
       >(stateScheme, (key, memStateScheme, subscribeObjectFulfill, settersObjectFulfill) => {
-        const [useSubscr, setter] = usePlainInterstate(key, memStateScheme[key]);
+        const [useSubscr, setter] = usePlainInterstate<S[keyof S]>(key, memStateScheme[key]);
         subscribeObjectFulfill(useSubscr);
         settersObjectFulfill(setter);
       });
 
       function useSubscribe(): UseInterstateStateObject<S> {
-        const evalState = {} as UnsealReadOnly<UseInterstateStateObject<S>>;
+        const evalState = {} as { [P in keyof S]: S[P] };
         enumKeys.forEach((key) => {
           evalState[key] = subscribeObject[key]();
           return evalState;
         });
-        return evalState;
+        return evalState as UseInterstateStateObject<S>;
       }
 
-      return [useSubscribe, settersObject];
+      return [useSubscribe, settersObject as UseInterstateSettersObject<S>];
     }
 
-    if (typeof p1 === 'object') {
+    if (typeof a1 === 'object') {
       checkUsingSchemeIntegrity(true);
-      return useMultiInterstate(p1);
+      return useMultiInterstate(a1);
     }
 
     checkUsingSchemeIntegrity(false);
-    return usePlainInterstate(p1, initValue);
-  }) as UseInterstate;
+    return usePlainInterstate(a1, initValue);
+  }) as UseInterstate<M>;
 
   return { Scope, useInterstate };
-}
+};
 
 const { Scope, useInterstate } = getUseInterstate();
 
 export { getUseInterstateErrorsHandleMethods, isUseInterstateError } from './errorHandle';
 export type { UseInterstateError, UseInterstateErrorMethods } from './errorHandle';
 export { Scope, useInterstate };
-export type { StateKey, InterstateParam, InterstateInitializeParam };
+export type {
+  GetUseInterstate,
+  InterstateInitializeParam,
+  InterstateParam,
+  SetInterstate,
+  StateKey,
+  UseInterstate,
+  UseInterstateInitializeObject,
+  UseInterstateSettersObject,
+  UseInterstateStateObject,
+};

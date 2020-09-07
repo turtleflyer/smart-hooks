@@ -4,7 +4,7 @@ import type {
   InterstateParam,
   Setter,
   StateKey,
-} from './InterstateParam';
+} from './UseInterstateInterface';
 import type { StoreMapEffectTask, StoreRenderTask } from './LifeCyclesTasks';
 import type { SettersWatchList } from './SettersLists';
 import type { StoreMap } from './StoreMap';

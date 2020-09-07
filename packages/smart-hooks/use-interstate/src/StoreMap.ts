@@ -1,5 +1,5 @@
 import type { UseInterstateErrorCodes } from './errorHandle';
-import type { Setter, StateKey } from './InterstateParam';
+import type { Setter, StateKey } from './UseInterstateInterface';
 import type { SettersListBase, SettersListEntryBase, SettersListIterator } from './SettersLists';
 
 export interface MapValueSettersListEntry extends SettersListEntryBase {

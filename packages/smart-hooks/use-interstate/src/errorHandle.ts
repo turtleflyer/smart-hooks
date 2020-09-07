@@ -1,5 +1,5 @@
 import type { TrueObjectAssign } from './CommonTypes';
-import type { StateKey } from './InterstateParam';
+import type { StateKey } from './UseInterstateInterface';
 import type { MemValueMap, StoreState } from './StoreState';
 import type { MapValue } from './StoreMap';
 

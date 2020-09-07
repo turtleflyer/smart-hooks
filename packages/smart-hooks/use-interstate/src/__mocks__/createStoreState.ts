@@ -1,5 +1,5 @@
 import { createStoreState } from '../createStoreState';
-import type { StateKey } from '../InterstateParam';
+import type { StateKey } from '../UseInterstateInterface';
 import type { StoreState } from '../StoreState';
 
 const originalStoreState: StoreState[] = [];
