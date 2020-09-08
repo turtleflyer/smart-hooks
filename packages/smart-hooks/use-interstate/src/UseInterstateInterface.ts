@@ -28,17 +28,19 @@ export type UseInterstateStateObject<
   M extends object = S
 > = keyof S extends keyof M ? { readonly [P in keyof S]: M[P] } : never;
 
-export interface UseInterstate<M extends object = object> {
-  <T extends undefined & (keyof M extends never ? unknown : never)>(key: StateKey, initValue: T): [
-    () => unknown,
-    SetInterstate<unknown>
-  ];
+type ValidateStateDefined<M extends object, N extends unknown = never> = keyof M extends never
+  ? unknown
+  : N;
 
-  <
-    S extends Partial<M> &
-      (keyof M extends never ? unknown : keyof S extends keyof M ? unknown : never)
-  >(
-    stateScheme: UseInterstateInitializeObject<S>
+export interface UseInterstate<M extends object = object> {
+  <T extends undefined>(
+    key: StateKey & ValidateStateDefined<M>,
+    initValue?: T & ValidateStateDefined<M>
+  ): [() => unknown, SetInterstate<unknown>];
+
+  <S extends Partial<M>>(
+    stateScheme: UseInterstateInitializeObject<S> &
+      ValidateStateDefined<M, keyof S extends keyof M ? unknown : never>
   ): keyof M extends never
     ? [() => UseInterstateStateObject<S, S>, UseInterstateSettersObject<S, S>]
     : [() => UseInterstateStateObject<S, M>, UseInterstateSettersObject<S, M>];
@@ -48,10 +50,10 @@ export interface UseInterstate<M extends object = object> {
     SetInterstate<M[K]>
   ];
 
-  <T extends keyof M extends never ? unknown : never>(
-    key: StateKey,
+  <T extends unknown>(
+    key: StateKey & ValidateStateDefined<M>,
     initValue?: InterstateInitializeParam<T>
-  ): T[] extends void[] ? [() => undefined, SetInterstate<undefined>] : [() => T, SetInterstate<T>];
+  ): [T] extends [void] ? [() => undefined, SetInterstate<undefined>] : [() => T, SetInterstate<T>];
 }
 
 export interface GetUseInterstate {

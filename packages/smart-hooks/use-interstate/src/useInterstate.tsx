@@ -75,14 +75,14 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
       }
     }
 
-    function usePlainInterstate<T extends unknown>(
+    function usePlainInterstate<P extends unknown>(
       key: StateKey,
-      initV?: InterstateInitializeParam<T>
-    ): [() => T, SetInterstate<T>] {
+      initV?: InterstateInitializeParam<P>
+    ): [() => P, SetInterstate<P>] {
       const { initializeState, runRenderTask, runEffectTask, throwError: throwErr } = useStore();
       mainRecord.current = { ...mainRecord.current, throwError: throwErr };
 
-      const memState = useRef({} as StoreMethods<T>);
+      const memState = useRef({} as StoreMethods<P>);
       runRenderTask(key);
 
       useSmartMemo(() => {
@@ -124,7 +124,7 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
         return getValue();
       }
 
-      const setInterstate = useCallback<SetInterstate<T>>((val) => {
+      const setInterstate = useCallback<SetInterstate<P>>((val) => {
         const {
           current: { setValue },
         } = memState;

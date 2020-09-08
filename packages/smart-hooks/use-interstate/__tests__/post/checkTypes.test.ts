@@ -269,13 +269,19 @@ describe('Check types', () => {
       >;
 
       // @ts-expect-error
-      const tdErr01 = useInterstateDefined('1', (c: number) => c + 1);
+      const tdErr01 = useInterstateDefined('1', () => 1);
       // @ts-expect-error
       const tdErr02 = useInterstateDefined<string | boolean[]>(77, () => ['a']);
       // @ts-expect-error
       const tdErr03 = useInterstateDefined(symbolKey, d02);
       // @ts-expect-error
       const tdErr04 = useInterstateDefined<string>('a', d01);
+      // @ts-expect-error
+      const tdErr05 = useInterstateDefined(1, undefined);
+      // @ts-expect-error
+      const tdErr06 = useInterstateDefined(1);
+      // @ts-expect-error
+      const tdErr07 = useInterstateDefined('go', (y: boolean) => ['no']);
 
       const s01 = { a: () => 'hurray' };
       const s02 = {
