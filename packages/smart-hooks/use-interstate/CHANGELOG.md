@@ -1,3 +1,9 @@
+## 3.1.0 (Sep 8, 2020)
+
+### Change
+
+- Improve `UseInterstate` interface having more consistent typing.
+
 ## 3.0.0 (Sep 6, 2020)
 
 ### Breaking change
