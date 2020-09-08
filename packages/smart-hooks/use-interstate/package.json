@@ -1,6 +1,6 @@
 {
   "name": "@smart-hooks/use-interstate",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "useState on steroids",
   "keywords": [
     "react"
