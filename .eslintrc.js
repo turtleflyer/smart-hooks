@@ -69,6 +69,10 @@ module.exports = {
       rules: {
         ...defRules,
         '@typescript-eslint/ban-types': ['error', { types: { object: false } }],
+        '@typescript-eslint/no-shadow': 'error',
+        '@typescript-eslint/no-use-before-define': 'error',
+        'no-shadow': 'off',
+        'no-use-before-define': 'off',
       },
     },
   ],
