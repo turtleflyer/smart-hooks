@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { FC } from 'react';
-import type { Reveal, toBeExact } from '../../../../../test_utilities/checkTypes';
+import type { Reveal, ToBeExact } from '../../../../../test_utilities/checkTypes';
 import { getUseInterstate, useInterstate } from '../../lib/use-interstate';
 import type { InterstateParam, SetInterstate, UseInterstate } from '../../lib/use-interstate';
 
@@ -35,25 +35,25 @@ describe('Check types', () => {
       const tu14 = useInterstate<undefined>(Symbol('1'), u05);
       const tu15 = useInterstate<string>(Symbol('1'), u06);
 
-      type CU01 = Reveal<toBeExact<typeof tu01, [() => string, SetInterstate<string>]>>;
-      type CU02 = Reveal<toBeExact<typeof tu02, [() => string, SetInterstate<string>]>>;
-      type CU03 = Reveal<toBeExact<typeof tu03, [() => () => void, SetInterstate<() => void>]>>;
-      type CU04 = Reveal<toBeExact<typeof tu04, [() => undefined, SetInterstate<undefined>]>>;
-      type CU05 = Reveal<toBeExact<typeof tu05, [() => undefined, SetInterstate<undefined>]>>;
-      type CU06 = Reveal<toBeExact<typeof tu06, [() => unknown, SetInterstate<unknown>]>>;
-      type CU07 = Reveal<toBeExact<typeof tu07, [() => unknown, SetInterstate<unknown>]>>;
-      type CU08 = Reveal<toBeExact<typeof tu08, [() => string, SetInterstate<string>]>>;
-      type CU09 = Reveal<toBeExact<typeof tu09, [() => string, SetInterstate<string>]>>;
-      type CU10 = Reveal<toBeExact<typeof tu10, [() => string, SetInterstate<string>]>>;
-      type CU11 = Reveal<toBeExact<typeof tu11, [() => string, SetInterstate<string>]>>;
+      type CU01 = Reveal<ToBeExact<typeof tu01, [() => string, SetInterstate<string>]>>;
+      type CU02 = Reveal<ToBeExact<typeof tu02, [() => string, SetInterstate<string>]>>;
+      type CU03 = Reveal<ToBeExact<typeof tu03, [() => () => void, SetInterstate<() => void>]>>;
+      type CU04 = Reveal<ToBeExact<typeof tu04, [() => undefined, SetInterstate<undefined>]>>;
+      type CU05 = Reveal<ToBeExact<typeof tu05, [() => undefined, SetInterstate<undefined>]>>;
+      type CU06 = Reveal<ToBeExact<typeof tu06, [() => unknown, SetInterstate<unknown>]>>;
+      type CU07 = Reveal<ToBeExact<typeof tu07, [() => unknown, SetInterstate<unknown>]>>;
+      type CU08 = Reveal<ToBeExact<typeof tu08, [() => string, SetInterstate<string>]>>;
+      type CU09 = Reveal<ToBeExact<typeof tu09, [() => string, SetInterstate<string>]>>;
+      type CU10 = Reveal<ToBeExact<typeof tu10, [() => string, SetInterstate<string>]>>;
+      type CU11 = Reveal<ToBeExact<typeof tu11, [() => string, SetInterstate<string>]>>;
       type CU12 = Reveal<
-        toBeExact<typeof tu12, [() => string | boolean, SetInterstate<string | boolean>]>
+        ToBeExact<typeof tu12, [() => string | boolean, SetInterstate<string | boolean>]>
       >;
       type CU13 = Reveal<
-        toBeExact<typeof tu13, [() => string | boolean, SetInterstate<string | boolean>]>
+        ToBeExact<typeof tu13, [() => string | boolean, SetInterstate<string | boolean>]>
       >;
-      type CU14 = Reveal<toBeExact<typeof tu14, [() => undefined, SetInterstate<undefined>]>>;
-      type CU15 = Reveal<toBeExact<typeof tu15, [() => string, SetInterstate<string>]>>;
+      type CU14 = Reveal<ToBeExact<typeof tu14, [() => undefined, SetInterstate<undefined>]>>;
+      type CU15 = Reveal<ToBeExact<typeof tu15, [() => string, SetInterstate<string>]>>;
 
       // @ts-expect-error
       const tuErr01 = useInterstate('1', (c: number) => c + 1);
@@ -65,29 +65,29 @@ describe('Check types', () => {
       type T3 = number | boolean;
       type T4 = (() => string) | boolean[];
 
-      type CSI1 = Reveal<toBeExact<SetInterstate<T1>, (p: InterstateParam<string>) => void>>;
+      type CSI1 = Reveal<ToBeExact<SetInterstate<T1>, (p: InterstateParam<string>) => void>>;
       type CSI2 = Reveal<
-        toBeExact<SetInterstate<T2>, (p: InterstateParam<(a: boolean) => number>) => void>
+        ToBeExact<SetInterstate<T2>, (p: InterstateParam<(a: boolean) => number>) => void>
       >;
       type CSI3 = Reveal<
-        toBeExact<SetInterstate<T3>, (p: InterstateParam<number | boolean>) => void>
+        ToBeExact<SetInterstate<T3>, (p: InterstateParam<number | boolean>) => void>
       >;
       type CSI4 = Reveal<
-        toBeExact<SetInterstate<T4>, (p: InterstateParam<(() => string) | boolean[]>) => void>
+        ToBeExact<SetInterstate<T4>, (p: InterstateParam<(() => string) | boolean[]>) => void>
       >;
 
-      type CIP1 = Reveal<toBeExact<InterstateParam<T1>, string | ((p: string) => string)>>;
+      type CIP1 = Reveal<ToBeExact<InterstateParam<T1>, string | ((p: string) => string)>>;
       type CIP2 = Reveal<
-        toBeExact<InterstateParam<T2>, (p: (a: boolean) => number) => (a: boolean) => number>
+        ToBeExact<InterstateParam<T2>, (p: (a: boolean) => number) => (a: boolean) => number>
       >;
       type CIP3 = Reveal<
-        toBeExact<
+        ToBeExact<
           InterstateParam<T3>,
           number | boolean | ((p: number | boolean) => number | boolean)
         >
       >;
       type CIP4 = Reveal<
-        toBeExact<
+        ToBeExact<
           InterstateParam<T4>,
           boolean[] | ((p: (() => string) | boolean[]) => (() => string) | boolean[])
         >
@@ -112,19 +112,19 @@ describe('Check types', () => {
       }>(m04);
 
       type CM01 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof tm01,
           [() => { a: number; 2: string }, { a: SetInterstate<number>; 2: SetInterstate<string> }]
         >
       >;
       type CM02 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof tm02,
           [() => { [symbolKey]: boolean }, { [symbolKey]: SetInterstate<boolean> }]
         >
       >;
       type CM03 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof tm03,
           [
             () => { a: string; 2: () => void },
@@ -150,7 +150,7 @@ describe('Check types', () => {
       // >;
 
       type CM05 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof tm05,
           [
             () => { [symbolKey]: number | boolean },
@@ -159,7 +159,7 @@ describe('Check types', () => {
         >
       >;
       type CM06 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof tm06,
           [
             () => { a: string; 2: () => void },
@@ -168,7 +168,7 @@ describe('Check types', () => {
         >
       >;
       type CM07 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof tm07,
           [
             () => { a: unknown; 2: undefined; [symbolKey]: undefined },
@@ -181,7 +181,7 @@ describe('Check types', () => {
         >
       >;
       type CM08 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof tm08,
           [
             () => {
@@ -210,7 +210,7 @@ describe('Check types', () => {
         go: null | undefined | string[];
       }
       const g = getUseInterstate<State>();
-      type G = Reveal<toBeExact<typeof g, { Scope: FC; useInterstate: UseInterstate<State> }>>;
+      type G = Reveal<ToBeExact<typeof g, { Scope: FC; useInterstate: UseInterstate<State> }>>;
       const { useInterstate: useInterstateDefined } = g;
 
       const d01 = 'la';
@@ -230,12 +230,12 @@ describe('Check types', () => {
       const td09 = useInterstateDefined(2, undefined);
       const td10 = useInterstateDefined<2 | 'a'>('a', d01);
 
-      type CD01 = Reveal<toBeExact<typeof td01, [() => string, SetInterstate<string>]>>;
+      type CD01 = Reveal<ToBeExact<typeof td01, [() => string, SetInterstate<string>]>>;
       type CD02 = Reveal<
-        toBeExact<typeof td02, [() => (boolean | number)[], SetInterstate<(boolean | number)[]>]>
+        ToBeExact<typeof td02, [() => (boolean | number)[], SetInterstate<(boolean | number)[]>]>
       >;
       type CD03 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof td03,
           [
             () => (() => unknown) | { b: number | object },
@@ -243,26 +243,26 @@ describe('Check types', () => {
           ]
         >
       >;
-      type CD04 = Reveal<toBeExact<typeof td04, [() => undefined, SetInterstate<undefined>]>>;
-      type CD05 = Reveal<toBeExact<typeof td05, [() => undefined, SetInterstate<undefined>]>>;
-      type CD06 = Reveal<toBeExact<typeof td06, [() => unknown, SetInterstate<unknown>]>>;
+      type CD04 = Reveal<ToBeExact<typeof td04, [() => undefined, SetInterstate<undefined>]>>;
+      type CD05 = Reveal<ToBeExact<typeof td05, [() => undefined, SetInterstate<undefined>]>>;
+      type CD06 = Reveal<ToBeExact<typeof td06, [() => unknown, SetInterstate<unknown>]>>;
       type CD07 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof td07,
           [() => null | undefined | string[], SetInterstate<null | undefined | string[]>]
         >
       >;
       type CD08 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof td08,
           [() => null | undefined | string[], SetInterstate<null | undefined | string[]>]
         >
       >;
       type CD09 = Reveal<
-        toBeExact<typeof td09, [() => (boolean | number)[], SetInterstate<(boolean | number)[]>]>
+        ToBeExact<typeof td09, [() => (boolean | number)[], SetInterstate<(boolean | number)[]>]>
       >;
       type CD10 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof td10,
           [() => string | (boolean | number)[], SetInterstate<string | (boolean | number)[]>]
         >
@@ -306,10 +306,10 @@ describe('Check types', () => {
       const ts04 = useInterstateDefined(s04);
 
       type CS01 = Reveal<
-        toBeExact<typeof ts01, [() => { a: string }, { a: SetInterstate<string> }]>
+        ToBeExact<typeof ts01, [() => { a: string }, { a: SetInterstate<string> }]>
       >;
       type CS02 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof ts02,
           [
             () => {
@@ -328,7 +328,7 @@ describe('Check types', () => {
         >
       >;
       type CS03 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof ts03,
           [
             () => { [symbolKey]: (() => unknown) | { b: number | object } },
@@ -337,7 +337,7 @@ describe('Check types', () => {
         >
       >;
       type CS04 = Reveal<
-        toBeExact<
+        ToBeExact<
           typeof ts04,
           [
             () => {
