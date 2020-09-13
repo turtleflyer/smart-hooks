@@ -1,3 +1,9 @@
+## 3.0.0 (Sep 13, 2020)
+
+### Fix
+
+- Add React as peer dependency.
+
 ## 2.0.0 (Sep 6, 2020)
 
 ### Breaking change
