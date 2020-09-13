@@ -117,6 +117,7 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
           subscribeMemState.current = addSetter(setter);
         }, [key]);
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         useEffect(() => subscribeMemState.current?.removeSetterFromWatchList?.(), [key]);
 
         useEffect(() => () => subscribeMemState.current?.removeSetterFromKeyList?.(), []);
@@ -143,6 +144,7 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
         { readonly [P in keyof S]: () => S[P] },
         { readonly [P in keyof S]: SetInterstate<S[P]> }
       >(stateScheme, (key, memStateScheme, subscribeObjectFulfill, settersObjectFulfill) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         const [useSubscr, setter] = usePlainInterstate<S[keyof S]>(key, memStateScheme[key]);
         subscribeObjectFulfill(useSubscr);
         settersObjectFulfill(setter);

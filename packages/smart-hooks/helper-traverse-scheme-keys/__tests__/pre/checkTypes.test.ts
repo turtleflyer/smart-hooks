@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable symbol-description */
 import type { Reveal, ToBeExact } from '../../../../../test_utilities/checkTypes';

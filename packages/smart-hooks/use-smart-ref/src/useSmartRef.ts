@@ -68,6 +68,7 @@ export function useSmartRef<T extends HTMLElement = HTMLElement>(
     }
 
     memStore.current = { ...curStore, element, cleanUp };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return callbackRef;

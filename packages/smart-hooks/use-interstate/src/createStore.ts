@@ -127,7 +127,7 @@ export function createStore(): Store {
         }
 
         function removeSetterFromKeyList() {
-          // eslint-disable-next-line no-use-before-define
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           removeSetterEntry(setterEntry, mapEntryValue, {
             throwError,
             key,
@@ -135,7 +135,7 @@ export function createStore(): Store {
         }
 
         function removeSetterFromWatchList() {
-          // eslint-disable-next-line no-use-before-define
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           removeSetterEntry(watchListEntry, settersWatchList, {
             throwError,
             key,

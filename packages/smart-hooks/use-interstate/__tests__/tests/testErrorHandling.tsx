@@ -85,7 +85,7 @@ const testErrorHandling: TestDescription = (p) => [
         if (throwError) {
           setInterstate('wrong');
         }
-      }, [throwError]);
+      }, [setInterstate, throwError]);
 
       return <></>;
     };

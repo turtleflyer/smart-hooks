@@ -14,6 +14,7 @@ function mockReactUseMemo<
       return factory();
     }
     flagManager.set({ PROOF_OF_MOCK: 'original' } as Readonly<T>);
+    // eslint-disable-next-line react-hooks/rules-of-hooks, react-hooks/exhaustive-deps
     return useMemo(factory, deps);
   };
 

@@ -27,7 +27,7 @@ const testHelper: TestDescription = (p) => [
       scheme: S;
       eachKeyProceed: (
         key: keyof S,
-        p: S,
+        a: S,
         fulfillStateSide: FulfillTraversingKeys<StateSideT, keyof S>,
         fulfillSettersSide: FulfillTraversingKeys<SettersSideT, keyof S>
       ) => void;
@@ -39,7 +39,7 @@ const testHelper: TestDescription = (p) => [
       StateSideT extends DeriveScheme<S>,
       SettersSideT extends DeriveScheme<S>
     >(
-      p: TestComponentsProps<S, StateSideT, SettersSideT>
+      a: TestComponentsProps<S, StateSideT, SettersSideT>
     ) => ReturnType<FC>;
 
     const TestComponent: TestComponentType = wrapWithStrictModeComponent(

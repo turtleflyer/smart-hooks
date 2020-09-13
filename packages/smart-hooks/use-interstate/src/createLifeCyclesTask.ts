@@ -16,7 +16,7 @@ export function createCyclesTask<T extends LifeCyclesTaskBase>(
     proto: (...arg: Parameters<T[RunOrResetProp]>[]) => void
   ) {
     return (...arg: Parameters<T[P]>[]) => {
-      // eslint-disable-next-line no-use-before-define
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       if (isLifeCyclesTaskDone(memTask)) {
         if (propName === 'run') {
           return;
@@ -26,7 +26,7 @@ export function createCyclesTask<T extends LifeCyclesTaskBase>(
       }
 
       proto(...arg);
-      // eslint-disable-next-line no-use-before-define
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       memTask.done = propName === 'run';
     };
   }

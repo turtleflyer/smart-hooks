@@ -13,6 +13,7 @@ export function useMultiState<S extends object>(
   const [stateObject, settersObject] = useTraverseKeys<S, StateObject<S>, SettersObject<S>>(
     stateScheme,
     (key, memStateScheme, stateObjectFulfill, settersObjectFulfill) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [state, setter] = useState(memStateScheme[key]);
       stateObjectFulfill(state);
       settersObjectFulfill(setter);

@@ -5,7 +5,7 @@ import { cleanup } from '@testing-library/react';
 import testHelper from './tests/testHelper';
 import { AssetsImport, TestParameter, UseTraverseKeysImport } from './testsAssets';
 
-const mainTestSuit = (packagePath: string) =>
+const mainTestSuit = (packagePath: string): void =>
   describe('Test useMultiState correctness', () => {
     const testParameter: TestParameter = {} as TestParameter;
 

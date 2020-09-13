@@ -43,7 +43,9 @@ export function useTraverseKeys<
         scheme,
         [
           ...Object.keys(scheme),
-          ...Object.getOwnPropertySymbols(scheme).filter((key) => scheme.propertyIsEnumerable(key)),
+          ...Object.getOwnPropertySymbols(scheme).filter((key) =>
+            Object.prototype.propertyIsEnumerable.call(scheme, key)
+          ),
         ],
       ] as [S, (keyof S)[]]
   );

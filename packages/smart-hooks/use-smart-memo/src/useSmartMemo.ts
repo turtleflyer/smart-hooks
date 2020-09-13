@@ -25,6 +25,7 @@ function useSmartMemo<T extends unknown>(factory: () => T, deps: ReadonlyArray<u
     }
 
     return curValue as T;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
 
