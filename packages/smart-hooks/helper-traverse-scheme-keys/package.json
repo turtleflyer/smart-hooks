@@ -36,5 +36,8 @@
   },
   "bugs": {
     "url": "https://github.com/turtleflyer/smart-hooks/issues"
+  },
+  "peerDependencies": {
+    "react": "^16.9.0"
   }
 }
