@@ -78,14 +78,15 @@ const testErrorHandling: TestDescription = (p) => [
     const ThrowMultipleAttempt: FC<{
       throwError: boolean;
       subscribeId: number;
-    }> = ({ throwError, subscribeId }) => {
+      value: string;
+    }> = ({ throwError, subscribeId, value }) => {
       const [, setInterstate] = useInterstate(subscribeId);
 
       useEffect(() => {
         if (throwError) {
-          setInterstate('wrong');
+          setInterstate(value);
         }
-      }, [setInterstate, throwError]);
+      }, [setInterstate, throwError, value]);
 
       return <></>;
     };
@@ -132,8 +133,8 @@ const testErrorHandling: TestDescription = (p) => [
           }}
         />
 
-        <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
-        <ThrowMultipleAttempt {...{ subscribeId, throwError }} />
+        <ThrowMultipleAttempt {...{ subscribeId, throwError, value: 'wrong' }} />
+        <ThrowMultipleAttempt {...{ subscribeId, throwError, value: 'wronger' }} />
       </ErrorBoundary>
     );
 

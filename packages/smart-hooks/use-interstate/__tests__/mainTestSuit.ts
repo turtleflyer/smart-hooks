@@ -6,6 +6,7 @@ import { flagManager } from './testFlags';
 import checkInitializationConcurrency from './tests/checkInitializationConcurrency';
 import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
 import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetState';
+import setSameValueRepeatedly from './tests/setSameValueRepeatedly';
 import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
 import sophisticatedStructure from './tests/sophisticatedStructure';
 import testChangeInterface from './tests/testChangeInterface';
@@ -82,6 +83,7 @@ const mainTestSuit = (packagePath: string): void =>
     test(...testErrorHandling(testParameter));
     test(...testIndependentMode(testParameter));
     test(...testMultistateInterface(testParameter));
+    test(...setSameValueRepeatedly(testParameter));
 
     if (!flags.SHOULD_TEST_PERFORMANCE) {
       test(...checkInitializationConcurrency(testParameter));

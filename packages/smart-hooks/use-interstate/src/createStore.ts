@@ -110,9 +110,9 @@ export function createStore(): Store {
 
             setterEntry.setter((v) => !v);
           }
-        }
 
-        mapEntryValue.triggerRegistered = true;
+          mapEntryValue.triggerRegistered = true;
+        }
       },
 
       addSetter(setter: Setter) {
