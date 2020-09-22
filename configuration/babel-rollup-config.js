@@ -1,15 +1,8 @@
 export const baseConfig = { extensions: ['.js'], comments: false, babelHelpers: 'bundled' };
 
+process.env.BABEL_ENV = 'production';
 export const cjsPreset = {
-  presets: [
-    [
-      '@babel/preset-env',
-      {
-        targets: ['last 1 chrome version', 'last 1 firefox version', 'last 1 safari version'],
-        modules: false,
-      },
-    ],
-  ],
+  presets: ['react-app'],
 };
 
 export const umdPreset = {
