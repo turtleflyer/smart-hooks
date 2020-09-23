@@ -32,7 +32,9 @@
     "build:js": "tsc -p ./tsconfig.bundle.json --rootDir .",
     "build:types": "tsc -p ./tsconfig.bundle.json --emitDeclarationOnly --declaration --outDir lib",
     "cleanup_lib": "node ../../../bundle_utilities/cleanUpDistFolder.js lib",
-    "bundle": "npm run cleanup_lib && npm run build:js && npm run build:types && rollup -c"
+    "format:space": "node ../../../bundle_utilities/insertSpaceLines.js lib *.d.ts",
+    "format:prettier": "prettier ./lib --write --ignore-path ../../../.prettierignore",
+    "bundle": "npm run cleanup_lib && npm run build:js && npm run build:types && rollup -c && npm run format:space && npm run format:prettier"
   },
   "bugs": {
     "url": "https://github.com/turtleflyer/smart-hooks/issues"
