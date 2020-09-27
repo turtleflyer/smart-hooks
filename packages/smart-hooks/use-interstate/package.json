@@ -28,13 +28,13 @@
   },
   "scripts": {
     "test:pre": "jest pre",
-    "test:post": "jest post",
-    "build:js": "tsc -p ./tsconfig.bundle.json --rootDir .",
-    "build:types": "tsc -p ./tsconfig.bundle.json --emitDeclarationOnly --declaration --outDir lib",
-    "cleanup_lib": "node ../../../bundle_utilities/cleanUpDistFolder.js lib",
+    "test:post": "jest post --no-cache",
+    "cleanup-dirs": "node ../../../bundle_utilities/cleanUpDirs.js ts lib",
+    "compile-ts": "tsc -p ./tsconfig.bundle.json --rootDir . --declaration",
+    "proceed-type-decl": "node ../../../bundle_utilities/proceedTypeDeclarations.js",
     "format:space": "node ../../../bundle_utilities/insertSpaceLines.js lib *.d.ts",
     "format:prettier": "prettier ./lib --write --ignore-path ../../../.prettierignore",
-    "bundle": "npm run cleanup_lib && npm run build:js && npm run build:types && rollup -c && npm run format:space && npm run format:prettier"
+    "bundle": "npm run cleanup-dirs && npm run compile-ts && rollup -c && npm run proceed-type-decl && npm run format:space && npm run format:prettier"
   },
   "bugs": {
     "url": "https://github.com/turtleflyer/smart-hooks/issues"

@@ -1,13 +1,12 @@
-function determineInput(config) {
+const path = require('path');
+
+module.exports = function determineInput(tsConfig) {
   const {
-    files: [filename],
-    compilerOptions: { outDir },
-  } = config;
+    files: [tsConfigFile],
+    compilerOptions: { outDir: tsConfigOutDir },
+  } = tsConfig;
 
-  return (
-    outDir.replace(/^(\.\/)?/, './').replace(/\/?$/, '/')
-    + filename.replace(/tsx?/, 'js')
-  );
-}
+  const proceedFileName = tsConfigFile.match(/(.*(?:\/|\\))(.*)/);
 
-export { determineInput };
+  return path.resolve(tsConfigOutDir, proceedFileName[1], proceedFileName[2].replace(/tsx?/, 'js'));
+};

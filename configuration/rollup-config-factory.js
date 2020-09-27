@@ -5,8 +5,6 @@ import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
-import { bundleTypesDeclaration } from '../bundle_utilities/bundleTypesDeclaration';
-import { determineInput } from '../bundle_utilities/determineInput';
 import * as BabelRollupConfig from './babel-rollup-config';
 
 function resolveBabelConfig(configArray) {
@@ -31,8 +29,8 @@ export function rollupConfigFactory(options) {
   );
   const pkg = require('./package.json');
   const tsconfigBundle = require('./tsconfig.bundle.json');
+  const determineInput = require('../../../bundle_utilities/determineInput');
   const input = determineInput(tsconfigBundle);
-  bundleTypesDeclaration(input, pkg.types);
 
   return [
     cjsOptions
