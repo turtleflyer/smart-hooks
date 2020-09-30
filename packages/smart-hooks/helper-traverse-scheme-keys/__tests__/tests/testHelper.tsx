@@ -1,9 +1,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable symbol-description */
 import { render } from '@testing-library/react';
-import React from 'react';
 import type { FC } from 'react';
-import type { DeriveScheme, FulfillTraversingKeys } from '../../src/useTraverseKeys';
+import React from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const testHelper: TestDescription = (p) => [
@@ -14,32 +13,32 @@ const testHelper: TestDescription = (p) => [
     } = p;
 
     type TraverseReturn<
-      S extends object,
-      StateSideT extends DeriveScheme<S> = DeriveScheme<S>,
-      SettersSideT extends DeriveScheme<S> = DeriveScheme<S>
-    > = [StateSideT, SettersSideT, (keyof S)[]];
+      S extends Record<keyof never, unknown>,
+      StateSide extends Record<keyof S, unknown> = Record<keyof S, unknown>,
+      SettersSide extends Record<keyof S, unknown> = Record<keyof S, unknown>
+    > = [StateSide, SettersSide, (keyof S)[]];
 
     interface TestComponentsProps<
-      S extends object,
-      StateSideT extends DeriveScheme<S>,
-      SettersSideT extends DeriveScheme<S>
+      S extends Record<keyof never, unknown>,
+      StateSide extends Record<keyof S, unknown>,
+      SettersSide extends Record<keyof S, unknown>
     > {
       scheme: S;
       eachKeyProceed: (
         key: keyof S,
         a: S,
-        fulfillStateSide: FulfillTraversingKeys<StateSideT, keyof S>,
-        fulfillSettersSide: FulfillTraversingKeys<SettersSideT, keyof S>
+        fulfillStateSide: (p: StateSide[keyof S]) => void,
+        fulfillSettersSide: (p: SettersSide[keyof S]) => void
       ) => void;
-      memReturn: { current: TraverseReturn<S, StateSideT, SettersSideT> };
+      memReturn: { current: TraverseReturn<S, StateSide, SettersSide> };
     }
 
     type TestComponentType = <
-      S extends object,
-      StateSideT extends DeriveScheme<S>,
-      SettersSideT extends DeriveScheme<S>
+      S extends Record<keyof never, unknown>,
+      StateSide extends Record<keyof S, unknown>,
+      SettersSide extends Record<keyof S, unknown>
     >(
-      a: TestComponentsProps<S, StateSideT, SettersSideT>
+      a: TestComponentsProps<S, StateSide, SettersSide>
     ) => ReturnType<FC>;
 
     const TestComponent: TestComponentType = wrapWithStrictModeComponent(

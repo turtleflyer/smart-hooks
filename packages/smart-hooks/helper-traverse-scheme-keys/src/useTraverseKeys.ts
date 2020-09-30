@@ -1,42 +1,18 @@
 import { useRef, useState } from 'react';
 
-type UnsealReadOnly<R extends object> = { [P in keyof R]: R[P] };
-
-export type DeriveScheme<T> = { readonly [P in keyof T]: unknown };
-
-export type FulfillTraversingKeys<S, K extends keyof S> = (p: S[K]) => void;
-
 export function useTraverseKeys<
   S extends object,
-  StateSideT extends DeriveScheme<S>,
-  SettersSideT extends DeriveScheme<S>
+  StateSide extends Record<keyof S, unknown>,
+  SettersSide extends Record<keyof S, unknown>
 >(
   scheme: S,
   eachKeyProceed: (
     key: keyof S,
     p: S,
-    fulfillStateSide: FulfillTraversingKeys<StateSideT, keyof S>,
-    fulfillSettersSide: FulfillTraversingKeys<SettersSideT, keyof S>
+    fulfillStateSide: (p: StateSide[keyof S]) => void,
+    fulfillSettersSide: (p: SettersSide[keyof S]) => void
   ) => void
-): Readonly<StateSideT> extends StateSideT
-  ? Readonly<SettersSideT> extends SettersSideT
-    ? [StateSideT, SettersSideT, (keyof S)[]]
-    : never
-  : never;
-
-export function useTraverseKeys<
-  S extends object,
-  StateSideT extends DeriveScheme<S>,
-  SettersSideT extends DeriveScheme<S>
->(
-  scheme: S,
-  eachKeyProceed: (
-    key: keyof S,
-    p: S,
-    fulfillStateSide: FulfillTraversingKeys<StateSideT, keyof S>,
-    fulfillSettersSide: FulfillTraversingKeys<SettersSideT, keyof S>
-  ) => void
-): [StateSideT, SettersSideT, (keyof S)[]] {
+): [StateSide, SettersSide, (keyof S)[]] {
   const [[memScheme, enumKeys]] = useState(
     () =>
       [
@@ -50,13 +26,13 @@ export function useTraverseKeys<
       ] as [S, (keyof S)[]]
   );
 
-  const stateSide = {} as UnsealReadOnly<StateSideT>;
-  const { current: settersSide } = useRef({} as UnsealReadOnly<SettersSideT>);
+  const stateSide = {} as StateSide;
+  const { current: settersSide } = useRef({} as SettersSide);
   enumKeys.forEach((key): void => {
-    const fulfillStateSide: FulfillTraversingKeys<StateSideT, typeof key> = (p) => {
+    const fulfillStateSide: (p: StateSide[keyof S]) => void = (p) => {
       stateSide[key] = p;
     };
-    const fulfillSettersSide: FulfillTraversingKeys<SettersSideT, typeof key> = (p) => {
+    const fulfillSettersSide: (p: SettersSide[keyof S]) => void = (p) => {
       settersSide[key] = p;
     };
 
