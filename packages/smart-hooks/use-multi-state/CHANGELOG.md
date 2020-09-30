@@ -1,3 +1,13 @@
+## 2.0.1 (Sep 29, 2020)
+
+### Change
+
+- Format the polyfilled code and type definitions for better readability.
+
+### Fix
+
+- Polyfill the code in accordance with create-react-app requirements.
+
 ## 2.0.0 (Sep 6, 2020)
 
 ### Breaking change

@@ -1,3 +1,17 @@
+## 4.0.0 (Sep 29, 2020)
+
+### Breaking change
+
+- Rewrite type definitions to improve integrity.
+
+### Change
+
+- Format the polyfilled code and type definitions for better readability.
+
+### Fix
+
+- Polyfill the code in accordance with create-react-app requirements.
+
 ## 3.0.0 (Sep 13, 2020)
 
 ### Fix

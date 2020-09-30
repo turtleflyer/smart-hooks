@@ -1,3 +1,19 @@
+## 4.0.0 (Sep 29, 2020)
+
+### Breaking change
+
+- Rewrite type definitions to improve integrity and make the use of the library clearer.
+
+### Change
+
+- Format the polyfilled code and type definitions for better readability.
+- Limit included files in the final bundle by counting only those ones whose export effectively
+  contributes type definitions.
+
+### Fix
+
+- Polyfill the code in accordance with create-react-app requirements.
+
 ## 3.1.0 (Sep 8, 2020)
 
 ### Change
