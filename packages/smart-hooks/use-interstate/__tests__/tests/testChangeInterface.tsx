@@ -1,11 +1,10 @@
-import { cleanup } from '@testing-library/react';
 import type { RenderResult } from '@testing-library/react';
-import React from 'react';
+import { cleanup } from '@testing-library/react';
 import type { FC, ReactElement } from 'react';
+import React from 'react';
 import type {
-  InterstateInitializeParam,
-  StateKey,
-  UseInterstateInitializeObject,
+  InterstateInitializeObject, InterstateInitializeParam,
+  StateKey
 } from '../../src/useInterstate';
 import type { TestDescription } from '../testsAssets';
 
@@ -21,7 +20,7 @@ const testChangeInterface: TestDescription = (p) => [
 
     type Args =
       | [StateKey, InterstateInitializeParam<unknown>]
-      | [UseInterstateInitializeObject<object>];
+      | [InterstateInitializeObject<object>];
 
     const TestComponent: FC<{
       args: Args;

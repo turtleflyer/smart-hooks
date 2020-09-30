@@ -1,21 +1,21 @@
 import { useTraverseKeys } from '@smart-hooks/helper-traverse-scheme-keys';
 import { useSmartMemo } from '@smart-hooks/use-smart-memo';
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createStore } from './createStore';
-import { UseInterstateErrorCodes } from './errorHandle';
 import type { UseInterstateThrowError } from './errorHandle';
+import { UseInterstateErrorCodes } from './errorHandle';
 import type { SetterMethods, Store, StoreMethods } from './StoreState';
 import type {
   GetUseInterstate,
+  InterstateInitializeObject,
   InterstateInitializeParam,
   InterstateParam,
+  InterstateSettersObject,
+  InterstateStateObject,
   SetInterstate,
   StateKey,
   UseInterstate,
-  UseInterstateInitializeObject,
-  UseInterstateSettersObject,
-  UseInterstateStateObject,
 } from './UseInterstateInterface';
 
 export const getUseInterstate: GetUseInterstate = <M extends object>() => {
@@ -51,15 +51,11 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
   }
 
   const useInterstate = (<T extends unknown>(
-    a1: StateKey | UseInterstateInitializeObject<T & object>,
+    a1: StateKey | InterstateInitializeObject<T & object>,
     initValue?: InterstateInitializeParam<T>
   ):
     | [() => T, SetInterstate<T>]
-    | [() => UseInterstateStateObject<T & object, M>, UseInterstateSettersObject<T & object, M>]
-    | [
-        () => UseInterstateStateObject<T & object, T & object>,
-        UseInterstateSettersObject<T & object, T & object>
-      ] => {
+    | [() => InterstateStateObject<T & object>, InterstateSettersObject<T & object>] => {
     const mainRecord = useRef({} as MainHookState);
 
     const {
@@ -75,14 +71,14 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
       }
     }
 
-    function usePlainInterstate<P extends unknown>(
+    function usePlainInterstate<PT extends unknown>(
       key: StateKey,
-      initV?: InterstateInitializeParam<P>
-    ): [() => P, SetInterstate<P>] {
+      initV?: InterstateInitializeParam<PT>
+    ): [() => PT, SetInterstate<PT>] {
       const { initializeState, runRenderTask, runEffectTask, throwError: throwErr } = useStore();
       mainRecord.current = { ...mainRecord.current, throwError: throwErr };
 
-      const memState = useRef({} as StoreMethods<P>);
+      const memState = useRef({} as StoreMethods<PT>);
       runRenderTask(key);
 
       useSmartMemo(() => {
@@ -125,7 +121,7 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
         return getValue();
       }
 
-      const setInterstate = useCallback<SetInterstate<P>>((val) => {
+      const setInterstate = useCallback<SetInterstate<PT>>((val) => {
         const {
           current: { setValue },
         } = memState;
@@ -136,30 +132,33 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
       return [useSubscribe, setInterstate];
     }
 
-    function useMultiInterstate<S extends object>(
-      stateScheme: UseInterstateInitializeObject<S>
-    ): [() => UseInterstateStateObject<S>, UseInterstateSettersObject<S>] {
+    function useMultiInterstate(
+      stateScheme: InterstateInitializeObject<T & object>
+    ): [() => InterstateStateObject<T & object>, InterstateSettersObject<T & object>] {
       const [subscribeObject, settersObject, enumKeys] = useTraverseKeys<
-        UseInterstateInitializeObject<S>,
-        { readonly [P in keyof S]: () => S[P] },
-        { readonly [P in keyof S]: SetInterstate<S[P]> }
+        InterstateInitializeObject<T & object>,
+        { readonly [P in keyof (T & object)]: () => (T & object)[P] },
+        { readonly [P in keyof (T & object)]: SetInterstate<(T & object)[P]> }
       >(stateScheme, (key, memStateScheme, subscribeObjectFulfill, settersObjectFulfill) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [useSubscr, setter] = usePlainInterstate<S[keyof S]>(key, memStateScheme[key]);
+        const [useSubscr, setter] = usePlainInterstate<(T & object)[keyof (T & object)]>(
+          key,
+          memStateScheme[key]
+        );
         subscribeObjectFulfill(useSubscr);
         settersObjectFulfill(setter);
       });
 
-      function useSubscribe(): UseInterstateStateObject<S> {
-        const evalState = {} as { [P in keyof S]: S[P] };
+      function useSubscribe(): InterstateStateObject<T & object> {
+        const evalState = {} as { [P in keyof (T & object)]: (T & object)[P] };
         enumKeys.forEach((key) => {
           evalState[key] = subscribeObject[key]();
           return evalState;
         });
-        return evalState as UseInterstateStateObject<S>;
+        return evalState as InterstateStateObject<T & object>;
       }
 
-      return [useSubscribe, settersObject as UseInterstateSettersObject<S>];
+      return [useSubscribe, settersObject as InterstateSettersObject<T & object>];
     }
 
     if (typeof a1 === 'object') {
@@ -186,7 +185,7 @@ export type {
   SetInterstate,
   StateKey,
   UseInterstate,
-  UseInterstateInitializeObject,
-  UseInterstateSettersObject,
-  UseInterstateStateObject,
+  InterstateStateObject,
+  InterstateInitializeObject,
+  InterstateSettersObject,
 };

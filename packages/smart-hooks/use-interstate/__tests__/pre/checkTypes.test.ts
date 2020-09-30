@@ -5,12 +5,32 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { FC } from 'react';
 import type { Reveal, ToBeExact } from '../../../../../test_utilities/checkTypes';
-import { getUseInterstate, useInterstate } from '../../src/useInterstate';
-import type { InterstateParam, SetInterstate, UseInterstate } from '../../src/useInterstate';
+import type {
+  GetUseInterstate,
+  InterstateInitializeObject,
+  InterstateInitializeParam,
+  InterstateParam,
+  InterstateSettersObject,
+  InterstateStateObject,
+  SetInterstate,
+  StateKey,
+  UseInterstate,
+  UseInterstateError,
+  UseInterstateErrorMethods,
+} from '../../src/useInterstate';
+import {
+  getUseInterstate,
+  getUseInterstateErrorsHandleMethods,
+  isUseInterstateError,
+  useInterstate,
+} from '../../src/useInterstate';
 
 describe('Check types', () => {
   test('types are consistent', () => {
     const testIt = () => {
+      type C01 = Reveal<ToBeExact<typeof getUseInterstate, GetUseInterstate>>;
+      type C02 = Reveal<ToBeExact<StateKey, number | string | symbol>>;
+
       const symbolKey = Symbol('jee');
 
       const u01 = 'ni';
@@ -369,6 +389,167 @@ describe('Check types', () => {
       const tsErr03 = useInterstateDefined({ [symbolKey]: () => () => 'eh', b: null });
       // @ts-expect-error
       const tsErr04 = useInterstateDefined({ a: 'bo', er: 2 });
+
+      const e01 = new Error() as UseInterstateError;
+      const e02 = new Error();
+
+      const te01 = getUseInterstateErrorsHandleMethods(e01);
+      const te02 = getUseInterstateErrorsHandleMethods(e02);
+
+      type CE01 = Reveal<ToBeExact<typeof te01, UseInterstateErrorMethods>>;
+      type CE02 = Reveal<ToBeExact<typeof te02, undefined>>;
+
+      const tee01 = isUseInterstateError(e01);
+      const tee02 = isUseInterstateError(e02);
+
+      type CEE01 = Reveal<ToBeExact<typeof tee01, boolean>>;
+      type CEE02 = Reveal<ToBeExact<typeof tee02, boolean>>;
+
+      type CUIP01 = Reveal<ToBeExact<InterstateInitializeParam<string>, string | (() => string)>>;
+      type CUIP02 = Reveal<
+        ToBeExact<
+          InterstateInitializeParam<string | undefined>,
+          string | ((() => string) | (() => undefined | void))
+        >
+      >;
+      type CUIP03 = Reveal<
+        ToBeExact<
+          InterstateInitializeParam<string | boolean>,
+          string | boolean | (() => string) | (() => true) | (() => false)
+        >
+      >;
+      type CUIP04 = Reveal<
+        ToBeExact<InterstateInitializeParam<() => number | boolean>, () => () => number | boolean>
+      >;
+      type CUIP05 = Reveal<
+        ToBeExact<
+          InterstateInitializeParam<number | (() => { foo: string })>,
+          number | (() => number) | (() => () => { foo: string })
+        >
+      >;
+
+      type CUP01 = Reveal<ToBeExact<InterstateParam<string>, string | ((a: string) => string)>>;
+      type CUP02 = Reveal<
+        ToBeExact<
+          InterstateParam<string | undefined>,
+          string | undefined | ((a: string | undefined) => string | undefined)
+        >
+      >;
+      type CUP03 = Reveal<
+        ToBeExact<
+          InterstateParam<string | boolean>,
+          string | boolean | ((a: string | boolean) => string | boolean)
+        >
+      >;
+      type CUP04 = Reveal<
+        ToBeExact<
+          InterstateParam<() => number | boolean>,
+          (a: () => number | boolean) => () => number | boolean
+        >
+      >;
+      type CUP05 = Reveal<
+        ToBeExact<
+          InterstateParam<number | (() => { foo: string })>,
+          number | ((a: number | (() => { foo: string })) => number | (() => { foo: string }))
+        >
+      >;
+
+      type OS01 = Reveal<
+        ToBeExact<
+          InterstateStateObject<{ one: string; [symbolKey]: number | undefined | null }>,
+          { readonly one: string; readonly [symbolKey]: number | undefined | null }
+        >
+      >;
+      type OS02 = Reveal<
+        ToBeExact<
+          InterstateStateObject<
+            { one: string; [symbolKey]: number | undefined | null },
+            typeof symbolKey
+          >,
+          { readonly [symbolKey]: number | undefined | null }
+        >
+      >;
+      type OSErr03 = InterstateStateObject<
+        { one: string; [symbolKey]: number | undefined | null },
+        // @ts-expect-error
+        typeof symbolKey | 'two'
+      >;
+
+      type OI01 = Reveal<
+        ToBeExact<
+          InterstateInitializeObject<{ one: string; [symbolKey]: number | undefined | null }>,
+          {
+            readonly one: string | (() => string) | undefined;
+            readonly [symbolKey]:
+              | number
+              | null
+              | (() => number)
+              | (() => undefined | void)
+              | (() => null)
+              | undefined;
+          }
+        >
+      >;
+      type OI02 = Reveal<
+        ToBeExact<
+          InterstateInitializeObject<
+            { one: string; [symbolKey]: number | undefined | null },
+            typeof symbolKey
+          >,
+          {
+            readonly [symbolKey]:
+              | number
+              | null
+              | (() => number)
+              | (() => undefined | void)
+              | (() => null)
+              | undefined;
+          }
+        >
+      >;
+      type OI0Err3 = InterstateInitializeObject<
+        { one: string; [symbolKey]: number | undefined | null },
+        // @ts-expect-error
+        typeof symbolKey | 'two'
+      >;
+
+      type OSE01 = Reveal<
+        ToBeExact<
+          InterstateSettersObject<{ one: string; [symbolKey]: number | undefined | null }>,
+          {
+            readonly one: (a: string | ((p: string) => string)) => void;
+            readonly [symbolKey]: (
+              a:
+                | number
+                | undefined
+                | null
+                | ((p: number | undefined | null) => number | undefined | null)
+            ) => void;
+          }
+        >
+      >;
+      type OSE02 = Reveal<
+        ToBeExact<
+          InterstateSettersObject<
+            { one: string; [symbolKey]: number | undefined | null },
+            typeof symbolKey
+          >,
+          {
+            readonly [symbolKey]: (
+              a:
+                | number
+                | undefined
+                | null
+                | ((p: number | undefined | null) => number | undefined | null)
+            ) => void;
+          }
+        >
+      >;
+      type OSEErr03 = InterstateSettersObject<
+        { one: string; [symbolKey]: number | undefined | null },
+        // @ts-expect-error
+        typeof symbolKey | 'two'
+      >;
     };
   });
 });

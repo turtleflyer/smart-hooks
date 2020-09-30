@@ -2,10 +2,7 @@ import { cleanup, fireEvent, render } from '@testing-library/react';
 import React, { memo, useEffect } from 'react';
 import type { FC } from 'react';
 import type { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
-import type {
-  UseInterstateInitializeObject,
-  UseInterstateSettersObject,
-} from '../../src/useInterstate';
+import type { InterstateInitializeObject, InterstateSettersObject } from '../../src/useInterstate';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -58,7 +55,7 @@ const testMultistateInterface: TestDescription = (p) => [
     type InputFormProps<S extends Partial<AppState>, P extends keyof S> = {
       labelText: string;
       dataTestId: string;
-      setters: UseInterstateSettersObject<S>;
+      setters: InterstateSettersObject<S>;
       keyOfState: P;
     };
 
@@ -79,7 +76,7 @@ const testMultistateInterface: TestDescription = (p) => [
             data-testid={dataTestId}
             type="text"
             onChange={(e) =>
-              (setters as UseInterstateSettersObject<AppState>)[keyOfState as keyof AppState](
+              (setters as InterstateSettersObject<AppState>)[keyOfState as keyof AppState](
                 e.target.value
               )
             }
@@ -155,7 +152,7 @@ const testMultistateInterface: TestDescription = (p) => [
     });
 
     const TestComponent: FC<{
-      defState: UseInterstateInitializeObject<AppState>;
+      defState: InterstateInitializeObject<AppState>;
     }> = wrapWithStrictModeComponent(({ defState }) => {
       useInterstate(defState);
       const [useSubscribeState, setState] = useInterstate({
