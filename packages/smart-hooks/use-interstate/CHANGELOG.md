@@ -13,6 +13,7 @@
 ### Fix
 
 - Polyfill the code in accordance with create-react-app requirements.
+- Fix trying to update a state record with an old value second time results in an error.
 
 ## 3.1.0 (Sep 8, 2020)
 
