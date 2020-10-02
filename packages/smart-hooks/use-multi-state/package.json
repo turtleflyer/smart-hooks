@@ -10,7 +10,7 @@
   "license": "Unlicense",
   "main": "lib/use-multi-state.cjs.js",
   "module": "lib/use-multi-state.esm.js",
-  "browser": "lib/use-multi-state.umd.js",
+  "unpkg": "lib/use-multi-state.umd.js",
   "types": "lib/use-multi-state.d.ts",
   "directories": {
     "lib": "lib",

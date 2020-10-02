@@ -10,7 +10,7 @@
   "license": "Unlicense",
   "main": "lib/use-interstate.cjs.js",
   "module": "lib/use-interstate.esm.js",
-  "browser": "lib/use-interstate.umd.js",
+  "unpkg": "lib/use-interstate.umd.js",
   "types": "lib/use-interstate.d.ts",
   "directories": {
     "lib": "lib",

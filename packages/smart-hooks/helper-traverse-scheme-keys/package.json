@@ -10,7 +10,7 @@
   "license": "Unlicense",
   "main": "lib/helper-traverse-scheme-keys.cjs.js",
   "module": "lib/helper-traverse-scheme-keys.esm.js",
-  "browser": "lib/helper-traverse-scheme-keys.umd.js",
+  "unpkg": "lib/helper-traverse-scheme-keys.umd.js",
   "types": "lib/helper-traverse-scheme-keys.d.ts",
   "directories": {
     "lib": "lib",

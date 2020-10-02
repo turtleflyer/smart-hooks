@@ -10,7 +10,7 @@
   "license": "Unlicense",
   "main": "lib/use-smart-memo.cjs.js",
   "module": "lib/use-smart-memo.esm.js",
-  "browser": "lib/use-smart-memo.umd.js",
+  "unpkg": "lib/use-smart-memo.umd.js",
   "types": "lib/use-smart-memo.d.ts",
   "directories": {
     "lib": "lib",

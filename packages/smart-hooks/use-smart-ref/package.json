@@ -10,7 +10,7 @@
   "license": "Unlicense",
   "main": "lib/use-smart-ref.cjs.js",
   "module": "lib/use-smart-ref.esm.js",
-  "browser": "lib/use-smart-ref.umd.js",
+  "unpkg": "lib/use-smart-ref.umd.js",
   "types": "lib/use-smart-ref.d.ts",
   "directories": {
     "lib": "lib",
