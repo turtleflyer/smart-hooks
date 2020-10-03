@@ -1,8 +1,8 @@
 import type { TrueObjectAssign } from './CommonTypes';
 import { createSettersListIterator } from './createSettersListIterator';
-import { UseInterstateErrorCodes } from './errorHandle';
 import type { ErrorHandleOptions } from './errorHandle';
-import type { SettersListBase, SettersListIterator } from './SettersLists';
+import { UseInterstateErrorCodes } from './errorHandle';
+import type { SettersListBase } from './SettersLists';
 
 export function createSettersList<
   L extends SettersListBase,
@@ -26,5 +26,5 @@ export function createSettersList(
 
   return (Object.assign as TrueObjectAssign)(list, {
     [Symbol.iterator]: createSettersListIterator(list),
-  } as Partial<SettersListBase> & { [Symbol.iterator]: SettersListIterator });
+  });
 }

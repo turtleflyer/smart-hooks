@@ -1,4 +1,4 @@
-export type TrueObjectAssign = <T extends object, U extends Partial<T>>(
+export type TrueObjectAssign = <T extends object, U extends object>(
   target: T,
-  source: U
-) => T & U;
+  source: keyof U extends keyof T ? (U extends { [P in keyof U]: T[P] } ? U : never) : never
+) => T;

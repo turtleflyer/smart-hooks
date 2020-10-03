@@ -1,6 +1,6 @@
 import type { TrueObjectAssign } from './CommonTypes';
-import { UseInterstateErrorCodes } from './errorHandle';
 import type { ErrorHandleOptions } from './errorHandle';
+import { UseInterstateErrorCodes } from './errorHandle';
 import type { SettersListBase, SettersListEntryBase } from './SettersLists';
 
 declare function fixControlFlowAnalysis(): never;
@@ -86,7 +86,7 @@ export function removeSetterEntry(
 
   const { start, end } = list;
 
-  (Object.assign as TrueObjectAssign)(list, {
+  (Object.assign as TrueObjectAssign)(list as SettersListBase, {
     start: closeSettersListEndpoint(start, 'next'),
     end: closeSettersListEndpoint(end, 'prev'),
   });
