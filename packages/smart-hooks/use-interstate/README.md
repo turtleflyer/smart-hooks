@@ -1,5 +1,15 @@
 # useInterstate
 
+> ---
+>
+> _NEW._ We added an [enhanced interface](#enhanced-interface) allowing to obtain a setter along
+> with the value of the state in the easiest way.
+>
+> The [support of TypeScript](#typescript-and-managing-complicated-state-structures) in the library
+> is strong.
+>
+> ---
+
 ![use-interstate](use-interstate.png)
 
 `useInterstate` is a simple, lightweight, and powerful global state management solution for React
@@ -95,31 +105,13 @@ You must keep in mind two notable differences from `useState`.
    vocabulary as small as possible but still gets a choice to opt-in subscribing on demand.
    Otherwise, as performing a subscription to the state in a body of a React component has its own
    performance cost you would get forced to assume it whenever using the hook even if the only thing
-   you need is to have a setter to manipulate the state not listening to it. Let us take a look at
-   different scenarios. If we only need to have a function to update the sate:
+   you need is to have a setter to manipulate the state not listening to it.
 
-   ```js
-   const [, setState] = useInterstate('size', 9);
-   ```
-
-   Now we want to subscribe to changes in the state (that will cause re-rendering the component):
-
-   ```js
-   const [useSubscribe] = useInterstate('size', 9);
-   const state = useSubscribe();
-   ```
-
-   Both:
-
-   ```js
-   const [useSubscribe, setState] = useInterstate('size', 9);
-   const state = useSubscribe();
-   ```
-
-The default value passed to the hook can be a function. It will run only once, and its return will
-provide an actual initialization value. If the specific key has been initialized earlier in a
-different part of the application the provided init value will be ignored as it is for the further
-calls in the same component after each re-rendering. (It is how standard `useState` behaves.)
+   The default value passed to the hook can be a function. It will run only once, and its return
+   will provide an actual initialization value. If the specific key has been initialized earlier in
+   a different part of the application the provided init value will be ignored as it is for the
+   further calls in the same component after each re-rendering. (It is how standard `useState`
+   behaves.)
 
 ### `useInterstate({key1: initValue1, key2: initValue2})`
 
@@ -194,6 +186,50 @@ const [useSubscribe] = useInterstate({
   key4: initValue4,
 });
 const state = useSubscribe();
+```
+
+### Enhanced interface
+
+We add an enhanced interface allowing us to obtain a setter along with the value of the state in the
+easiest way. It adds methods `get`, `set`, and `both` to the returned value. Let us take a look at
+different scenarios.
+
+If we only need to have a function to update the sate:
+
+```js
+const [, setState] = useInterstate('size', 9);
+```
+
+It is equivalent to the following:
+
+```js
+const setState = useInterstate('size', 9).set();
+```
+
+Now we want to subscribe to changes in the state (that will cause re-rendering the component):
+
+```js
+const [useSubscribe] = useInterstate('size', 9);
+const state = useSubscribe();
+```
+
+That is the same as:
+
+```js
+const state = useInterstate('size', 9).get();
+```
+
+Both:
+
+```js
+const [useSubscribe, setState] = useInterstate('size', 9);
+const state = useSubscribe();
+```
+
+Now write it in a compacter way:
+
+```js
+const [state, setState] = useInterstate('size', 9).both();
 ```
 
 ## Important notes
