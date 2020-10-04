@@ -1,6 +1,6 @@
 {
   "name": "@smart-hooks/use-smart-memo",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Make useMemo predictable",
   "keywords": [
     "react"
