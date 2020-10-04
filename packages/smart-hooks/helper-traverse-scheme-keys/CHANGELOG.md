@@ -1,3 +1,9 @@
+## 4.0.1 (Oct 3, 2020)
+
+### Fix
+
+- Fix create-react-app uses UMD module for bundling.
+
 ## 4.0.0 (Sep 29, 2020)
 
 ### Breaking change

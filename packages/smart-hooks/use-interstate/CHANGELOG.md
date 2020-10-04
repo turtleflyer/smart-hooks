@@ -1,3 +1,13 @@
+## 4.1.0 (Oct 3, 2020)
+
+### Fix
+
+- Fix create-react-app uses UMD module for bundling.
+
+### Change
+
+- Add an enhanced interface to `useInterstate` returning the state value and the setter.
+
 ## 4.0.0 (Sep 29, 2020)
 
 ### Breaking change
