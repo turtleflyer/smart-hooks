@@ -63,7 +63,7 @@ export function rollupConfigFactory(options) {
 
           output: [
             {
-              file: pkg.browser,
+              file: pkg.unpkg,
               format: 'umd',
               name: umdOptions.name,
 
