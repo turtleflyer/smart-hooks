@@ -150,7 +150,7 @@ Notable differences with `useMultiState`:
 - `useInterstate` does not return the object with the values of the state in its relevant
   properties. Instead, it returns a hook whose call provides such an object. It means you need one
   more step to subscribe as it was described for [the first call
-  interface](#useInterstatekey-initValue).
+  interface](#useinterstatekey-initvalue).
 
   Effectively, instead of the construction:
 
@@ -232,6 +232,8 @@ Now write it in a compacter way:
 const [state, setState] = useInterstate('size', 9).both();
 ```
 
+It also works with [the multi-state call interface](#useinterstatekey1-initvalue1-key2-initvalue2).
+
 ## Important notes
 
 There are some limitations to using `useInterstate` that, when being broken, may lead to errors.
@@ -254,7 +256,7 @@ Also, some advanced use cases may add power and resilience to your code.
   tries to initialize the record using a provided argument. After that, you become subscribed to the
   new key of the state and can manipulate it.
 
-  It is true for [the first call interface](#useInterstatekey-initValue). When you pass a
+  It is true for [the first call interface](#useinterstatekey-initvalue). When you pass a
   multi-state object for the first time the hook will memoize it and use it throughout the life of
   the component regardless you change it later. If you switch from one interface to another it will
   cause an error.
