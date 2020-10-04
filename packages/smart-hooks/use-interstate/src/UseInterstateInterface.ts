@@ -26,31 +26,55 @@ export type InterstateSettersObject<M extends object, K extends keyof M = keyof 
   readonly [P in K]: SetInterstate<M[P]>;
 };
 
+export type EnhancePlainInterface<T extends unknown> = readonly [() => T, SetInterstate<T>] & {
+  readonly get: () => T;
+  readonly set: () => SetInterstate<T>;
+  readonly both: () => readonly [T, SetInterstate<T>];
+};
+
+export type EnhanceObjectInterface<S extends object> = readonly [
+  () => S,
+  InterstateSettersObject<S>
+] & {
+  readonly get: () => S;
+  readonly set: () => InterstateSettersObject<S>;
+  readonly both: () => readonly [S, InterstateSettersObject<S>];
+};
+
+type EnhanceUseInterstate<
+  T extends unknown,
+  ObjectInterface extends boolean = false
+> = ObjectInterface extends true
+  ? T extends object
+    ? EnhanceObjectInterface<T>
+    : never
+  : EnhancePlainInterface<T>;
+
 export type UseInterstate<M extends object = object> = keyof M extends never
   ? {
-      <U extends undefined>(key: StateKey, initValue?: U): [() => unknown, SetInterstate<unknown>];
+      <U extends undefined>(key: StateKey, initValue?: U): EnhanceUseInterstate<unknown>;
 
       <T extends unknown>(key: StateKey, initValue?: InterstateInitializeParam<T>): [T] extends [
         void
       ]
-        ? [() => undefined, SetInterstate<undefined>]
-        : [() => T, SetInterstate<T>];
+        ? EnhanceUseInterstate<undefined>
+        : EnhanceUseInterstate<T>;
 
-      <S extends object>(stateScheme: InterstateInitializeObject<S>): [
-        () => InterstateStateObject<S>,
-        InterstateSettersObject<S>
-      ];
+      <S extends object>(stateScheme: InterstateInitializeObject<S>): EnhanceUseInterstate<
+        InterstateStateObject<S>,
+        true
+      >;
     }
   : {
-      <K extends keyof M>(stateScheme: InterstateInitializeObject<M, K>): [
-        () => InterstateStateObject<M, K>,
-        InterstateSettersObject<M, K>
-      ];
+      <K extends keyof M>(stateScheme: InterstateInitializeObject<M, K>): EnhanceUseInterstate<
+        InterstateStateObject<M, K>,
+        true
+      >;
 
       <K extends keyof M, T extends M[K] = M[K]>(
         key: K,
         initValue?: InterstateInitializeParam<T>
-      ): [() => M[K], SetInterstate<M[K]>];
+      ): EnhanceUseInterstate<M[K]>;
     };
 
 export interface GetUseInterstate {

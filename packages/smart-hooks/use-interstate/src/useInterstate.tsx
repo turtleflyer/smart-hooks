@@ -2,11 +2,14 @@ import { useTraverseKeys } from '@smart-hooks/helper-traverse-scheme-keys';
 import { useSmartMemo } from '@smart-hooks/use-smart-memo';
 import type { FC } from 'react';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import type { TrueObjectAssign } from './CommonTypes';
 import { createStore } from './createStore';
 import type { UseInterstateThrowError } from './errorHandle';
 import { UseInterstateErrorCodes } from './errorHandle';
 import type { SetterMethods, Store, StoreMethods } from './StoreState';
 import type {
+  EnhanceObjectInterface,
+  EnhancePlainInterface,
   GetUseInterstate,
   InterstateInitializeObject,
   InterstateInitializeParam,
@@ -50,12 +53,10 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
     throwError: UseInterstateThrowError;
   }
 
-  const useInterstate = (<T extends unknown>(
-    a1: StateKey | InterstateInitializeObject<T & object>,
+  const useInterstate = (<T extends unknown, S extends object>(
+    a1: StateKey | InterstateInitializeObject<S>,
     initValue?: InterstateInitializeParam<T>
-  ):
-    | [() => T, SetInterstate<T>]
-    | [() => InterstateStateObject<T & object>, InterstateSettersObject<T & object>] => {
+  ): EnhancePlainInterface<T> | EnhanceObjectInterface<S> => {
     const mainRecord = useRef({} as MainHookState);
 
     const {
@@ -74,7 +75,7 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
     function usePlainInterstate<PT extends unknown>(
       key: StateKey,
       initV?: InterstateInitializeParam<PT>
-    ): [() => PT, SetInterstate<PT>] {
+    ): readonly [() => PT, SetInterstate<PT>] {
       const { initializeState, runRenderTask, runEffectTask, throwError: throwErr } = useStore();
       mainRecord.current = { ...mainRecord.current, throwError: throwErr };
 
@@ -133,41 +134,50 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
     }
 
     function useMultiInterstate(
-      stateScheme: InterstateInitializeObject<T & object>
-    ): [() => InterstateStateObject<T & object>, InterstateSettersObject<T & object>] {
+      stateScheme: InterstateInitializeObject<S>
+    ): readonly [() => InterstateStateObject<S>, InterstateSettersObject<S>] {
       const [subscribeObject, settersObject, enumKeys] = useTraverseKeys<
-        InterstateInitializeObject<T & object>,
-        { readonly [P in keyof (T & object)]: () => (T & object)[P] },
-        { readonly [P in keyof (T & object)]: SetInterstate<(T & object)[P]> }
+        InterstateInitializeObject<S>,
+        { readonly [P in keyof S]: () => S[P] },
+        { readonly [P in keyof S]: SetInterstate<S[P]> }
       >(stateScheme, (key, memStateScheme, subscribeObjectFulfill, settersObjectFulfill) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [useSubscr, setter] = usePlainInterstate<(T & object)[keyof (T & object)]>(
-          key,
-          memStateScheme[key]
-        );
+        const [useSubscr, setter] = usePlainInterstate<S[keyof S]>(key, memStateScheme[key]);
         subscribeObjectFulfill(useSubscr);
         settersObjectFulfill(setter);
       });
 
-      function useSubscribe(): InterstateStateObject<T & object> {
-        const evalState = {} as { [P in keyof (T & object)]: (T & object)[P] };
+      function useSubscribe(): InterstateStateObject<S> {
+        const evalState = {} as { [P in keyof S]: S[P] };
         enumKeys.forEach((key) => {
           evalState[key] = subscribeObject[key]();
           return evalState;
         });
-        return evalState as InterstateStateObject<T & object>;
+        return evalState as InterstateStateObject<S>;
       }
 
-      return [useSubscribe, settersObject as InterstateSettersObject<T & object>];
+      return [useSubscribe, settersObject];
     }
+
+    let evalReturn: EnhancePlainInterface<T> | EnhanceObjectInterface<S>;
 
     if (typeof a1 === 'object') {
       checkUsingSchemeIntegrity(true);
-      return useMultiInterstate(a1);
+      evalReturn = useMultiInterstate(a1) as EnhanceObjectInterface<S>;
+    } else {
+      checkUsingSchemeIntegrity(false);
+      evalReturn = usePlainInterstate(a1, initValue) as EnhancePlainInterface<T>;
     }
 
-    checkUsingSchemeIntegrity(false);
-    return usePlainInterstate(a1, initValue);
+    (Object.assign as TrueObjectAssign)(evalReturn, {
+      get: evalReturn[0],
+      set: (() => evalReturn[1]) as (() => SetInterstate<T>) | (() => InterstateSettersObject<S>),
+      both: (() => [evalReturn[0](), evalReturn[1]]) as
+        | (() => readonly [T, SetInterstate<T>])
+        | (() => readonly [S, InterstateSettersObject<S>]),
+    });
+
+    return evalReturn;
   }) as UseInterstate<M>;
 
   return { Scope, useInterstate };

@@ -56,25 +56,156 @@ describe('Check types', () => {
       const tu14 = useInterstate<undefined>(Symbol('1'), u05);
       const tu15 = useInterstate<string>(Symbol('1'), u06);
 
-      type CU01 = Reveal<ToBeExact<typeof tu01, [() => string, SetInterstate<string>]>>;
-      type CU02 = Reveal<ToBeExact<typeof tu02, [() => string, SetInterstate<string>]>>;
-      type CU03 = Reveal<ToBeExact<typeof tu03, [() => () => void, SetInterstate<() => void>]>>;
-      type CU04 = Reveal<ToBeExact<typeof tu04, [() => undefined, SetInterstate<undefined>]>>;
-      type CU05 = Reveal<ToBeExact<typeof tu05, [() => undefined, SetInterstate<undefined>]>>;
-      type CU06 = Reveal<ToBeExact<typeof tu06, [() => unknown, SetInterstate<unknown>]>>;
-      type CU07 = Reveal<ToBeExact<typeof tu07, [() => unknown, SetInterstate<unknown>]>>;
-      type CU08 = Reveal<ToBeExact<typeof tu08, [() => string, SetInterstate<string>]>>;
-      type CU09 = Reveal<ToBeExact<typeof tu09, [() => string, SetInterstate<string>]>>;
-      type CU10 = Reveal<ToBeExact<typeof tu10, [() => string, SetInterstate<string>]>>;
-      type CU11 = Reveal<ToBeExact<typeof tu11, [() => string, SetInterstate<string>]>>;
+      type CU01 = Reveal<
+        ToBeExact<
+          typeof tu01,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
+      type CU02 = Reveal<
+        ToBeExact<
+          typeof tu02,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
+      type CU03 = Reveal<
+        ToBeExact<
+          typeof tu03,
+          readonly [() => () => void, SetInterstate<() => void>] & {
+            get: () => () => void;
+            set: () => SetInterstate<() => void>;
+            both: () => readonly [() => void, SetInterstate<() => void>];
+          }
+        >
+      >;
+      type CU04 = Reveal<
+        ToBeExact<
+          typeof tu04,
+          readonly [() => undefined, SetInterstate<undefined>] & {
+            get: () => undefined;
+            set: () => SetInterstate<undefined>;
+            both: () => readonly [undefined, SetInterstate<undefined>];
+          }
+        >
+      >;
+      type CU05 = Reveal<
+        ToBeExact<
+          typeof tu05,
+          readonly [() => undefined, SetInterstate<undefined>] & {
+            get: () => undefined;
+            set: () => SetInterstate<undefined>;
+            both: () => readonly [undefined, SetInterstate<undefined>];
+          }
+        >
+      >;
+      type CU06 = Reveal<
+        ToBeExact<
+          typeof tu06,
+          readonly [() => unknown, SetInterstate<unknown>] & {
+            get: () => unknown;
+            set: () => SetInterstate<unknown>;
+            both: () => readonly [unknown, SetInterstate<unknown>];
+          }
+        >
+      >;
+      type CU07 = Reveal<
+        ToBeExact<
+          typeof tu07,
+          readonly [() => unknown, SetInterstate<unknown>] & {
+            get: () => unknown;
+            set: () => SetInterstate<unknown>;
+            both: () => readonly [unknown, SetInterstate<unknown>];
+          }
+        >
+      >;
+      type CU08 = Reveal<
+        ToBeExact<
+          typeof tu08,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
+      type CU09 = Reveal<
+        ToBeExact<
+          typeof tu09,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
+      type CU10 = Reveal<
+        ToBeExact<
+          typeof tu10,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
+      type CU11 = Reveal<
+        ToBeExact<
+          typeof tu11,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
       type CU12 = Reveal<
-        ToBeExact<typeof tu12, [() => string | boolean, SetInterstate<string | boolean>]>
+        ToBeExact<
+          typeof tu12,
+          readonly [() => string | boolean, SetInterstate<string | boolean>] & {
+            get: () => string | boolean;
+            set: () => SetInterstate<string | boolean>;
+            both: () => readonly [string | boolean, SetInterstate<string | boolean>];
+          }
+        >
       >;
       type CU13 = Reveal<
-        ToBeExact<typeof tu13, [() => string | boolean, SetInterstate<string | boolean>]>
+        ToBeExact<
+          typeof tu13,
+          readonly [() => string | boolean, SetInterstate<string | boolean>] & {
+            get: () => string | boolean;
+            set: () => SetInterstate<string | boolean>;
+            both: () => readonly [string | boolean, SetInterstate<string | boolean>];
+          }
+        >
       >;
-      type CU14 = Reveal<ToBeExact<typeof tu14, [() => undefined, SetInterstate<undefined>]>>;
-      type CU15 = Reveal<ToBeExact<typeof tu15, [() => string, SetInterstate<string>]>>;
+      type CU14 = Reveal<
+        ToBeExact<
+          typeof tu14,
+          readonly [() => undefined, SetInterstate<undefined>] & {
+            get: () => undefined;
+            set: () => SetInterstate<undefined>;
+            both: () => readonly [undefined, SetInterstate<undefined>];
+          }
+        >
+      >;
+      type CU15 = Reveal<
+        ToBeExact<
+          typeof tu15,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
 
       // @ts-expect-error
       const tuErr01 = useInterstate('1', (c: number) => c + 1);
@@ -122,7 +253,6 @@ describe('Check types', () => {
       const tm01 = useInterstate(m01);
       const tm02 = useInterstate(m02);
       const tm03 = useInterstate(m03);
-      const tm04 = useInterstate(m04);
       const tm05 = useInterstate<{ [symbolKey]: number | boolean }>(m02);
       const tm06 = useInterstate<{ a: string; 2: () => void }>(m03);
       const tm07 = useInterstate<{ a: unknown; 2: undefined; [symbolKey]: undefined }>(m04);
@@ -135,76 +265,113 @@ describe('Check types', () => {
       type CM01 = Reveal<
         ToBeExact<
           typeof tm01,
-          [() => { a: number; 2: string }, { a: SetInterstate<number>; 2: SetInterstate<string> }]
+          readonly [
+            () => { a: number; 2: string },
+            { a: SetInterstate<number>; 2: SetInterstate<string> }
+          ] & {
+            get: () => { a: number; 2: string };
+            set: () => { a: SetInterstate<number>; 2: SetInterstate<string> };
+            both: () => readonly [
+              { a: number; 2: string },
+              { a: SetInterstate<number>; 2: SetInterstate<string> }
+            ];
+          }
         >
       >;
       type CM02 = Reveal<
         ToBeExact<
           typeof tm02,
-          [() => { [symbolKey]: boolean }, { [symbolKey]: SetInterstate<boolean> }]
+          readonly [() => { [symbolKey]: boolean }, { [symbolKey]: SetInterstate<boolean> }] & {
+            get: () => { [symbolKey]: boolean };
+            set: () => { [symbolKey]: SetInterstate<boolean> };
+            both: () => readonly [
+              { [symbolKey]: boolean },
+              { [symbolKey]: SetInterstate<boolean> }
+            ];
+          }
         >
       >;
       type CM03 = Reveal<
         ToBeExact<
           typeof tm03,
-          [
+          readonly [
             () => { a: string; 2: () => void },
             { a: SetInterstate<string>; 2: SetInterstate<() => void> }
-          ]
+          ] & {
+            get: () => { a: string; 2: () => void };
+            set: () => { a: SetInterstate<string>; 2: SetInterstate<() => void> };
+            both: () => readonly [
+              { a: string; 2: () => void },
+              { a: SetInterstate<string>; 2: SetInterstate<() => void> }
+            ];
+          }
         >
       >;
-
-      // TODO: Make the scheme to work
-      //
-      // type CM04 = Reveal<
-      //   toBeExact<
-      //     typeof tm04,
-      //     [
-      //       () => { a: unknown; 2: undefined; [symbolKey]: undefined },
-      //       {
-      //         a: SetInterstate<unknown>;
-      //         2: SetInterstate<undefined>;
-      //         [symbolKey]: SetInterstate<undefined>;
-      //       }
-      //     ]
-      //   >
-      // >;
 
       type CM05 = Reveal<
         ToBeExact<
           typeof tm05,
-          [
+          readonly [
             () => { [symbolKey]: number | boolean },
             { [symbolKey]: SetInterstate<number | boolean> }
-          ]
+          ] & {
+            get: () => { [symbolKey]: number | boolean };
+            set: () => { [symbolKey]: SetInterstate<number | boolean> };
+            both: () => readonly [
+              { [symbolKey]: number | boolean },
+              { [symbolKey]: SetInterstate<number | boolean> }
+            ];
+          }
         >
       >;
       type CM06 = Reveal<
         ToBeExact<
           typeof tm06,
-          [
+          readonly [
             () => { a: string; 2: () => void },
             { a: SetInterstate<string>; 2: SetInterstate<() => void> }
-          ]
+          ] & {
+            get: () => { a: string; 2: () => void };
+            set: () => { a: SetInterstate<string>; 2: SetInterstate<() => void> };
+            both: () => readonly [
+              { a: string; 2: () => void },
+              { a: SetInterstate<string>; 2: SetInterstate<() => void> }
+            ];
+          }
         >
       >;
       type CM07 = Reveal<
         ToBeExact<
           typeof tm07,
-          [
+          readonly [
             () => { a: unknown; 2: undefined; [symbolKey]: undefined },
             {
               a: SetInterstate<unknown>;
               2: SetInterstate<undefined>;
               [symbolKey]: SetInterstate<undefined>;
             }
-          ]
+          ] & {
+            get: () => { a: unknown; 2: undefined; [symbolKey]: undefined };
+            set: () => {
+              a: SetInterstate<unknown>;
+              2: SetInterstate<undefined>;
+              [symbolKey]: SetInterstate<undefined>;
+            };
+            both: () => readonly [
+              { a: unknown; 2: undefined; [symbolKey]: undefined },
+              {
+                a: SetInterstate<unknown>;
+                2: SetInterstate<undefined>;
+                [symbolKey]: SetInterstate<undefined>;
+              }
+            ];
+          }
         >
       >;
       type CM08 = Reveal<
         ToBeExact<
           typeof tm08,
-          [
+          readonly [
             () => {
               a: string | boolean;
               2: (() => string) | undefined;
@@ -215,7 +382,30 @@ describe('Check types', () => {
               2: SetInterstate<(() => string) | undefined>;
               [symbolKey]: SetInterstate<number | undefined>;
             }
-          ]
+          ] & {
+            get: () => {
+              a: string | boolean;
+              2: (() => string) | undefined;
+              [symbolKey]: number | undefined;
+            };
+            set: () => {
+              a: SetInterstate<string | boolean>;
+              2: SetInterstate<(() => string) | undefined>;
+              [symbolKey]: SetInterstate<number | undefined>;
+            };
+            both: () => readonly [
+              {
+                a: string | boolean;
+                2: (() => string) | undefined;
+                [symbolKey]: number | undefined;
+              },
+              {
+                a: SetInterstate<string | boolean>;
+                2: SetInterstate<(() => string) | undefined>;
+                [symbolKey]: SetInterstate<number | undefined>;
+              }
+            ];
+          }
         >
       >;
 
@@ -251,41 +441,128 @@ describe('Check types', () => {
       const td09 = useInterstateDefined(2, undefined);
       const td10 = useInterstateDefined<2 | 'a'>('a', d01);
 
-      type CD01 = Reveal<ToBeExact<typeof td01, [() => string, SetInterstate<string>]>>;
+      type CD01 = Reveal<
+        ToBeExact<
+          typeof td01,
+          readonly [() => string, SetInterstate<string>] & {
+            get: () => string;
+            set: () => SetInterstate<string>;
+            both: () => readonly [string, SetInterstate<string>];
+          }
+        >
+      >;
       type CD02 = Reveal<
-        ToBeExact<typeof td02, [() => (boolean | number)[], SetInterstate<(boolean | number)[]>]>
+        ToBeExact<
+          typeof td02,
+          readonly [() => (boolean | number)[], SetInterstate<(boolean | number)[]>] & {
+            get: () => (boolean | number)[];
+            set: () => SetInterstate<(boolean | number)[]>;
+            both: () => readonly [(boolean | number)[], SetInterstate<(boolean | number)[]>];
+          }
+        >
       >;
       type CD03 = Reveal<
         ToBeExact<
           typeof td03,
-          [
+          readonly [
             () => (() => unknown) | { b: number | object },
             SetInterstate<(() => unknown) | { b: number | object }>
-          ]
+          ] & {
+            get: () => (() => unknown) | { b: number | object };
+            set: () => SetInterstate<(() => unknown) | { b: number | object }>;
+            both: () => readonly [
+              (() => unknown) | { b: number | object },
+              SetInterstate<(() => unknown) | { b: number | object }>
+            ];
+          }
         >
       >;
-      type CD04 = Reveal<ToBeExact<typeof td04, [() => undefined, SetInterstate<undefined>]>>;
-      type CD05 = Reveal<ToBeExact<typeof td05, [() => undefined, SetInterstate<undefined>]>>;
-      type CD06 = Reveal<ToBeExact<typeof td06, [() => unknown, SetInterstate<unknown>]>>;
+      type CD04 = Reveal<
+        ToBeExact<
+          typeof td04,
+          readonly [() => undefined, SetInterstate<undefined>] & {
+            get: () => undefined;
+            set: () => SetInterstate<undefined>;
+            both: () => readonly [undefined, SetInterstate<undefined>];
+          }
+        >
+      >;
+      type CD05 = Reveal<
+        ToBeExact<
+          typeof td05,
+          readonly [() => undefined, SetInterstate<undefined>] & {
+            get: () => undefined;
+            set: () => SetInterstate<undefined>;
+            both: () => readonly [undefined, SetInterstate<undefined>];
+          }
+        >
+      >;
+      type CD06 = Reveal<
+        ToBeExact<
+          typeof td06,
+          readonly [() => unknown, SetInterstate<unknown>] & {
+            get: () => unknown;
+            set: () => SetInterstate<unknown>;
+            both: () => readonly [unknown, SetInterstate<unknown>];
+          }
+        >
+      >;
       type CD07 = Reveal<
         ToBeExact<
           typeof td07,
-          [() => null | undefined | string[], SetInterstate<null | undefined | string[]>]
+          readonly [
+            () => null | undefined | string[],
+            SetInterstate<null | undefined | string[]>
+          ] & {
+            get: () => null | undefined | string[];
+            set: () => SetInterstate<null | undefined | string[]>;
+            both: () => readonly [
+              null | undefined | string[],
+              SetInterstate<null | undefined | string[]>
+            ];
+          }
         >
       >;
       type CD08 = Reveal<
         ToBeExact<
           typeof td08,
-          [() => null | undefined | string[], SetInterstate<null | undefined | string[]>]
+          readonly [
+            () => null | undefined | string[],
+            SetInterstate<null | undefined | string[]>
+          ] & {
+            get: () => null | undefined | string[];
+            set: () => SetInterstate<null | undefined | string[]>;
+            both: () => readonly [
+              null | undefined | string[],
+              SetInterstate<null | undefined | string[]>
+            ];
+          }
         >
       >;
       type CD09 = Reveal<
-        ToBeExact<typeof td09, [() => (boolean | number)[], SetInterstate<(boolean | number)[]>]>
+        ToBeExact<
+          typeof td09,
+          readonly [() => (boolean | number)[], SetInterstate<(boolean | number)[]>] & {
+            get: () => (boolean | number)[];
+            set: () => SetInterstate<(boolean | number)[]>;
+            both: () => readonly [(boolean | number)[], SetInterstate<(boolean | number)[]>];
+          }
+        >
       >;
       type CD10 = Reveal<
         ToBeExact<
           typeof td10,
-          [() => string | (boolean | number)[], SetInterstate<string | (boolean | number)[]>]
+          readonly [
+            () => string | (boolean | number)[],
+            SetInterstate<string | (boolean | number)[]>
+          ] & {
+            get: () => string | (boolean | number)[];
+            set: () => SetInterstate<string | (boolean | number)[]>;
+            both: () => readonly [
+              string | (boolean | number)[],
+              SetInterstate<string | (boolean | number)[]>
+            ];
+          }
         >
       >;
 
@@ -327,12 +604,19 @@ describe('Check types', () => {
       const ts04 = useInterstateDefined(s04);
 
       type CS01 = Reveal<
-        ToBeExact<typeof ts01, [() => { a: string }, { a: SetInterstate<string> }]>
+        ToBeExact<
+          typeof ts01,
+          readonly [() => { a: string }, { a: SetInterstate<string> }] & {
+            get: () => { a: string };
+            set: () => { a: SetInterstate<string> };
+            both: () => readonly [{ a: string }, { a: SetInterstate<string> }];
+          }
+        >
       >;
       type CS02 = Reveal<
         ToBeExact<
           typeof ts02,
-          [
+          readonly [
             () => {
               a: string;
               77: undefined;
@@ -345,22 +629,56 @@ describe('Check types', () => {
               [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }>;
               fun: SetInterstate<unknown>;
             }
-          ]
+          ] & {
+            get: () => {
+              a: string;
+              77: undefined;
+              [symbolKey]: (() => unknown) | { b: number | object };
+              fun: unknown;
+            };
+            set: () => {
+              a: SetInterstate<string>;
+              77: SetInterstate<undefined>;
+              [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }>;
+              fun: SetInterstate<unknown>;
+            };
+            both: () => readonly [
+              {
+                a: string;
+                77: undefined;
+                [symbolKey]: (() => unknown) | { b: number | object };
+                fun: unknown;
+              },
+              {
+                a: SetInterstate<string>;
+                77: SetInterstate<undefined>;
+                [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }>;
+                fun: SetInterstate<unknown>;
+              }
+            ];
+          }
         >
       >;
       type CS03 = Reveal<
         ToBeExact<
           typeof ts03,
-          [
+          readonly [
             () => { [symbolKey]: (() => unknown) | { b: number | object } },
             { [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }> }
-          ]
+          ] & {
+            get: () => { [symbolKey]: (() => unknown) | { b: number | object } };
+            set: () => { [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }> };
+            both: () => readonly [
+              { [symbolKey]: (() => unknown) | { b: number | object } },
+              { [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }> }
+            ];
+          }
         >
       >;
       type CS04 = Reveal<
         ToBeExact<
           typeof ts04,
-          [
+          readonly [
             () => {
               a: string;
               2: (boolean | number)[];
@@ -377,7 +695,42 @@ describe('Check types', () => {
               fun: SetInterstate<unknown>;
               go: SetInterstate<null | undefined | string[]>;
             }
-          ]
+          ] & {
+            get: () => {
+              a: string;
+              2: (boolean | number)[];
+              [symbolKey]: (() => unknown) | { b: number | object };
+              77: undefined;
+              fun: unknown;
+              go: null | undefined | string[];
+            };
+            set: () => {
+              a: SetInterstate<string>;
+              2: SetInterstate<(boolean | number)[]>;
+              [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }>;
+              77: SetInterstate<undefined>;
+              fun: SetInterstate<unknown>;
+              go: SetInterstate<null | undefined | string[]>;
+            };
+            both: () => readonly [
+              {
+                a: string;
+                2: (boolean | number)[];
+                [symbolKey]: (() => unknown) | { b: number | object };
+                77: undefined;
+                fun: unknown;
+                go: null | undefined | string[];
+              },
+              {
+                a: SetInterstate<string>;
+                2: SetInterstate<(boolean | number)[]>;
+                [symbolKey]: SetInterstate<(() => unknown) | { b: number | object }>;
+                77: SetInterstate<undefined>;
+                fun: SetInterstate<unknown>;
+                go: SetInterstate<null | undefined | string[]>;
+              }
+            ];
+          }
         >
       >;
 
@@ -517,7 +870,7 @@ describe('Check types', () => {
         ToBeExact<
           InterstateSettersObject<{ one: string; [symbolKey]: number | undefined | null }>,
           {
-            readonly one: (a: string | ((p: string) => string)) => void;
+            readonly one: SetInterstate<string>;
             readonly [symbolKey]: (
               a:
                 | number

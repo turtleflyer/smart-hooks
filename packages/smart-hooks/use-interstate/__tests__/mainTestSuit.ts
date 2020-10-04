@@ -11,6 +11,7 @@ import siblingsCanCommunicate from './tests/siblingsCanCommunicate';
 import sophisticatedStructure from './tests/sophisticatedStructure';
 import testChangeInterface from './tests/testChangeInterface';
 import testContext from './tests/testContext';
+import testEnhancedInterface from './tests/testEnhancedInterface';
 import testErrorHandling from './tests/testErrorHandling';
 import testErrorMethods from './tests/testErrorMethods';
 import testIndependentMode from './tests/testIndependentMode';
@@ -92,6 +93,7 @@ const mainTestSuit = (packagePath: string): void =>
       test(...testErrorMethods(testParameter));
       test(...testSettersImmutability(testParameter));
       test(...testChangeInterface(testParameter));
+      test(...testEnhancedInterface(testParameter));
     }
 
     test('proof of mock', () => {
