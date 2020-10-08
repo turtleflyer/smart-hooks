@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -72,7 +72,7 @@ const testContext: TestDescription = (p) => [
       initV3?: string;
       initV4?: string;
     }> = ({ isolate = false, listenerId, initV1, initV2, initV3, initV4 }) => (
-      <>
+      <StrictMode>
         <CanListenAndUpdate
           {...{
             subscribeId: subscribeId1,
@@ -103,7 +103,7 @@ const testContext: TestDescription = (p) => [
         ) : (
           <IsolatedBlock {...{ initVS1: initV3, initVS2: initV4, listenerId }} />
         )}
-      </>
+      </StrictMode>
     );
 
     const { fireNode, getTextFromNode, rerender, unmount } = render(

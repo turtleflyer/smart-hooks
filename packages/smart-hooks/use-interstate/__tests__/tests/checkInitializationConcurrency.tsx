@@ -1,6 +1,6 @@
 import { cleanup } from '@testing-library/react';
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const checkInitializationConcurrency: TestDescription = (p) => [
@@ -38,7 +38,7 @@ const checkInitializationConcurrency: TestDescription = (p) => [
       initV2?: string;
       initV3?: string;
     }> = ({ initV1, initV2, initV3 }) => (
-      <>
+      <StrictMode>
         <div>
           <div>
             <CanUpdate
@@ -57,7 +57,7 @@ const checkInitializationConcurrency: TestDescription = (p) => [
             initialValue: initV3,
           }}
         />
-      </>
+      </StrictMode>
     );
 
     expect(() =>

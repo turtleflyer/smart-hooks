@@ -1,6 +1,6 @@
 import { fireEvent } from '@testing-library/react';
 import type { FC } from 'react';
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -31,7 +31,7 @@ const setSameValueRepeatedly: TestDescription = (p) => [
     };
 
     const TestComponent: FC = () => (
-      <>
+      <StrictMode>
         <CanListenAndUpdate
           {...{
             countRender: countRender.count,
@@ -41,7 +41,7 @@ const setSameValueRepeatedly: TestDescription = (p) => [
           }}
         />
         <UpdateWitFunctionValue />
-      </>
+      </StrictMode>
     );
 
     const { fireNode, getTextFromNode, unmount, getByTestId } = render(<TestComponent />);

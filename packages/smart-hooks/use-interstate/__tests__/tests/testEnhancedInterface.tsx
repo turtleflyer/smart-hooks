@@ -7,7 +7,7 @@ const testEnhancedInterface: TestDescription = (p) => [
   'check enhanced interface of useInterstate',
   () => {
     const {
-      assets: { render, getUseInterstate },
+      assets: { render, getUseInterstate, wrapWithStrictModeComponent },
     } = p;
 
     const subscribeId0 = '0';
@@ -37,7 +37,7 @@ const testEnhancedInterface: TestDescription = (p) => [
       );
     };
 
-    const TestComponent: FC = () => {
+    const TestComponent: FC = wrapWithStrictModeComponent(() => {
       const state0 = useInterstate(subscribeId0, '').get();
       const [state1, updateState1] = useInterstate(subscribeId1, '').both();
 
@@ -55,7 +55,7 @@ const testEnhancedInterface: TestDescription = (p) => [
           <div {...{ 'data-testid': testId3 }}>{state1}</div>
         </>
       );
-    };
+    });
 
     const { unmount, getByTestId } = render(<TestComponent />);
 

@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -43,7 +43,7 @@ const testIndependentMode: TestDescription = (p) => [
     const countRender8 = executionCountersFactory();
 
     const TestComponent: FC = () => (
-      <>
+      <StrictMode>
         <CanListen
           {...{ testId: testId1, subscribeId, countRender: countRender1.count, initialValue: '' }}
         />
@@ -90,14 +90,14 @@ const testIndependentMode: TestDescription = (p) => [
             />
           </ScopeIndependent>
         </Scope>
-      </>
+      </StrictMode>
     );
 
     const { fireNode, getTextFromNode, unmount } = render(<TestComponent />);
     const countSetter1 = settersCounterFactory(0);
-    const countSetter2 = settersCounterFactory(1);
-    const countSetter3 = settersCounterFactory(2);
-    const countSetter4 = settersCounterFactory(3);
+    const countSetter2 = settersCounterFactory(2);
+    const countSetter3 = settersCounterFactory(4);
+    const countSetter4 = settersCounterFactory(5);
     fireNode(testId2, 'bus');
 
     if (!flagManager.read('SHOULD_TEST_PERFORMANCE')) {

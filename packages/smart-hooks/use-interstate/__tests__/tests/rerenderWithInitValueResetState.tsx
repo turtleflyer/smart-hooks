@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import type { TestDescription } from '../testsAssets';
 
 const rerenderWithInitValueResetState: TestDescription = (p) => [
@@ -17,7 +17,7 @@ const rerenderWithInitValueResetState: TestDescription = (p) => [
       init?: string | null;
       id?: string;
     }> = ({ init, id = subscribeId1 }) => (
-      <>
+      <StrictMode>
         <CanUpdate
           {...{
             subscribeId: id,
@@ -33,7 +33,7 @@ const rerenderWithInitValueResetState: TestDescription = (p) => [
             }}
           />
         )}
-      </>
+      </StrictMode>
     );
 
     const { rerender, fireNode, getTextFromNode, unmount } = render(<TestComponent init="start" />);

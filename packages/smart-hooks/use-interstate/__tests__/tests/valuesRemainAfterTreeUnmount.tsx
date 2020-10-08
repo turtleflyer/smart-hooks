@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import { flagManager } from '../testFlags';
 import type { ComposeCallback, TestDescription } from '../testsAssets';
 
@@ -16,7 +16,7 @@ const valuesRemainAfterTreeUnmount: TestDescription = (p) => [
       set((old: string) => (old || '') + value);
     };
     const TestComponent: FC<{ initV?: string }> = ({ initV }) => (
-      <>
+      <StrictMode>
         <CanUpdate
           {...{
             subscribeId,
@@ -31,7 +31,7 @@ const valuesRemainAfterTreeUnmount: TestDescription = (p) => [
             testId: testId2,
           }}
         />
-      </>
+      </StrictMode>
     );
 
     const { unmount, rerender, fireNode, getTextFromNode } = render(<TestComponent initV="a" />);

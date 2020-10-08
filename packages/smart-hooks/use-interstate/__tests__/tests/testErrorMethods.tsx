@@ -1,6 +1,6 @@
 import { cleanup } from '@testing-library/react';
-import React, { useEffect } from 'react';
 import type { FC } from 'react';
+import React, { StrictMode, useEffect } from 'react';
 import type { UseInterstateError } from '../../src/useInterstate';
 import type { TestDescription } from '../testsAssets';
 
@@ -67,11 +67,11 @@ const testErrorMethods: TestDescription = (p) => [
     };
 
     const ErrorEmitterRegardingSetValue: FC = () => (
-      <>
+      <StrictMode>
         <InnerSet toSet="warm" />
         <InnerInit />
         <InnerSet toSet="hot" />
-      </>
+      </StrictMode>
     );
 
     jest.useFakeTimers();

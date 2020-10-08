@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import { flagManager } from '../testFlags';
 import type { ComposeCallback, TestDescription } from '../testsAssets';
 
@@ -41,7 +41,7 @@ const sophisticatedStructure: TestDescription = (p) => [
     const countRender9 = executionCountersFactory();
 
     const TestComponent: FC<{ initV1: string; initV2: string }> = ({ initV1, initV2 }) => (
-      <>
+      <StrictMode>
         <CanListen
           {...{
             subscribeId: subscribeId1,
@@ -121,7 +121,7 @@ const sophisticatedStructure: TestDescription = (p) => [
             </div>
           </div>
         </div>
-      </>
+      </StrictMode>
     );
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent initV1="h" initV2="m" />);

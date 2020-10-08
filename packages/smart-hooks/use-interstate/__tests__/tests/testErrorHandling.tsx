@@ -1,5 +1,5 @@
-import React, { Component, useEffect } from 'react';
 import type { FC } from 'react';
+import React, { Component, StrictMode, useEffect } from 'react';
 import type { UseInterstateError } from '../../src/useInterstate';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
@@ -107,35 +107,37 @@ const testErrorHandling: TestDescription = (p) => [
       resetErrorState,
       throwError = false,
     }) => (
-      <ErrorBoundary {...{ resetErrorState }}>
-        <CanListen
-          {...{
-            subscribeId,
-            testId: testId1,
-            countRender: countRender1.count,
-            initialValue: initV1,
-          }}
-        />
-        <CanListen
-          {...{
-            subscribeId,
-            testId: testId2,
-            countRender: countRender2.count,
-            initialValue: initV2,
-          }}
-        />
-        <CanListen
-          {...{
-            subscribeId,
-            testId: testId3,
-            countRender: countRender3.count,
-            initialValue: initV3,
-          }}
-        />
+      <StrictMode>
+        <ErrorBoundary {...{ resetErrorState }}>
+          <CanListen
+            {...{
+              subscribeId,
+              testId: testId1,
+              countRender: countRender1.count,
+              initialValue: initV1,
+            }}
+          />
+          <CanListen
+            {...{
+              subscribeId,
+              testId: testId2,
+              countRender: countRender2.count,
+              initialValue: initV2,
+            }}
+          />
+          <CanListen
+            {...{
+              subscribeId,
+              testId: testId3,
+              countRender: countRender3.count,
+              initialValue: initV3,
+            }}
+          />
 
-        <ThrowMultipleAttempt {...{ subscribeId, throwError, value: 'wrong' }} />
-        <ThrowMultipleAttempt {...{ subscribeId, throwError, value: 'wronger' }} />
-      </ErrorBoundary>
+          <ThrowMultipleAttempt {...{ subscribeId, throwError, value: 'wrong' }} />
+          <ThrowMultipleAttempt {...{ subscribeId, throwError, value: 'wronger' }} />
+        </ErrorBoundary>
+      </StrictMode>
     );
 
     const { getTextFromNode, rerender, unmount, getByTestId } = render(

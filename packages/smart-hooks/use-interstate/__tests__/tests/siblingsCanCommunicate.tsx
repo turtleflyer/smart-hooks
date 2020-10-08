@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -15,7 +15,7 @@ const siblingsCanCommunicate: TestDescription = (p) => [
     const countRender1 = executionCountersFactory();
     const countRender2 = executionCountersFactory();
     const TestComponent: FC<{ initV: string }> = ({ initV }) => (
-      <>
+      <StrictMode>
         <CanUpdate
           {...{
             countRender: countRender1.count,
@@ -31,7 +31,7 @@ const siblingsCanCommunicate: TestDescription = (p) => [
             testId: testId2,
           }}
         />
-      </>
+      </StrictMode>
     );
 
     const { unmount, fireNode, getTextFromNode } = render(<TestComponent initV="" />);

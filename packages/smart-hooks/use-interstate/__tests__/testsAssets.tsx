@@ -91,7 +91,7 @@ const defaultComposeCallback: ComposeCallback = (set) => ({ target: { value } })
 type ComposeComponent = (importedUseInterstate: typeof useInterstate) => FC<TestComponentsProps>;
 
 const composeCanListen: ComposeComponent = (importedUseInterstate) => {
-  const Inner: FC<TestComponentsProps> = ({
+  const CanListen: FC<TestComponentsProps> = ({
     subscribeId,
     initialValue,
     testId = '',
@@ -112,11 +112,11 @@ const composeCanListen: ComposeComponent = (importedUseInterstate) => {
     );
   };
 
-  return wrapWithStrictModeComponent(Inner);
+  return CanListen;
 };
 
 const composeCanUpdate: ComposeComponent = (importedUseInterstate) => {
-  const Inner: FC<TestComponentsProps> = ({
+  const CanUpdate: FC<TestComponentsProps> = ({
     subscribeId,
     initialValue,
     testId = '',
@@ -138,11 +138,11 @@ const composeCanUpdate: ComposeComponent = (importedUseInterstate) => {
     );
   };
 
-  return wrapWithStrictModeComponent(Inner);
+  return CanUpdate;
 };
 
 const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => {
-  const Inner: FC<TestComponentsProps> = ({
+  const CanListenAndUpdate: FC<TestComponentsProps> = ({
     subscribeId,
     initialValue,
     testId = '',
@@ -166,7 +166,7 @@ const composeCanListenAndUpdate: ComposeComponent = (importedUseInterstate) => {
     );
   };
 
-  return wrapWithStrictModeComponent(Inner);
+  return CanListenAndUpdate;
 };
 
 interface ErrorRecord {

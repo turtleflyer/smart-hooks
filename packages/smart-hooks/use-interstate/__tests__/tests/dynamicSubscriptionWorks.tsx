@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import React, { StrictMode } from 'react';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';
 
@@ -27,7 +27,7 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
       dynamicSubscribe: number | string | symbol;
       initV2?: string | (() => string);
     }> = ({ initV1 = 'sun', dynamicSubscribe, initV2 = undefined }) => (
-      <>
+      <StrictMode>
         <CanUpdate
           {...{
             subscribeId: subscribeId1,
@@ -59,7 +59,7 @@ const dynamicSubscriptionWorks: TestDescription = (p) => [
             countRender: countRender4.count,
           }}
         />
-      </>
+      </StrictMode>
     );
 
     const { rerender, fireNode, getTextFromNode, unmount } = render(
