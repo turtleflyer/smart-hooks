@@ -3,17 +3,18 @@ import { createSettersList } from './createSettersList';
 import { createSettersListEntry } from './createSettersListEntry';
 import { createStoreState } from './createStoreState';
 import { createThrowError, UseInterstateErrorCodes } from './errorHandle';
+import { isSettersListSubscribed } from './isSettersListSubscribed';
+import { removeSetterEntry } from './removeSetterEntry';
+import type { SettersWatchList, SettersWatchListEntry } from './SettersLists';
+import type { MapValue, MapValueSettersListEntry } from './StoreMap';
+import { isSetterListEntryErrorChunk } from './StoreMap';
+import type { InitializeState, Store } from './StoreState';
 import type {
   InterstateInitializeParam,
   InterstateParam,
   Setter,
   StateKey,
 } from './UseInterstateInterface';
-import { removeSetterEntry } from './removeSetterEntry';
-import type { SettersWatchList, SettersWatchListEntry } from './SettersLists';
-import { isSetterListEntryErrorChunk } from './StoreMap';
-import type { MapValue, MapValueSettersListEntry } from './StoreMap';
-import type { InitializeState, Store } from './StoreState';
 
 declare function fixControlFlowAnalysis(): never;
 
@@ -102,16 +103,18 @@ export function createStore(): Store {
         if (!Object.is(curVal, evalVal)) {
           mapEntryValue.value = evalVal;
 
-          // eslint-disable-next-line no-restricted-syntax
-          for (const setterEntry of mapEntryValue) {
-            if (isSetterListEntryErrorChunk(setterEntry)) {
-              throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
+          if (isSettersListSubscribed(mapEntryValue, { throwError, key })) {
+            mapEntryValue.triggerRegistered = true;
+
+            // eslint-disable-next-line no-restricted-syntax
+            for (const setterEntry of mapEntryValue) {
+              if (isSetterListEntryErrorChunk(setterEntry)) {
+                throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
+              }
+
+              setterEntry.setter((v) => !v);
             }
-
-            setterEntry.setter((v) => !v);
           }
-
-          mapEntryValue.triggerRegistered = true;
         }
       },
 

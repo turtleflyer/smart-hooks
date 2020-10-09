@@ -4,6 +4,7 @@
 import { cleanup } from '@testing-library/react';
 import { flagManager } from './testFlags';
 import checkInitializationConcurrency from './tests/checkInitializationConcurrency';
+import checkUpdateWithNoSubscribers from './tests/checkUpdateWithNoSubscribers';
 import dynamicSubscriptionWorks from './tests/dynamicSubscriptionWorks';
 import rerenderWithInitValueResetState from './tests/rerenderWithInitValueResetState';
 import setSameValueRepeatedly from './tests/setSameValueRepeatedly';
@@ -85,6 +86,7 @@ const mainTestSuit = (packagePath: string): void =>
     test(...testIndependentMode(testParameter));
     test(...testMultistateInterface(testParameter));
     test(...setSameValueRepeatedly(testParameter));
+    test(...checkUpdateWithNoSubscribers(testParameter));
 
     if (!flags.SHOULD_TEST_PERFORMANCE) {
       test(...checkInitializationConcurrency(testParameter));
