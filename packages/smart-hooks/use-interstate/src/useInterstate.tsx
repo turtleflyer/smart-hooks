@@ -4,7 +4,6 @@ import type { FC } from 'react';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { TrueObjectAssign } from './CommonTypes';
 import { createStore } from './createStore';
-import type { UseInterstateThrowError } from './errorHandle';
 import { UseInterstateErrorCodes } from './errorHandle';
 import type { SetterMethods, Store, StoreMethods } from './StoreState';
 import type {
@@ -48,25 +47,28 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
     return globalStore;
   }
 
-  interface MainHookState {
-    usingMultiStateScheme?: boolean;
-    throwError: UseInterstateThrowError;
-  }
-
   const useInterstate = (<T extends unknown, S extends object>(
     a1: StateKey | InterstateInitializeObject<S>,
     initValue?: InterstateInitializeParam<T>
   ): EnhancePlainInterface<T> | EnhanceObjectInterface<S> => {
-    const mainRecord = useRef({} as MainHookState);
+    interface KeepUseInterstateRecords {
+      usingMultiStateScheme?: boolean;
+    }
+    const keepUseInterstateRecords = useRef({} as KeepUseInterstateRecords);
 
     const {
       current: curMainHookState,
-      current: { usingMultiStateScheme, throwError },
-    } = mainRecord;
+      current: { usingMultiStateScheme },
+    } = keepUseInterstateRecords;
+
+    const { initializeState, runRenderTask, runEffectTask, throwError } = useStore();
 
     function checkUsingSchemeIntegrity(flagToSet: boolean) {
       if (usingMultiStateScheme === undefined) {
-        mainRecord.current = { ...curMainHookState, usingMultiStateScheme: flagToSet };
+        keepUseInterstateRecords.current = {
+          ...curMainHookState,
+          usingMultiStateScheme: flagToSet,
+        };
       } else if (usingMultiStateScheme === !flagToSet) {
         throwError(UseInterstateErrorCodes.INVALID_INTERFACE_CHANGE, {});
       }
@@ -76,23 +78,18 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
       key: StateKey,
       initV?: InterstateInitializeParam<PT>
     ): readonly [() => PT, SetInterstate<PT>] {
-      const { initializeState, runRenderTask, runEffectTask, throwError: throwErr } = useStore();
-      mainRecord.current = { ...mainRecord.current, throwError: throwErr };
-
-      const memState = useRef({} as StoreMethods<PT>);
       runRenderTask(key);
 
+      const keepUsePlainInterstateRecords = useRef({} as StoreMethods<PT>);
       useSmartMemo(() => {
-        memState.current = initializeState(key, initV);
+        keepUsePlainInterstateRecords.current = initializeState(key, initV);
       }, [key]);
 
-      useEffect(() => runEffectTask());
-
       function useSubscribe() {
-        const subscribeMemState = useRef<Partial<SetterMethods> | null>({});
+        const keepUseSubscribeRecords = useRef<Partial<SetterMethods> | null>(null);
         const {
           current: { getValue },
-        } = memState;
+        } = keepUsePlainInterstateRecords;
 
         /**
          * Emit a setter that will be used to trigger rendering the component in the case a value
@@ -107,17 +104,17 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
         useSmartMemo(() => {
           const {
             current: { addSetter },
-          } = memState;
+          } = keepUsePlainInterstateRecords;
 
-          subscribeMemState.current?.removeSetterFromKeyList?.();
+          keepUseSubscribeRecords.current?.removeSetterFromKeyList?.();
 
-          subscribeMemState.current = addSetter(setter);
+          keepUseSubscribeRecords.current = addSetter(setter);
         }, [key]);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        useEffect(() => subscribeMemState.current?.removeSetterFromWatchList?.(), [key]);
+        useEffect(() => keepUseSubscribeRecords.current?.removeSetterFromWatchList?.(), [key]);
 
-        useEffect(() => () => subscribeMemState.current?.removeSetterFromKeyList?.(), []);
+        useEffect(() => () => keepUseSubscribeRecords.current?.removeSetterFromKeyList?.(), []);
 
         return getValue();
       }
@@ -125,7 +122,7 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
       const setInterstate = useCallback<SetInterstate<PT>>((val) => {
         const {
           current: { setValue },
-        } = memState;
+        } = keepUsePlainInterstateRecords;
 
         setValue(val);
       }, []);
@@ -159,8 +156,9 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
       return [useSubscribe, settersObject];
     }
 
-    let evalReturn: EnhancePlainInterface<T> | EnhanceObjectInterface<S>;
+    useEffect(() => runEffectTask());
 
+    let evalReturn: EnhancePlainInterface<T> | EnhanceObjectInterface<S>;
     if (typeof a1 === 'object') {
       checkUsingSchemeIntegrity(true);
       evalReturn = useMultiInterstate(a1) as EnhanceObjectInterface<S>;
@@ -168,7 +166,6 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
       checkUsingSchemeIntegrity(false);
       evalReturn = usePlainInterstate(a1, initValue) as EnhancePlainInterface<T>;
     }
-
     (Object.assign as TrueObjectAssign)(evalReturn, {
       get: evalReturn[0],
       set: (() => evalReturn[1]) as (() => SetInterstate<T>) | (() => InterstateSettersObject<S>),
