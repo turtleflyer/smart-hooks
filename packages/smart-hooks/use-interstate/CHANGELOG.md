@@ -1,3 +1,9 @@
+## 4.1.1 (Oct 8, 2020)
+
+### Fix
+
+- Fix update the state with no subscribers results in an error.
+
 ## 4.1.0 (Oct 3, 2020)
 
 ### Fix
