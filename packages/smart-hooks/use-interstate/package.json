@@ -1,9 +1,10 @@
 {
   "name": "@smart-hooks/use-interstate",
-  "version": "4.1.1",
+  "version": "5.0.0",
   "description": "useState on steroids",
   "keywords": [
-    "react", "state management"
+    "react",
+    "state management"
   ],
   "author": "Andrei Kovalev <35089047+turtleflyer@users.noreply.github.com>",
   "homepage": "https://github.com/turtleflyer/smart-hooks/tree/master/packages/smart-hooks/use-interstate#readme",
@@ -43,8 +44,8 @@
     "react": "^17.0.0"
   },
   "dependencies": {
-    "@smart-hooks/helper-traverse-scheme-keys": "^4.0.1",
-    "@smart-hooks/use-smart-memo": "^3.0.3",
+    "@smart-hooks/helper-traverse-scheme-keys": "^5.0.0",
+    "@smart-hooks/use-smart-memo": "^4.0.0",
     "@types/react": "^16.9.51"
   },
   "gitHead": "9a47ccf24e6f09b4f17ebf01516e8c4833f2290f"
