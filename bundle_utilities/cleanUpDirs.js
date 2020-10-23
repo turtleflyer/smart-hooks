@@ -18,7 +18,7 @@ function cleanUpDistFolder(dirNames) {
             }
 
             if (stats.isDirectory) {
-              fs.rmdir(fullPath, { recursive: true }, (rmDirErr) => {
+              fs.rm(fullPath, { recursive: true, force: true }, (rmDirErr) => {
                 if (rmDirErr) {
                   throw rmDirErr;
                 }

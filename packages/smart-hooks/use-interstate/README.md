@@ -10,7 +10,7 @@
 >
 > ---
 
-![use-interstate](use-interstate.png)
+[![use-interstate](use-interstate.png)](#useinterstate)
 
 `useInterstate` is a simple, lightweight, and powerful global state management solution for React
 projects designed to stick as close as possible to a natural usage pattern found in the standard

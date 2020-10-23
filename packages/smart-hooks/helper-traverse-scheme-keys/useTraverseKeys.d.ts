@@ -1,0 +1,1 @@
+export declare function useTraverseKeys<S extends object, StateSide extends Record<keyof S, unknown>, SettersSide extends Record<keyof S, unknown>>(scheme: S, eachKeyProceed: (key: keyof S, p: S, fulfillStateSide: (p: StateSide[keyof S]) => void, fulfillSettersSide: (p: SettersSide[keyof S]) => void) => void): [StateSide, SettersSide, (keyof S)[]];

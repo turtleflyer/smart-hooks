@@ -1,3 +1,9 @@
+## 5.0.0 (Oct 22, 2020)
+
+### Change
+
+- Add support React 17.
+
 ## 4.0.1 (Oct 3, 2020)
 
 ### Fix

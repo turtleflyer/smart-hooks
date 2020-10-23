@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./ts"
+    "outDir": "./ts",
+    "rootDir": ".",
+    "declaration": true
   },
   "files": ["src/useTraverseKeys.ts"]
 }
