@@ -1,7 +1,7 @@
 import type { TrueObjectAssign } from './CommonTypes';
-import type { StateKey } from './UseInterstateInterface';
+import type { MapValue, MapValueSettersListEntry } from './StoreMap';
 import type { MemValueMap, StoreState } from './StoreState';
-import type { MapValue } from './StoreMap';
+import type { StateKey } from './UseInterstateInterface';
 
 export enum UseInterstateErrorCodes {
   CONCURRENTLY_PROVIDED_INIT_VALUE,
@@ -124,10 +124,13 @@ export function createThrowError(storeState: StoreState): UseInterstateThrowErro
 
   function flushMapValue(key: StateKey, memValuesMap: MemValueMap, isToRevertData: boolean) {
     const mapValue = storeMap.get(key) as MapValue<unknown>;
-    // eslint-disable-next-line no-restricted-syntax
-    for (const s of mapValue) {
-      s.removeFromWatchList();
-      s.errorChunk = true;
+
+    let setterEntry: MapValueSettersListEntry | undefined = mapValue.start;
+    while (setterEntry) {
+      setterEntry.removeFromWatchList();
+      setterEntry.errorChunk = true;
+
+      setterEntry = setterEntry.next;
     }
 
     (Object.assign as TrueObjectAssign)(mapValue, {

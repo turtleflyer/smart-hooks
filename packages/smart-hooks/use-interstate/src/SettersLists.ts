@@ -12,20 +12,12 @@ export interface SettersWatchListEntry extends SettersListEntryBase {
   readonly removeFromStore: () => void;
 }
 
-export type SettersListIterator<
-  L extends SettersListEntryBase = SettersListEntryBase
-> = () => Iterator<L, undefined>;
-
 export interface SettersListBase {
   start?: SettersListEntryBase & { prev: undefined };
   end?: SettersListEntryBase & { next: undefined };
-
-  readonly [Symbol.iterator]: SettersListIterator;
 }
 
 export interface SettersWatchList extends SettersListBase {
   start?: SettersWatchListEntry & { prev: undefined };
   end?: SettersWatchListEntry & { next: undefined };
-
-  readonly [Symbol.iterator]: SettersListIterator<SettersWatchListEntry>;
 }

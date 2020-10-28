@@ -1,23 +1,24 @@
 import type { TrueObjectAssign } from './CommonTypes';
 import { createCyclesTask } from './createLifeCyclesTask';
-import { createSettersList } from './createSettersList';
-import type { StateKey } from './UseInterstateInterface';
+import type { SettersWatchListEntry } from './SettersLists';
 import type { MapValue } from './StoreMap';
 import type { StoreState } from './StoreState';
+import type { StateKey } from './UseInterstateInterface';
 
 export function createStoreState(): StoreState {
   const storeState: StoreState = {
     storeMap: new Map<StateKey, MapValue>(),
     memValuesMap: new Map<StateKey, { value: unknown } | undefined>(),
-    settersWatchList: createSettersList({}),
+    settersWatchList: {},
     renderTask: createCyclesTask(
       () => ({}),
       () => {
         const { settersWatchList, effectTask } = storeState;
 
-        // eslint-disable-next-line no-restricted-syntax
-        for (const s of settersWatchList) {
-          s.removeFromStore();
+        let setterEntry: SettersWatchListEntry | undefined = settersWatchList.start;
+        while (setterEntry) {
+          setterEntry.removeFromStore();
+          setterEntry = setterEntry.next;
         }
 
         storeState.memValuesMap = new Map<StateKey, { value: unknown } | undefined>();

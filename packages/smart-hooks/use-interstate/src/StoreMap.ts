@@ -1,6 +1,6 @@
 import type { UseInterstateErrorCodes } from './errorHandle';
+import type { SettersListBase, SettersListEntryBase } from './SettersLists';
 import type { Setter, StateKey } from './UseInterstateInterface';
-import type { SettersListBase, SettersListEntryBase, SettersListIterator } from './SettersLists';
 
 export interface MapValueSettersListEntry extends SettersListEntryBase {
   prev?: (MapValueSettersListEntry & { next: object }) | undefined;
@@ -33,8 +33,6 @@ export interface MapValue<T extends unknown = unknown> extends SettersListBase {
   initStatus?: InitStatus<T>;
 
   triggerRegistered?: boolean;
-
-  readonly [Symbol.iterator]: SettersListIterator<MapValueSettersListEntry>;
 }
 
 export type StoreMap = Map<StateKey, MapValue>;

@@ -1,6 +1,7 @@
 import { createStoreState } from '../createStoreState';
-import type { StateKey } from '../UseInterstateInterface';
+import type { MapValueSettersListEntry } from '../StoreMap';
 import type { StoreState } from '../StoreState';
+import type { StateKey } from '../UseInterstateInterface';
 
 const originalStoreState: StoreState[] = [];
 
@@ -27,9 +28,10 @@ export const settersCounterFactory: SettersCounterFactory = (n = 0) => {
     }
 
     let count = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-restricted-syntax
-    for (const _ of mapVal) {
+    let setterEntry: MapValueSettersListEntry | undefined = mapVal.start;
+    while (setterEntry) {
       count++;
+      setterEntry = setterEntry.next;
     }
 
     return count;

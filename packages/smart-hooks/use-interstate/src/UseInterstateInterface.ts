@@ -2,7 +2,7 @@ import type { Dispatch, FC, SetStateAction } from 'react';
 
 export type StateKey = string | number | symbol;
 
-export type Setter = Dispatch<SetStateAction<boolean>>;
+export type Setter = Dispatch<SetStateAction<object>>;
 
 export type InterstateParam<T extends unknown> =
   | Exclude<T, (...arg: never[]) => unknown>

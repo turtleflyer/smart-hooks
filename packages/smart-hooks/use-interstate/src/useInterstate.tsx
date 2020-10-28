@@ -95,7 +95,7 @@ export const getUseInterstate: GetUseInterstate = <M extends object>() => {
          * Emit a setter that will be used to trigger rendering the component in the case a value
          * corresponding the stateKey has changed
          */
-        const [, setter] = useState<boolean>(true);
+        const [, setter] = useState<object>({});
 
         /**
          * For the first call or in the case of changing the subscription key it will place the

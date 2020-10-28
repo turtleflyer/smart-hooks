@@ -1,5 +1,4 @@
 import type { TrueObjectAssign } from './CommonTypes';
-import { createSettersList } from './createSettersList';
 import { createSettersListEntry } from './createSettersListEntry';
 import { createStoreState } from './createStoreState';
 import { createThrowError, UseInterstateErrorCodes } from './errorHandle';
@@ -106,13 +105,14 @@ export function createStore(): Store {
           if (isSettersListSubscribed(mapEntryValue, { throwError, key })) {
             mapEntryValue.triggerRegistered = true;
 
-            // eslint-disable-next-line no-restricted-syntax
-            for (const setterEntry of mapEntryValue) {
+            let setterEntry: MapValueSettersListEntry | undefined = mapEntryValue.start;
+            while (setterEntry) {
               if (isSetterListEntryErrorChunk(setterEntry)) {
                 throwError(UseInterstateErrorCodes.UNEXPECTED_ERROR, { key });
               }
 
-              setterEntry.setter((v) => !v);
+              setterEntry.setter({});
+              setterEntry = setterEntry.next;
             }
           }
         }
@@ -176,15 +176,9 @@ export function createStore(): Store {
     renderTask.run();
 
     if (!storeMap.has(key)) {
-      storeMap.set(
-        key,
-        createSettersList<MapValue>(
-          {
-            isValueSetUp: false,
-          },
-          { throwError, key }
-        )
-      );
+      storeMap.set(key, {
+        isValueSetUp: false,
+      });
     }
 
     const mapValue = storeMap.get(key) as MapValue<unknown>;
