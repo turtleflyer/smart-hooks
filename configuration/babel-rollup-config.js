@@ -1,7 +1,8 @@
-export const baseConfig = { extensions: ['.js'], comments: false, babelHelpers: 'bundled' };
+export const baseConfig = { comments: false, babelHelpers: 'bundled' };
 
 process.env.BABEL_ENV = 'production';
 export const cjsPreset = {
+  babelHelpers: 'runtime',
   presets: ['react-app'],
 };
 
@@ -15,9 +16,4 @@ export const umdPreset = {
       },
     ],
   ],
-};
-
-export const optInRuntime = {
-  babelHelpers: 'runtime',
-  plugins: ['@babel/plugin-transform-runtime'],
 };

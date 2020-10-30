@@ -1,3 +1,9 @@
+## 5.1.0 (Oct 30, 2020)
+
+### Change
+
+- Add `@babel/runtime` as a dependency.
+
 ## 5.0.0 (Oct 22, 2020)
 
 ### Change

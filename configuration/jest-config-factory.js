@@ -6,10 +6,11 @@ function jestConfigFactory() {
     preset: 'ts-jest/presets/js-with-ts',
     globals: {
       'ts-jest': {
-        tsConfig: 'tsconfig.test.json',
+        tsconfig: 'tsconfig.test.json',
       },
     },
     moduleFileExtensions: ['js', 'json', 'jsx', 'ts', 'tsx', 'node', 'd.ts'],
+    transformIgnorePatterns: ['node_modules/(?!@babel/runtime)'],
   };
 }
 

@@ -7,18 +7,18 @@ import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import * as BabelRollupConfig from './babel-rollup-config';
 
-function resolveBabelConfig(configArray) {
-  return configArray.reduce((acc, conf) => ({ ...acc, ...BabelRollupConfig[conf] }), {});
+function resolveBabelConfig({ babelConfig }) {
+  return babelConfig.reduce((acc, conf) => ({ ...acc, ...BabelRollupConfig[conf] }), {});
 }
 
 function resolveExternal(baseArr, possibleUndefined) {
-  return [...baseArr, ...(possibleUndefined.external ? possibleUndefined.external : [])];
+  return [...baseArr, ...(possibleUndefined.external || [])];
 }
 
 export function rollupConfigFactory(options) {
   const defOptions = {
-    cjs: { config: ['baseConfig', 'cjsPreset', 'optInRuntime'] },
-    umd: { config: ['baseConfig', 'umdPreset'] },
+    cjs: { babelConfig: ['baseConfig', 'cjsPreset'] },
+    umd: { babelConfig: ['baseConfig', 'umdPreset'] },
   };
   const { cjs: cjsOptions, umd: umdOptions } = ['cjs', 'umd'].reduce(
     (acc, prop) =>
@@ -37,9 +37,9 @@ export function rollupConfigFactory(options) {
       ? {
           input,
 
-          external: resolveExternal(['react', /@babel\/runtime/], cjsOptions),
+          external: resolveExternal(['react', /^@babel\/runtime/], cjsOptions),
 
-          plugins: [babel(resolveBabelConfig(cjsOptions.config))],
+          plugins: [babel(resolveBabelConfig(cjsOptions))],
 
           output: [
             {
@@ -59,7 +59,7 @@ export function rollupConfigFactory(options) {
 
           external: resolveExternal(['react'], umdOptions),
 
-          plugins: [babel(resolveBabelConfig(umdOptions.config)), resolve(), commonjs(), terser()],
+          plugins: [babel(resolveBabelConfig(umdOptions)), resolve(), commonjs(), terser()],
 
           output: [
             {
