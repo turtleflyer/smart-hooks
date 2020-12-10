@@ -1,6 +1,7 @@
 const defRules = {
   'no-nested-ternary': 'off',
   'no-plusplus': 'off',
+  'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
   'import/extensions': 'off',
   'import/prefer-default-export': 'off',
   'jsx-a11y/label-has-associated-control': ['error', { assert: 'either', depth: 2 }],
@@ -26,21 +27,22 @@ module.exports = {
     sourceType: 'module',
   },
   rules: { ...defRules },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.d.ts'],
+      },
+    },
+  },
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
-      settings: {
-        'import/resolver': {
-          node: {
-            extensions: ['.ts', '.tsx', '.d.ts'],
-          },
-        },
-      },
       extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint'],
       parser: '@typescript-eslint/parser',
       rules: {
         ...defRules,
         '@typescript-eslint/ban-types': ['error', { types: { object: false } }],
+        '@typescript-eslint/no-empty-function': 'off',
         'no-shadow': 'off',
         '@typescript-eslint/no-shadow': 'error',
         'no-use-before-define': 'off',
