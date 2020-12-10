@@ -11,11 +11,11 @@ export interface AssetsImport {
   wrapWithStrictModeComponent: typeof wrapWithStrictModeComponent;
 }
 
-export interface UseMultistateImport {
+export interface UseMultiStateImport {
   useMultiState: typeof useMultiState;
 }
 
-export type TestParameter = TestParameterG<AssetsImport & UseMultistateImport>;
+export type TestParameter = TestParameterG<AssetsImport & UseMultiStateImport>;
 
 export type TestDescription = TestDescriptionG<TestParameter>;
 

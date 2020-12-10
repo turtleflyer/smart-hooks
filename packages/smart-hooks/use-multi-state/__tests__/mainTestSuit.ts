@@ -4,7 +4,7 @@
 import { cleanup } from '@testing-library/react';
 import testSetterImmutability from './tests/testSetterImmutability';
 import testSophisticatedCase from './tests/testSophisticatedCase';
-import { AssetsImport, TestParameter, UseMultistateImport } from './testsAssets';
+import { AssetsImport, TestParameter, UseMultiStateImport } from './testsAssets';
 
 const mainTestSuit = (packagePath: string): void =>
   describe('Test useMultiState correctness', () => {
@@ -13,8 +13,8 @@ const mainTestSuit = (packagePath: string): void =>
     beforeEach(() => {
       jest.isolateModules(() => {
         const assets = require('./testsAssets') as AssetsImport;
-        const useMultistateImport = require(packagePath) as UseMultistateImport;
-        testParameter.assets = { ...assets, ...useMultistateImport };
+        const useMultiStateImport = require(packagePath) as UseMultiStateImport;
+        testParameter.assets = { ...assets, ...useMultiStateImport };
       });
     });
 
