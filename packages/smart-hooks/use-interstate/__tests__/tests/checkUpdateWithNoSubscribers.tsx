@@ -16,7 +16,7 @@ const checkUpdateWithNoSubscribers: TestDescription = (p) => [
     const counter = executionCountersFactory();
 
     const TestComponent: FC = wrapWithStrictModeComponent(() => {
-      const [, updateState] = useInterstate(subscribeId0, '');
+      const [, updateState] = useInterstate<string>(subscribeId0, '');
 
       useEffect(() => counter.count());
 
@@ -24,9 +24,7 @@ const checkUpdateWithNoSubscribers: TestDescription = (p) => [
         <input
           {...{
             value: '',
-            onChange: ({ target: { value } }) => {
-              return updateState(value);
-            },
+            onChange: ({ target: { value } }) => updateState(value),
             'data-testid': testId0,
           }}
         />

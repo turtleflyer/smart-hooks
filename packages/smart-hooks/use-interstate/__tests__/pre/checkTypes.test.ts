@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-useless-computed-key */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
@@ -33,7 +34,7 @@ describe('Check types', () => {
 
       const symbolKey = Symbol('jee');
 
-      const u01 = 'ni';
+      let u01 = 'ni';
       const u02 = () => 'ni';
       const u03 = () => () => {};
       const u04 = () => undefined;
