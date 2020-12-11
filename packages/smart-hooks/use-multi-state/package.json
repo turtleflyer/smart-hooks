@@ -1,6 +1,6 @@
 {
   "name": "@smart-hooks/use-multi-state",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Use one useMultiState instead multiple useState's",
   "keywords": [
     "react"
@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@smart-hooks/helper-traverse-scheme-keys": "^5.1.0",
+    "@smart-hooks/helper-traverse-scheme-keys": "^5.2.0",
     "@types/react": "^17.0.0"
   },
   "gitHead": "9a47ccf24e6f09b4f17ebf01516e8c4833f2290f"

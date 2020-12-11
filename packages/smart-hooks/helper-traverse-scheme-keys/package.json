@@ -1,6 +1,6 @@
 {
   "name": "@smart-hooks/helper-traverse-scheme-keys",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Helper for use-interstate and use-multi-state packages",
   "keywords": [
     "react"
