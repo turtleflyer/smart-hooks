@@ -19,7 +19,9 @@ Giving the following example where we use ordinary `useState`:
 function Component() {
   const [color, setColor] = useState('blue');
   const [theme, setTheme] = useState({ textSize: 'medium', hyphenations: true });
-  const [density, setDensity] = useState(100);
+  const [density, setDensity] = useState(() => {
+    // calculate init value
+  });
 
   return (
     <>
@@ -30,7 +32,7 @@ function Component() {
 }
 ```
 
-We can rewrite this logic by using `useMultiState` in more compact and readable way:
+We can rewrite this logic by using `useMultiState` in less repetitive and readable way:
 
 ```jsx
 import { useMultiState } from '@smart-hooks/use-multi-state';
@@ -39,7 +41,9 @@ function Component() {
   const [state, setState] = useMultiState({
     color: 'blue',
     theme: { textSize: 'medium', hyphenations: true },
-    density: 100,
+    density: () => {
+      // calculate init value
+    },
   });
 
   return (
@@ -52,7 +56,7 @@ function Component() {
 ```
 
 As in the case of using `useState` when you get setter that is [guaranteed stable and
-immutable](https://reactjs.org/docs/hooks-reference.html#usestate), with `usMultiState` you have an
+immutable](https://reactjs.org/docs/hooks-reference.html#usestate), with `usMultiState`, you have an
 object that alone has a stable identity, and its properties on their turn effectively are setters
 emitted by `useState` calls hence stable and immutable. You can use numbers, strings, and symbols
 for properties names.

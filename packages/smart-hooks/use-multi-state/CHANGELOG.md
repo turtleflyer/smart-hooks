@@ -1,3 +1,9 @@
+## 3.2.0 (Dec 10, 2020)
+
+### Change
+
+- MultiState can be initialized using function call.
+
 ## 3.1.0 (Oct 30, 2020)
 
 ### Change
