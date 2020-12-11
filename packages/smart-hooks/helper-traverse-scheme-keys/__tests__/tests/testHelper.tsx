@@ -3,6 +3,7 @@
 import { render } from '@testing-library/react';
 import type { FC } from 'react';
 import React from 'react';
+import type { UseEachKeyProceed, UseTraverseReturn } from '../../src/useTraverseKeys';
 import type { TestDescription } from '../testsAssets';
 
 const testHelper: TestDescription = (p) => [
@@ -12,25 +13,16 @@ const testHelper: TestDescription = (p) => [
       assets: { useTraverseKeys, wrapWithStrictModeComponent },
     } = p;
 
-    type TraverseReturn<
-      S extends Record<keyof never, unknown>,
-      StateSide extends Record<keyof S, unknown> = Record<keyof S, unknown>,
-      SettersSide extends Record<keyof S, unknown> = Record<keyof S, unknown>
-    > = [StateSide, SettersSide, (keyof S)[]];
-
-    interface TestComponentsProps<
+    interface TestComponentProps<
       S extends Record<keyof never, unknown>,
       StateSide extends Record<keyof S, unknown>,
       SettersSide extends Record<keyof S, unknown>
     > {
       scheme: S;
-      eachKeyProceed: (
-        key: keyof S,
-        a: S,
-        fulfillStateSide: (p: StateSide[keyof S]) => void,
-        fulfillSettersSide: (p: SettersSide[keyof S]) => void
-      ) => void;
-      memReturn: { current: TraverseReturn<S, StateSide, SettersSide> };
+
+      eachKeyProceed: UseEachKeyProceed<S, StateSide, SettersSide>;
+
+      memReturn: { current: Readonly<UseTraverseReturn<S, StateSide, SettersSide>> };
     }
 
     type TestComponentType = <
@@ -38,7 +30,7 @@ const testHelper: TestDescription = (p) => [
       StateSide extends Record<keyof S, unknown>,
       SettersSide extends Record<keyof S, unknown>
     >(
-      a: TestComponentsProps<S, StateSide, SettersSide>
+      props: TestComponentProps<S, StateSide, SettersSide>
     ) => ReturnType<FC>;
 
     const TestComponent: TestComponentType = wrapWithStrictModeComponent(
@@ -53,7 +45,7 @@ const testHelper: TestDescription = (p) => [
 
     const scheme1 = { a: 1, 2: 'hi', [symbolKey]: false };
     const memReturn1 = {} as {
-      current: TraverseReturn<typeof scheme1>;
+      current: UseTraverseReturn<typeof scheme1>;
     };
 
     const { rerender, unmount } = render(
@@ -75,7 +67,7 @@ const testHelper: TestDescription = (p) => [
 
     const scheme2 = { b: false };
     const memReturn2 = {} as {
-      current: TraverseReturn<typeof scheme1>;
+      current: UseTraverseReturn<typeof scheme1>;
     };
 
     rerender(
