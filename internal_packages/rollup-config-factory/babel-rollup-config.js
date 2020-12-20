@@ -12,7 +12,7 @@ const esmAndCjsBasePreset = {
   presets: [['@babel/preset-env', { exclude: ['transform-typeof-symbol'] }]],
 };
 
-export const esmPreset = {
+exports.esmPreset = {
   ...esmAndCjsBasePreset,
   plugins: [
     [
@@ -22,7 +22,7 @@ export const esmPreset = {
   ],
 };
 
-export const cjsPreset = {
+exports.cjsPreset = {
   ...esmAndCjsBasePreset,
   plugins: [
     [
@@ -32,7 +32,7 @@ export const cjsPreset = {
   ],
 };
 
-export const umdPreset = {
+exports.umdPreset = {
   comments: false,
   babelHelpers: 'bundled',
   presets: [

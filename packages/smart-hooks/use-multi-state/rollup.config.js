@@ -1,4 +1,5 @@
-import { rollupConfigFactory } from '../../../configuration/rollup-config-factory';
+/* eslint-disable import/no-extraneous-dependencies */
+import rollupConfigFactory from '@~internal/rollup-config-factory';
 
 const esmAndCjsConfig = {
   external: ['@smart-hooks/helper-traverse-scheme-keys'],
