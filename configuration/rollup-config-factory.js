@@ -17,42 +17,49 @@ function resolveExternal(baseArr, possibleUndefined) {
 
 export function rollupConfigFactory(options) {
   const defOptions = {
-    cjs: { babelConfig: ['baseConfig', 'cjsPreset'] },
-    umd: { babelConfig: ['baseConfig', 'umdPreset'] },
+    esm: { babelConfig: ['esmPreset'] },
+    cjs: { babelConfig: ['cjsPreset'] },
+    umd: { babelConfig: ['umdPreset'] },
   };
-  const { cjs: cjsOptions, umd: umdOptions } = ['cjs', 'umd'].reduce(
+
+  const { esm: esmOptions, cjs: cjsOptions, umd: umdOptions } = ['esm', 'cjs', 'umd'].reduce(
     (acc, prop) =>
       options && options[prop] && options[prop].disable
         ? acc
         : { ...acc, [prop]: { ...defOptions[prop], ...options[prop] } },
     {}
   );
+
   const pkg = require('./package.json');
   const tsconfigBundle = require('./tsconfig.bundle.json');
   const determineInput = require('../../../bundle_utilities/determineInput');
   const input = determineInput(tsconfigBundle);
 
   return [
+    esmOptions
+      ? {
+          input,
+
+          external: resolveExternal(['react', /^@babel\/runtime\/.*\/esm\//], esmOptions),
+
+          plugins: [babel(resolveBabelConfig(esmOptions))],
+
+          output: [{ file: pkg.module, format: 'es' }],
+        }
+      : null,
+
     cjsOptions
       ? {
           input,
 
-          external: resolveExternal(['react', /^@babel\/runtime/], cjsOptions),
+          external: resolveExternal(['react', /^@babel\/runtime\/(?!.*\/esm\/)/], cjsOptions),
 
           plugins: [babel(resolveBabelConfig(cjsOptions))],
 
-          output: [
-            {
-              file: pkg.main,
-              format: 'cjs',
-            },
-            {
-              file: pkg.module,
-              format: 'es',
-            },
-          ],
+          output: [{ file: pkg.main, format: 'cjs' }],
         }
       : null,
+
     umdOptions
       ? {
           input,
@@ -62,15 +69,7 @@ export function rollupConfigFactory(options) {
           plugins: [babel(resolveBabelConfig(umdOptions)), resolve(), commonjs(), terser()],
 
           output: [
-            {
-              file: pkg.unpkg,
-              format: 'umd',
-              name: umdOptions.name,
-
-              globals: {
-                react: 'React',
-              },
-            },
+            { file: pkg.unpkg, format: 'umd', name: umdOptions.name, globals: { react: 'React' } },
           ],
         }
       : null,

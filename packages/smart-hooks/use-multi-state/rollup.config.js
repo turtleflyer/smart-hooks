@@ -1,8 +1,11 @@
 import { rollupConfigFactory } from '../../../configuration/rollup-config-factory';
 
+const esmAndCjsConfig = {
+  external: ['@smart-hooks/helper-traverse-scheme-keys'],
+};
+
 export default rollupConfigFactory({
-  cjs: {
-    external: ['@smart-hooks/helper-traverse-scheme-keys'],
-  },
+  esm: esmAndCjsConfig,
+  cjs: esmAndCjsConfig,
   umd: { name: 'useMultiState' },
 });

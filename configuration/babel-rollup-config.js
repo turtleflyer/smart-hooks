@@ -1,18 +1,47 @@
-export const baseConfig = { comments: false, babelHelpers: 'bundled' };
+const basePluginTransforRuntimeSettings = {
+  corejs: false,
+  helpers: true,
+  // eslint-disable-next-line global-require
+  version: require('@babel/runtime/package.json').version,
+  regenerator: true,
+};
 
-process.env.BABEL_ENV = 'production';
-export const cjsPreset = {
+const esmAndCjsBasePreset = {
+  comments: false,
   babelHelpers: 'runtime',
-  presets: ['react-app'],
+  presets: [['@babel/preset-env', { exclude: ['transform-typeof-symbol'] }]],
+};
+
+export const esmPreset = {
+  ...esmAndCjsBasePreset,
+  plugins: [
+    [
+      '@babel/plugin-transform-runtime',
+      { ...basePluginTransforRuntimeSettings, useESModules: true },
+    ],
+  ],
+};
+
+export const cjsPreset = {
+  ...esmAndCjsBasePreset,
+  plugins: [
+    [
+      '@babel/plugin-transform-runtime',
+      { ...basePluginTransforRuntimeSettings, useESModules: false },
+    ],
+  ],
 };
 
 export const umdPreset = {
+  comments: false,
+  babelHelpers: 'bundled',
   presets: [
     [
       '@babel/preset-env',
       {
         targets: ['>0.2%', 'not dead', 'not op_mini all'],
         modules: false,
+        exclude: ['transform-typeof-symbol'],
       },
     ],
   ],
