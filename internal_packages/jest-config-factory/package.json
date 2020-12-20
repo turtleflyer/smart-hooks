@@ -1,0 +1,9 @@
+{
+  "name": "@~internal/jest-config-factory",
+  "version": "0.1.0",
+  "private": true,
+  "main": "jest-config-factory.ts",
+  "dependencies": {
+    "typescript": "^4.1.2"
+  }
+}
