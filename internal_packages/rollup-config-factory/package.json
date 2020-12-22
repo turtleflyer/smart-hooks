@@ -4,6 +4,7 @@
   "private": true,
   "main": "rollup-config-factory.js",
   "dependencies": {
+    "@~internal/bundle-utilities": "^0.1.0",
     "@babel/runtime": "^7.12.5",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-commonjs": "^17.0.0",

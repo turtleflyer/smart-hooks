@@ -4,8 +4,8 @@ const { babel } = require('@rollup/plugin-babel');
 const commonjs = require('@rollup/plugin-commonjs');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const { terser } = require('rollup-plugin-terser');
+const determineInput = require('@~internal/bundle-utilities/determineInput');
 const BabelRollupConfig = require('./babel-rollup-config');
-const determineInput = require('../../bundle_utilities/determineInput');
 
 const pkg = require(path.resolve(process.cwd(), './package.json'));
 const tsconfigBundle = require(path.resolve(process.cwd(), './tsconfig.bundle.json'));

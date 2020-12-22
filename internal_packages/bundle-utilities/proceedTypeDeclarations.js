@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 /* eslint-disable import/no-dynamic-require */
 const fs = require('fs');
 const path = require('path');

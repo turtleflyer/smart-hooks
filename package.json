@@ -23,6 +23,7 @@
     "internal_packages/*"
   ],
   "dependencies": {
+    "@~internal/bundle-utilities": "^0.1.0",
     "@~internal/check-types": "^0.1.0",
     "@~internal/jest-config-factory": "^0.1.0",
     "@~internal/rollup-config-factory": "^0.1.0",

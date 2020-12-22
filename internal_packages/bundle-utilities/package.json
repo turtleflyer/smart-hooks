@@ -1,0 +1,13 @@
+{
+  "name": "@~internal/bundle-utilities",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "cleanup-dirs": "cleanUpDirs.js",
+    "proceed-type-decl": "proceedTypeDeclarations.js",
+    "format-space": "insertSpaceLines.js"
+  },
+  "exports": {
+    "./determineInput": "./determineInput.js"
+  }
+}
