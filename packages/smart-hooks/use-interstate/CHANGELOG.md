@@ -1,3 +1,9 @@
+## 5.1.2 (Dec 22, 2020)
+
+### Fix
+
+- Fix rollup uses external babel runtime helpers of esm version in cjs module.
+
 ## 5.1.0 (Oct 30, 2020)
 
 ### Change
