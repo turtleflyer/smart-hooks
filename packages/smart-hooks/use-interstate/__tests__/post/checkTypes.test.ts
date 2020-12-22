@@ -4,8 +4,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
+import type { Reveal, ToBeExact } from "@~internal/check-types";
 import { FC } from 'react';
-import type { Reveal, ToBeExact } from '../../../../../test_utilities/checkTypes';
 import type {
   GetUseInterstate,
   InterstateInitializeObject,
@@ -17,13 +17,13 @@ import type {
   StateKey,
   UseInterstate,
   UseInterstateError,
-  UseInterstateErrorMethods,
+  UseInterstateErrorMethods
 } from '../../lib/use-interstate';
 import {
   getUseInterstate,
   getUseInterstateErrorsHandleMethods,
   isUseInterstateError,
-  useInterstate,
+  useInterstate
 } from '../../lib/use-interstate';
 
 describe('Check types', () => {

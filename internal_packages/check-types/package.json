@@ -1,0 +1,9 @@
+{
+  "name": "@~internal/check-types",
+  "version": "0.1.0",
+  "private": true,
+  "main": "checkTypes.ts",
+  "dependencies": {
+    "typescript": "^4.1.2"
+  }
+}

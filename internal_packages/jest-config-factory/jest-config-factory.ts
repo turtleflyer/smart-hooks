@@ -12,7 +12,6 @@ export const jestConfigFactory = (): JestConfig => ({
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.test.json',
-      isolatedModules: true,
     },
   },
   moduleFileExtensions: ['js', 'json', 'jsx', 'ts', 'tsx', 'node', 'd.ts'],

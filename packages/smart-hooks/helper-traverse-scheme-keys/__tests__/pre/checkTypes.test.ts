@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable symbol-description */
-import type { Reveal, ToBeExact } from '../../../../../test_utilities/checkTypes';
+import type { Reveal, ToBeExact } from '@~internal/check-types';
 import { useTraverseKeys } from '../../src/useTraverseKeys';
 
 describe('Check types', () => {
