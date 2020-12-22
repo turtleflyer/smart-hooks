@@ -1,5 +1,5 @@
+import { mockReactUseMemo } from '@~internal/test-utilities/mockReactUseMemo';
 import { flagManager } from '../__tests__/testFlags';
-import { mockReactUseMemo } from '../../../../test_utilities/mockReactUseMemo';
 
 const react = jest.requireActual('react');
 

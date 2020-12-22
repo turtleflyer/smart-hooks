@@ -1,4 +1,4 @@
-import { createFlagManager } from '../../../../test_utilities/createFlagManager';
+import { createFlagManager } from '@~internal/test-utilities/createFlagManager';
 
 interface TestFlags {
   MOCK_USE_MEMO: boolean;

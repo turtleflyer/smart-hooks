@@ -1,0 +1,11 @@
+{
+  "name": "@~internal/test-utilities",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./createFlagManager": "./createFlagManager.ts",
+    "./executionCounter": "./executionCounter.ts",
+    "./mockReactUseMemo": "./mockReactUseMemo.ts",
+    "./testDescriptionTypes": "./testDescriptionTypes.ts"
+  }
+}

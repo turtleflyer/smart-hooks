@@ -1,8 +1,8 @@
 import type {
   TestDescriptionG,
   TestParameterG,
-} from '../../../../test_utilities/testDescriptionTypes';
-import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
+} from '@~internal/test-utilities/testDescriptionTypes';
+import { wrapWithStrictModeComponent } from '@~internal/test-utilities/wrapWithStrictModeComponent';
 import { useTraverseKeys } from '../src/useTraverseKeys';
 
 export interface AssetsImport {

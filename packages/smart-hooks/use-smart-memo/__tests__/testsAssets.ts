@@ -1,9 +1,9 @@
-import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import { executionCountersFactory } from '@~internal/test-utilities/executionCounter';
 import type {
   TestDescriptionG,
   TestParameterG,
-} from '../../../../test_utilities/testDescriptionTypes';
-import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
+} from '@~internal/test-utilities/testDescriptionTypes';
+import { wrapWithStrictModeComponent } from '@~internal/test-utilities/wrapWithStrictModeComponent';
 import { useSmartMemo } from '../src/useSmartMemo';
 
 export interface AssetsImport {

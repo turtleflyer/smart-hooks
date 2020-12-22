@@ -50,7 +50,7 @@ module.exports = {
       },
     },
     {
-      files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', './test_utilities/*'],
+      files: ['**/__tests__/**/*', '**/__mocks__/**/*'],
       rules: {
         'import/no-extraneous-dependencies': 'off',
       },

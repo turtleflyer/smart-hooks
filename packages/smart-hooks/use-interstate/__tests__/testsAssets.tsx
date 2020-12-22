@@ -2,28 +2,28 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 // eslint-disable-next-line import/no-unresolved
 import '@testing-library/jest-dom/extend-expect';
-import { fireEvent, render } from '@testing-library/react';
 import type { RenderResult } from '@testing-library/react';
-import React, { useEffect, useMemo } from 'react';
-import type { FC } from 'react';
-import { executionCountersFactory } from '../../../../test_utilities/executionCounter';
+import { fireEvent, render } from '@testing-library/react';
+import { executionCountersFactory } from '@~internal/test-utilities/executionCounter';
 import type {
   TestDescriptionG,
   TestParameterG,
-} from '../../../../test_utilities/testDescriptionTypes';
-import { wrapWithStrictModeComponent } from '../../../../test_utilities/wrapWithStrictModeComponent';
+} from '@~internal/test-utilities/testDescriptionTypes';
+import { wrapWithStrictModeComponent } from '@~internal/test-utilities/wrapWithStrictModeComponent';
+import type { FC } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import * as mockedCreateStoreStateImport from '../src/createStoreState';
+import type {
+  InterstateInitializeParam,
+  InterstateParam,
+  UseInterstateError,
+} from '../src/useInterstate';
 import {
   getUseInterstate,
   getUseInterstateErrorsHandleMethods,
   isUseInterstateError,
   Scope,
   useInterstate,
-} from '../src/useInterstate';
-import type {
-  InterstateInitializeParam,
-  InterstateParam,
-  UseInterstateError,
 } from '../src/useInterstate';
 import type { SettersCounterFactory } from '../src/__mocks__/createStoreState';
 

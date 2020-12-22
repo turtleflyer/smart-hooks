@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
-import React, { createContext, useContext, useEffect } from 'react';
+import type { ExecutionCounter } from '@~internal/test-utilities/executionCounter';
 import type { FC } from 'react';
-import type { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
+import React, { createContext, useContext, useEffect } from 'react';
 import type { SettersObject } from '../../src/useMultiState';
 import type { TestDescription } from '../testsAssets';
 

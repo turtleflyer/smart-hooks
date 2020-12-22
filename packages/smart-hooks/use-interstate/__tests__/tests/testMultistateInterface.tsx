@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
-import React, { memo, useEffect } from 'react';
+import type { ExecutionCounter } from '@~internal/test-utilities/executionCounter';
 import type { FC } from 'react';
-import type { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
+import React, { memo, useEffect } from 'react';
 import type { InterstateInitializeObject, InterstateSettersObject } from '../../src/useInterstate';
 import { flagManager } from '../testFlags';
 import type { TestDescription } from '../testsAssets';

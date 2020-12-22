@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
-import React from 'react';
+import { ExecutionCounter } from '@~internal/test-utilities/executionCounter';
 import type { FC } from 'react';
-import { ExecutionCounter } from '../../../../../test_utilities/executionCounter';
+import React from 'react';
 import { TestDescription } from '../testsAssets';
 
 const checkRecalculation: TestDescription = (p) => [
